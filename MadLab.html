@@ -1122,9 +1122,13 @@ function drawProUI(){
          ${['testtube','beaker','flask','distill'].map(v=>`<button class="tool" style="font-size:13px;${PRO.vessel===v?'border-color:var(--acid);color:var(--acid)':''}" onclick="PRO.vessel='${v}';drawProUI()">${v==='testtube'?'🧪 Test tube':v==='beaker'?'🥃 Beaker':v==='flask'?'⚗️ Flask':'🔥 Distillation'}</button>`).join('')}
        </div>
        <canvas id="pro" width="440" height="400"></canvas>
-       <div class="btnrow">
-         <button class="btn gold sm" style="margin:0;flex:1" onmousedown="proHeat(true)" onmouseup="proHeat(false)" onmouseleave="proHeat(false)" ontouchstart="proHeat(true)" ontouchend="proHeat(false)">🔥 Hold to heat</button>
-         <button class="btn red sm" style="margin:0;flex:1" onclick="proEmpty()">🧹 Empty</button>
+       <div id="procontents" class="small" style="margin:6px 0;min-height:18px"></div>
+       <div class="small">🌡️ Temperature: <b id="templbl">${PRO.tempC||0}</b>°  <span style="color:#5b7da3">(slide up to ~65°+ to heat / boil / distil)</span></div>
+       <input type="range" min="0" max="100" value="${PRO.tempC||0}" oninput="proTemp(this.value)" style="width:100%;accent-color:var(--acid)">
+       <div class="btnrow" style="flex-wrap:wrap;gap:6px">
+         <button class="btn red sm" style="margin:0;flex:1;min-width:110px" onclick="proEmpty()">🧹 Clear flask</button>
+         ${PRO.vessel==='distill'?`<button class="btn ghost sm" style="margin:0;flex:1;min-width:120px" onclick="proClearReceiver()">🧹 Clear receiver</button><button class="btn green sm" style="margin:0;flex:1;min-width:140px" onclick="proPourBack()">♻️ Pour back → flask</button>`:''}
+         <button class="btn ghost sm" style="margin:0;flex:1;min-width:90px" onclick="proStir()">🥄 Stir</button>
        </div>
        <div class="toolbar" style="margin-top:8px">
          <button class="tool" style="font-size:12px" onclick="proTest('lime')">🥛 Limewater</button>
@@ -1138,10 +1142,24 @@ function drawProUI(){
    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
   const cv=document.getElementById('pro');PRO.cv=cv;PRO.ctx=cv.getContext('2d');renderLog();proLoop();
 }
-function renderLog(){const e=document.getElementById('prolog');if(!e)return;
-  if(!PRO.log.length){e.innerHTML="Pick a vessel, then click chemicals to add them. Mix acids with metals, carbonates or alkalis, add an indicator, or 🔥 heat things up. Then test any gas! 🧪";return}
+function renderLog(){renderContents();const e=document.getElementById('prolog');if(!e)return;
+  if(!PRO.log.length){e.innerHTML="Pick a vessel, then click chemicals to add them. Mix acids with metals, carbonates or alkalis, add an indicator, or slide up the 🌡️ temperature. Then test any gas! 🧪";return}
   e.innerHTML=PRO.log.slice(-5).map(l=>'• '+l).join('<br>');}
+function renderContents(){const e=document.getElementById('procontents');if(!e)return;
+  if(!PRO.contents.length){e.innerHTML='<span style="color:#5b7da3">🧪 Flask is empty</span>';return;}
+  e.innerHTML='🧪 <b style="color:var(--acid)">In the flask:</b> '+PRO.contents.map(id=>PCHEM[id].f).join(' + ');}
 function proLog(s){PRO.log.push(s);renderLog()}
+function proTemp(v){if(!PRO)return;v=+v;PRO.tempC=v;const l=document.getElementById('templbl');if(l)l.textContent=v;PRO.targetHeat=v/100;
+  if(v>=65&&!PRO._hot){PRO._hot=true;proHeat(true);}
+  else if(v<65&&PRO._hot){PRO._hot=false;PRO.heating=false;PRO.distilling=false;PRO._dmsg=false;}
+  else if(v>=65){PRO.heating=true;}}
+function proClearReceiver(){if(!PRO)return;SFX.whoosh();PRO.distillate=null;PRO.distilling=false;PRO.cloudy=0;proLog('🧹 Receiver flask emptied.');}
+function proPourBack(){if(!PRO)return;if(!PRO.distillate){proLog('Nothing in the receiver yet — distil something first (add ingredients, switch to 🔥 Distillation, heat up).');return;}
+  const map={'distilled water':'water','ethanol':'ethanol','bromine (Br₂)':'Br2'};const nm=PRO.distillate.name,col=PRO.distillate.c,id=map[nm];
+  PRO.distillate=null;PRO.distilling=false;
+  if(id){proLog('♻️ Poured the '+nm+' back into the reaction flask.');proAdd(id);}
+  else{PRO.targetLevel=Math.min(0.6,PRO.targetLevel+0.18);PRO.targetColor=col;for(let i=0;i<10;i++)PRO.bubbles.push(mkPB());SFX.whoosh();proLog('♻️ Poured the '+nm+' back into the reaction flask.');}}
+function proStir(){if(!PRO)return;SFX.whoosh();for(let i=0;i<14;i++)PRO.bubbles.push(mkPB());proLog('🥄 Stirred the mixture.');}
 
 function proAcidity(){const cs=PRO.contents.map(id=>PCHEM[id]);
   const acid=cs.some(c=>c.acid),base=cs.some(c=>c.base&&c.sol);
@@ -1260,7 +1278,7 @@ function proTest(kind){if(!PRO)return;
   if(kind==='lit'){if(PRO.gas==='h2'){SFX.pop();PRO.shakeT=8;proLog(`🔥 Lit splint: a <b>squeaky POP</b>! → the gas is <b>hydrogen</b>! ✅`);}else if(PRO.gas==='o2'){proLog(`🔥 The splint burns more brightly — that's oxygen, not hydrogen.`);}else proLog(`🔥 Nothing happens — no flammable gas present.`);}
   if(kind==='glow'){if(PRO.gas==='o2'){SFX.ding();proLog(`✨ Glowing splint <b>relights</b>! → the gas is <b>oxygen</b>! ✅`);}else proLog(`✨ The glowing splint goes out — no oxygen to relight it.`);}
 }
-function proEmpty(){if(!PRO)return;SFX.whoosh();Object.assign(PRO,{contents:[],targetLevel:0,targetColor:'#0a2036',targetFoam:0,foam:0,targetHeat:0,heat:0,gasFizz:false,gas:null,bubbles:[],parts:[],precip:[],cloudy:0,distillate:null,distilling:false,_dmsg:false,_heated:false,_burned:false,heating:false,flameT:0});
+function proEmpty(){if(!PRO)return;SFX.whoosh();Object.assign(PRO,{contents:[],targetLevel:0,targetColor:'#0a2036',targetFoam:0,foam:0,targetHeat:0,heat:0,gasFizz:false,gas:null,bubbles:[],parts:[],precip:[],cloudy:0,distillate:null,distilling:false,_dmsg:false,_heated:false,_burned:false,heating:false,flameT:0,_hot:false,tempC:0});
   PRO.log=[];proLog('Vessel rinsed and empty. 🧼 Ready for the next experiment!');}
 function mkPB(sp){return {x:160+Math.random()*120,y:330,r:2+Math.random()*5,vy:-(0.6+Math.random()*1.4)*(sp?2:1),wob:Math.random()*6.28}}
 function mkPrecip(c){return {x:150+Math.random()*140,y:120+Math.random()*180,vy:0.3+Math.random()*0.6,c,r:2+Math.random()*3}}
