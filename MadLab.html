@@ -456,7 +456,26 @@ function wireScalpel(){const svg=document.getElementById('frog');const sc=docume
 function openFrog(){if(BIO.opened)return;SFX.cut();SFX.whoosh();BIO.opened=true;renderBio();setTimeout(()=>toast("🔬 Incision complete! Explore the organs."),300)}
 function clickOrgan(id){const o=ORGANS.find(x=>x.id===id);if(BIO.quiz)return quizPick(id);SFX.click();
   document.querySelectorAll('.organ').forEach(g=>g.style.filter='');const g=document.querySelector(`.organ[data-id="${id}"]`);if(g)g.style.filter='drop-shadow(0 0 10px #39e6ff)';
-  document.getElementById('bioinfo').innerHTML=`<b>${o.em} ${o.name}</b> — ${o.fn}`}
+  document.getElementById('bioinfo').innerHTML=`<b>${o.em} ${o.name}</b> — ${o.fn}<br><button class="btn green sm" style="margin-top:8px" onclick="organDissect('${id}')">🔬 Dissect the ${o.name} further</button>`}
+const ORGAN_PARTS={
+ heart:[["Right atrium","Receives deoxygenated blood returning from the body."],["Left atrium","Receives oxygen-rich blood from the lungs."],["Ventricles","The thick, muscular chambers that pump blood out."],["Valves","Flaps that stop blood flowing backwards."],["Aorta","The main artery carrying oxygenated blood to the body."]],
+ lungs:[["Trachea","The windpipe — carries air down to the lungs."],["Bronchi","Two tubes, one branching into each lung."],["Bronchioles","Smaller tubes spreading through the lung tissue."],["Alveoli","Tiny air sacs where gas exchange happens — O₂ in, CO₂ out."]],
+ liver:[["Lobes","The large sections that make up the liver."],["Bile duct","Carries bile to the small intestine to help digest fats."],["Blood vessels","The liver filters toxins out of the blood."]],
+ stomach:[["Stomach lining","Coated in mucus to protect it from the acid."],["Acid glands","Release hydrochloric acid to kill microbes and start digestion."],["Muscular wall","Churns food into a soupy paste."],["Enzymes","Protease here begins breaking proteins into amino acids."]],
+ intestine:[["Villi","Tiny finger-like folds that absorb digested food."],["Thin lining","Gives a huge surface area for fast absorption."],["Blood vessels","Carry the absorbed nutrients into the blood."]],
+ kidneys:[["Cortex","The outer layer of the kidney."],["Medulla","The inner region of the kidney."],["Nephrons","Millions of tiny filters that clean the blood and make urine."],["Ureter","The tube carrying urine down to the bladder."]],
+ bladder:[["Muscular wall","Stretches as it fills with urine."],["Sphincter","A ring of muscle that holds urine in until you go to the toilet."]],
+};
+function organDissect(id){const o=ORGANS.find(x=>x.id===id);const parts=ORGAN_PARTS[id]||[];
+ const btns=parts.map((p,i)=>`<button class="tool" style="font-size:12px;margin:3px" onclick="organPart('${id}',${i})">${p[0]}</button>`).join('');
+ root.innerHTML=`<div class="topbar"><span class="tag">🔬 Dissecting</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+  <h2 class="center">${o.em} ${o.name} — up close</h2>
+  <div class="center" style="font-size:96px;filter:drop-shadow(0 0 18px var(--acid))">${o.em}</div>
+  <div class="sub">Click each part to dissect it further and learn what it does.</div>
+  <div class="toolbar">${btns}</div>
+  <div class="info" id="partinfo">${o.fn}</div>
+  <button class="btn ghost" onclick="SFX.click();renderBio()">⬅️ Back to the frog</button>`;}
+function organPart(id,i){const p=(ORGAN_PARTS[id]||[])[i];if(!p)return;SFX.click();const e=document.getElementById('partinfo');if(e)e.innerHTML='<b style="color:var(--acid)">'+p[0]+'</b> — '+p[1];}
 function startBioQuiz(){SFX.click();BIO.quiz=true;BIO.qIndex=0;BIO.score=0;BIO.order=ORGANS.map(o=>o.id).sort(()=>Math.random()-0.5);
   document.querySelector('.btn.green')?.remove();nextBioQ()}
 function nextBioQ(){if(BIO.qIndex>=BIO.order.length)return bioResult();const id=BIO.order[BIO.qIndex];const o=ORGANS.find(x=>x.id===id);
