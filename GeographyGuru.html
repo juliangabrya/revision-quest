@@ -75,6 +75,9 @@ function map(){const s=loadScores();let tiles='';if(RF&&RF.timer){clearInterval(
  tiles+=`<div class="tile" onclick="sfx.click();rapidFire()"><div class="em">⏱️</div><b>Rapid Fire</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();memoryMatch()"><div class="em">🃏</div><b>Memory Match</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();flashcards()"><div class="em">📇</div><b>Flashcards</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();survival()"><div class="em">🎯</div><b>Survival</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();trueFalse()"><div class="em">✅</div><b>True / False</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();ladder()"><div class="em">🎰</div><b>Quiz Ladder</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();writtenMenu()"><div class="em">📝</div><b>Written Exam</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();finalExam()"><div class="em">🎓</div><b>Final Exam</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();gapReport()"><div class="em">📊</div><b>Gap Report</b></div>`;
@@ -314,6 +317,43 @@ function foQ(){if(FO.i>=FO.qs.length)return foEnd();const q=FO.qs[FO.i];FO.answe
  const o2=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.tx;b.onclick=()=>foAns(b,o.k===q.a,q);o2.appendChild(b);});}
 function foAns(btn,ok,q){if(FO.answered)return;FO.answered=true;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});const ex=document.getElementById('ex');ex.innerHTML=(ok?"✅ <b>Order served!</b> ":"❌ <b>Best choice:</b> ")+q.w;ex.style.display='block';if(ok){FO.score++;sfx.good();}else sfx.bad();const nx=document.getElementById('nx');nx.style.display='block';if(FO.i>=FO.qs.length-1)nx.textContent='🏁 Finish shift';}
 function foEnd(){sfx.win();app.innerHTML=`<h1>🍔 Shift over!</h1><div class="center" style="font-size:54px">${FO.score>=5?'🌟':'👍'}</div><div class="hud"><div class="stat"><b>${FO.score}/${FO.qs.length}</b><span>Orders right</span></div></div><button class="btn" onclick="sfx.click();foodOrder()">🔁 New shift</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+/* Survival */
+let SV;
+function survival(){SV={qs:shuffle(allQ()),i:0,lives:3,score:0};svQ();}
+function svQ(){if(SV.i>=SV.qs.length){SV.qs=shuffle(allQ());SV.i=0;}const q=SV.qs[SV.i];
+ app.innerHTML=`<div class="topbar"><span class="tag">🎯 Survival</span></div><div class="hud"><div class="stat"><b>${'❤️'.repeat(SV.lives)||'💀'}</b><span>Lives</span></div><div class="stat"><b>${SV.score}</b><span>Streak</span></div></div><span class="cat">${q.cat}</span><div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="ex"></div><button class="btn" id="nx" style="display:none">Next ➡️</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
+ const o=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(x=>{const b=document.createElement('button');b.className='opt';b.textContent=x.tx;b.onclick=()=>svAns(b,x.k===q.a,q);o.appendChild(b);});}
+function svAns(btn,ok,q){document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});const ex=document.getElementById('ex');
+ if(ok){SV.score++;sfx.good();ex.innerHTML='✅ Correct! Streak: '+SV.score;}else{SV.lives--;sfx.bad();btn.classList.add('wrong');ex.innerHTML='❌ '+q.w;}ex.style.display='block';
+ const nx=document.getElementById('nx');nx.style.display='block';nx.textContent=SV.lives<=0?'💀 See result':'Next ➡️';nx.onclick=()=>{sfx.click();if(SV.lives<=0)svEnd();else{SV.i++;svQ();}};}
+function svEnd(){sfx.win();const key='rqg_'+GAME.id+'_sv';const best=Math.max(SV.score,+(localStorage.getItem(key)||0));localStorage.setItem(key,best);
+ app.innerHTML=`<h1>🎯 Survival over</h1><div class="center" style="font-size:54px">💀</div><div class="hud"><div class="stat"><b>${SV.score}</b><span>This streak</span></div><div class="stat"><b>${best}</b><span>Best ever</span></div></div><button class="btn" onclick="sfx.click();survival()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+/* True or False */
+let TF;
+function trueFalse(){TF={qs:shuffle(allQ()),i:0,score:0};tfQ();}
+function tfQ(){if(TF.i>=TF.qs.length){TF.qs=shuffle(allQ());TF.i=0;}const q=TF.qs[TF.i];const showT=Math.random()<0.5;
+ const claim=showT?q.o[q.a]:q.o[(q.a+1+Math.floor(Math.random()*(q.o.length-1)))%q.o.length];TF.cur={q,isTrue:showT};
+ app.innerHTML=`<div class="topbar"><span class="tag">✅❌ True or False</span></div><div class="hud"><div class="stat"><b>${TF.score}</b><span>Score</span></div><div class="stat"><b>${TF.i+1}</b><span>Q</span></div></div><span class="cat">${q.cat}</span>
+  <div class="q">${q.q}</div><div class="info" style="margin-bottom:10px">Proposed answer: <b>${claim}</b></div>
+  <div style="display:flex;gap:10px"><button class="btn green" style="flex:1" onclick="tfAns(true)">✅ True</button><button class="btn" style="flex:1;background:linear-gradient(180deg,#ff4d6d,#d62f4d);color:#fff" onclick="tfAns(false)">❌ False</button></div>
+  <div class="explain" id="ex"></div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function tfAns(g){const c=TF.cur,ok=g===c.isTrue,ex=document.getElementById('ex');
+ if(ok){TF.score++;sfx.good();ex.innerHTML='✅ Correct!';}else{sfx.bad();ex.innerHTML='❌ Wrong — the correct answer is <b>'+c.q.o[c.q.a]+'</b>.';}
+ ex.style.display='block';setTimeout(()=>{TF.i++;tfQ();},1050);}
+/* Quiz Ladder */
+const RUNGS=[100,200,300,500,1000,2000,4000,8000,16000,32000];
+let LAD;
+function ladder(){LAD={qs:shuffle(allQ()),i:0,lvl:0};ladQ();}
+function ladQ(){if(LAD.lvl>=RUNGS.length)return ladWin();if(LAD.i>=LAD.qs.length){LAD.qs=shuffle(allQ());LAD.i=0;}const q=LAD.qs[LAD.i];
+ app.innerHTML=`<div class="topbar"><span class="tag">🎰 Quiz Ladder</span></div><div class="hud"><div class="stat"><b>£${RUNGS[LAD.lvl]}</b><span>Playing for</span></div><div class="stat"><b>£${LAD.lvl>0?RUNGS[LAD.lvl-1]:0}</b><span>Banked</span></div></div><span class="cat">${q.cat}</span><div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="ex"></div><button class="btn ghost" onclick="sfx.click();ladBank()">💰 Bank & quit</button>`;
+ const o=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(x=>{const b=document.createElement('button');b.className='opt';b.textContent=x.tx;b.onclick=()=>ladAns(b,x.k===q.a,q);o.appendChild(b);});}
+function ladAns(btn,ok,q){document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});const ex=document.getElementById('ex');
+ if(ok){sfx.good();LAD.lvl++;LAD.i++;ex.innerHTML='✅ Correct — climbing!';ex.style.display='block';setTimeout(ladQ,850);}
+ else{sfx.bad();btn.classList.add('wrong');ex.innerHTML='❌ '+q.w;ex.style.display='block';setTimeout(ladLose,1500);}}
+function ladBank(){sfx.win();const amt=LAD.lvl>0?RUNGS[LAD.lvl-1]:0;app.innerHTML=`<h1>💰 Banked £${amt}</h1><div class="center" style="font-size:54px">🤑</div><button class="btn" onclick="sfx.click();ladder()">🔁 Play again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function ladLose(){app.innerHTML=`<h1>💸 Wrong!</h1><div class="center" style="font-size:54px">😬</div><p class="center small">You dropped to £0 — should've banked!</p><button class="btn" onclick="sfx.click();ladder()">🔁 Try again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function ladWin(){sfx.win();app.innerHTML=`<h1>🏆 £32,000!</h1><div class="center" style="font-size:54px">🎉</div><p class="center small">You climbed the whole ladder — genius!</p><button class="btn" onclick="sfx.click();ladder()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 
 home();
 if(window.parent&&window.parent!==window){var _bb=document.createElement('button');_bb.textContent='🎮 Subjects';_bb.onclick=function(){parent.postMessage('rq-menu','*')};_bb.style.cssText='position:fixed;top:10px;right:10px;z-index:99999;background:#1b1530;color:#fff;border:2px solid #ffd23f;border-radius:10px;padding:7px 11px;font-weight:bold;cursor:pointer;font-family:inherit;font-size:13px';document.body.appendChild(_bb);}

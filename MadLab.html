@@ -1139,8 +1139,11 @@ function drawProUI(){
      </div>
      <div>${proShelf()}</div>
    </div>
-   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
-  const cv=document.getElementById('pro');PRO.cv=cv;PRO.ctx=cv.getContext('2d');renderLog();proLoop();
+   <div class="btnrow"><button class="btn gold sm" style="margin:0;flex:1" onclick="SFX.click();proEquip()">🧰 Equipment / assemble kit</button>
+   <button class="btn ghost sm" style="margin:0;flex:1" onclick="SFX.click();hub()">⬅️ Back to lab</button></div>`;
+  const cv=document.getElementById('pro');PRO.cv=cv;PRO.ctx=cv.getContext('2d');
+  cv.style.cursor='pointer';cv.onclick=function(){toast(PRO.contents.length?('🧪 '+PRO.contents.map(id=>PCHEM[id].f).join(' + ')):'🧪 Flask is empty');};
+  renderLog();proLoop();
 }
 function renderLog(){renderContents();const e=document.getElementById('prolog');if(!e)return;
   if(!PRO.log.length){e.innerHTML="Pick a vessel, then click chemicals to add them. Mix acids with metals, carbonates or alkalis, add an indicator, or slide up the 🌡️ temperature. Then test any gas! 🧪";return}
@@ -1160,6 +1163,41 @@ function proPourBack(){if(!PRO)return;if(!PRO.distillate){proLog('Nothing in the
   if(id){proLog('♻️ Poured the '+nm+' back into the reaction flask.');proAdd(id);}
   else{PRO.targetLevel=Math.min(0.6,PRO.targetLevel+0.18);PRO.targetColor=col;for(let i=0;i<10;i++)PRO.bubbles.push(mkPB());SFX.whoosh();proLog('♻️ Poured the '+nm+' back into the reaction flask.');}}
 function proStir(){if(!PRO)return;SFX.whoosh();for(let i=0;i<14;i++)PRO.bubbles.push(mkPB());proLog('🥄 Stirred the mixture.');}
+const EQUIP=[
+ ['🥽','Safety goggles','Protect your eyes — always wear them in the lab!'],
+ ['🔥','Bunsen burner','Heats substances (blue flame = hottest).'],
+ ['🔺','Tripod','A stand that holds apparatus above the Bunsen.'],
+ ['🔲','Gauze','Spreads the heat evenly under a beaker/flask.'],
+ ['🧱','Heatproof mat','Protects the bench from the heat.'],
+ ['🥃','Beaker','Holds and mixes liquids; rough volume markings.'],
+ ['⚗️','Conical flask','Mixing & titrations; the narrow neck stops splashes.'],
+ ['🧪','Test tube','Small-scale reactions.'],
+ ['🧫','Boiling tube','A bigger test tube, used for heating.'],
+ ['🍶','Round-bottom flask','Heats liquids evenly — used for distillation.'],
+ ['🌡️','Thermometer','Measures the temperature.'],
+ ['🥄','Stirring rod','Stirs and mixes the contents.'],
+ ['💧','Pipette / dropper','Measures small volumes accurately.'],
+ ['📏','Measuring cylinder','Measures the volume of a liquid.'],
+ ['🔻','Funnel','For pouring, and for filtering.'],
+ ['🧻','Filter paper','Separates an insoluble solid from a liquid (filtration).'],
+ ['🥣','Evaporating basin','Evaporate a solution to grow crystals.'],
+ ['🌀','Liebig condenser','Cools vapour back into liquid (distillation).'],
+ ['🤏','Tongs / test-tube holder','Holds hot apparatus safely.'],
+ ['🗄️','Test-tube rack','Holds test tubes upright.'],
+ ['🥄','Spatula','Measures out small amounts of a solid.'],
+ ['🧵','Delivery tube','Carries a gas to another container.'],
+ ['🫙','Gas jar','Collects a gas.'],
+];
+function proEquip(){if(!PRO.kit)PRO.kit=[];
+ const list=EQUIP.map((e,i)=>`<button class="reagent" style="padding:7px 8px;${PRO.kit.includes(i)?'border-color:var(--good)':''}" onclick="proKit(${i})"><span class="rem">${e[0]}</span><span><span class="rn">${e[1]}${PRO.kit.includes(i)?' ✅':''}</span><br><span class="rf">${e[2]}</span></span></button>`).join('');
+ const bench=PRO.kit.length?PRO.kit.map(i=>EQUIP[i][0]+' '+EQUIP[i][1]).join(' · '):'(tap equipment below to add it to your bench)';
+ root.innerHTML=`<div class="topbar"><span class="tag">🧰 Equipment</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <h2 class="center">Assemble your kit 🧰</h2><div class="sub">Tap any apparatus to learn what it's for and add it to your bench. This is everything you'd need for school reactions & experiments.</div>
+   <div class="info" style="margin-bottom:8px">🧰 <b style="color:var(--acid)">Your bench:</b> ${bench}${PRO.kit.length?` &nbsp;<button class="btn red sm" style="padding:5px 10px;margin:0" onclick="PRO.kit=[];proEquip()">Clear bench</button>`:''}</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:300px;overflow:auto">${list}</div>
+   <button class="btn green" onclick="SFX.click();drawProUI()">🧪 Go to the bench →</button>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;}
+function proKit(i){if(!PRO.kit)PRO.kit=[];const at=PRO.kit.indexOf(i);if(at<0){PRO.kit.push(i);SFX.click();toast(EQUIP[i][1]+' — '+EQUIP[i][2]);}else{PRO.kit.splice(at,1);SFX.click();}proEquip();}
 
 function proAcidity(){const cs=PRO.contents.map(id=>PCHEM[id]);
   const acid=cs.some(c=>c.acid),base=cs.some(c=>c.base&&c.sol);
@@ -1309,7 +1347,7 @@ function proLoop(){
   // heat glow
   if(PRO.heat>0.02){const g=ctx.createRadialGradient(vx,bot,5,vx,bot,120);g.addColorStop(0,`rgba(255,120,40,${.35*PRO.heat})`);g.addColorStop(1,'rgba(255,120,40,0)');ctx.fillStyle=g;ctx.fillRect(0,200,W,H-200)}
   const liqTop=bot-(bot-top-16)*PRO.level;
-  const wAt=(y)=>{const f=(bot-y)/(bot-top);return halfBot+(halfTop-halfBot)*(1-f)};
+  const wAt=(y)=>{const f=(bot-y)/(bot-top);return halfBot+(halfTop-halfBot)*f};
   // liquid
   if(PRO.level>0.01){ctx.fillStyle=PRO.color;ctx.beginPath();const wt=wAt(liqTop);
     ctx.moveTo(vx-wt,liqTop);for(let x=-wt;x<=wt;x+=6){const yy=liqTop+Math.sin((x*0.06)+PRO.t*0.08)*2.5;ctx.lineTo(vx+x,yy)}
@@ -1369,7 +1407,7 @@ function drawDistill(ctx,W,H,sx){
   // ---- receiver (conical flask, fills bottom-up) ----
   const rx=356, rTop=242, rBot=350, hTop=12, hBot=40;
   if(PRO.distillate&&PRO.distillate.amount>0.005){const amt=Math.min(1,PRO.distillate.amount/0.7);
-    const liqY=rBot-(rBot-rTop-6)*amt;const wTop=hBot+(hTop-hBot)*((liqY-rTop)/(rBot-rTop));
+    const liqY=rBot-(rBot-rTop-6)*amt;const wTop=hTop+(hBot-hTop)*((liqY-rTop)/(rBot-rTop));
     ctx.fillStyle=PRO.distillate.c;ctx.beginPath();ctx.moveTo(rx-wTop,liqY);ctx.lineTo(rx+wTop,liqY);ctx.lineTo(rx+hBot,rBot-3);ctx.lineTo(rx-hBot,rBot-3);ctx.closePath();ctx.fill();}
   ctx.strokeStyle='rgba(160,210,255,.7)';ctx.lineWidth=4;ctx.beginPath();
   ctx.moveTo(rx-hTop,rTop);ctx.lineTo(rx-hBot,rBot);ctx.lineTo(rx+hBot,rBot);ctx.lineTo(rx+hTop,rTop);
