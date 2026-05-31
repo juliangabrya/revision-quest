@@ -251,4 +251,5 @@ function gapReport(){const s=loadScores();const names={};GAME.topics.forEach(t=>
  app.innerHTML=`<h1>📊 Gap Report</h1><div class="sub">${GAME.name}</div>${rows||'<p class="small center">Beat some bosses first!</p>'}${weak.length?`<div class="info" style="margin-top:12px"><b>🎯 Revise these first:</b> ${weak.join(', ')}.</div>`:(ranked.length?'<div class="info" style="margin-top:12px">🎉 Every attempted topic ≥70%!</div>':'')}<button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 
 home();
+if(window.parent&&window.parent!==window){var _bb=document.createElement('button');_bb.textContent='🎮 Subjects';_bb.onclick=function(){parent.postMessage('rq-menu','*')};_bb.style.cssText='position:fixed;top:10px;right:10px;z-index:99999;background:#1b1530;color:#fff;border:2px solid #ffd23f;border-radius:10px;padding:7px 11px;font-weight:bold;cursor:pointer;font-family:inherit;font-size:13px';document.body.appendChild(_bb);}
 </script></body></html>

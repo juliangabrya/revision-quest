@@ -1054,6 +1054,7 @@ function hwResult(){const pct=Math.round(HW.marks/HW.max*100);sfx.win&&sfx.win()
    <button class="btn ghost" onclick="sfx.click();histWritten()">⬅️ Topics</button>`;}
 
 title();
+if(window.parent&&window.parent!==window){var _bb=document.createElement('button');_bb.textContent='🎮 Subjects';_bb.onclick=function(){parent.postMessage('rq-menu','*')};_bb.style.cssText='position:fixed;top:10px;right:10px;z-index:99999;background:#15102a;color:#fff;border:2px solid #ffd23f;border-radius:10px;padding:7px 11px;font-weight:bold;cursor:pointer;font-family:inherit;font-size:13px';document.body.appendChild(_bb);}
 </script>
 </body>
 </html>
