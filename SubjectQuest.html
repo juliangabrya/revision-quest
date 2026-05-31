@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 SubjectQuest — Maths · Geography · RS · Computing · Languages</title>
+<style>
+  :root{--bg:#0c0f1f;--panel:#15192e;--line:#2c3354;--accent:#ffd23f;--accent2:#ff4d6d;--good:#3ddc84;--blue:#4d96ff;--pur:#9b5de5;--ink:#eef1ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Trebuchet MS','Segoe UI',sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;
+    background:radial-gradient(1200px 800px at 70% -10%, #232a52 0%, var(--bg) 55%)}
+  .wrap{width:100%;max-width:780px}
+  .panel{background:linear-gradient(180deg,#191e36,#12152a);border:2px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+  h1{font-size:30px;text-align:center;text-shadow:0 3px 0 #000,0 0 24px rgba(255,210,63,.35);margin-bottom:4px}
+  h2{font-size:22px;margin-bottom:6px;text-align:center}
+  .sub{text-align:center;color:#a6acd6;margin-bottom:16px;font-size:14px;line-height:1.5}
+  .btn{margin-top:12px;width:100%;padding:14px;border:none;border-radius:13px;cursor:pointer;font-size:17px;font-weight:bold;font-family:inherit;color:#101;background:linear-gradient(180deg,var(--accent),#f0b800);box-shadow:0 5px 0 #b98a00;transition:transform .06s}
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b98a00}
+  .btn.ghost{background:#222843;color:var(--ink);box-shadow:0 5px 0 #11152a}
+  .btn.green{background:linear-gradient(180deg,var(--good),#2fbf6e);color:#031;box-shadow:0 5px 0 #1f8a4a}
+  .btn.red{background:linear-gradient(180deg,var(--accent2),#d62f4d);color:#fff;box-shadow:0 5px 0 #8c1226}
+  .btn.sm{width:auto;display:inline-block;padding:9px 15px;font-size:15px;margin:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  @media(min-width:640px){.grid{grid-template-columns:1fr 1fr 1fr}}
+  .tile{background:linear-gradient(180deg,#1c2342,#141831);border:2px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:center;transition:transform .12s,border-color .15s;position:relative}
+  .tile:hover{transform:translateY(-4px);border-color:var(--accent)}
+  .tile .em{font-size:38px}
+  .tile b{display:block;font-size:15px;margin-top:6px}
+  .tile .pct{position:absolute;top:6px;right:9px;font-size:11px;font-weight:bold;color:var(--good)}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+  .tag{font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;background:#1c2342;border:1px solid var(--line);color:var(--accent)}
+  .cat{display:inline-block;font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;background:var(--pur);color:#fff;margin-bottom:10px}
+  .q{font-size:20px;font-weight:bold;line-height:1.35;margin:8px 0 12px}
+  .opts{display:grid;gap:10px}
+  .opt{text-align:left;padding:13px 15px;border-radius:12px;border:2px solid var(--line);background:#1c2342;color:var(--ink);font-size:16px;cursor:pointer;font-family:inherit;transition:transform .08s,background .12s}
+  .opt:hover{background:#26305a;transform:translateY(-2px)}
+  .opt.correct{background:var(--good);color:#031;border-color:#2fbf6e;font-weight:bold}
+  .opt.wrong{background:var(--accent2);color:#fff;border-color:#d62f4d;font-weight:bold}
+  .opt.dim{opacity:.4}
+  .explain{margin-top:12px;background:#11152a;border-left:5px solid var(--accent);border-radius:10px;padding:12px;font-size:15px;line-height:1.5;color:#dde2ff;display:none}
+  .explain b{color:var(--accent)}
+  .hud{display:flex;gap:10px;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
+  .stat{flex:1;min-width:74px;background:#11152a;border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+  .stat b{display:block;font-size:20px}.stat span{font-size:10px;color:#a6acd6;text-transform:uppercase;letter-spacing:.05em}
+  .streak.fire b{color:var(--accent);text-shadow:0 0 12px var(--accent)}
+  .bar{height:10px;background:#11152a;border-radius:8px;overflow:hidden;border:2px solid var(--line);margin-bottom:14px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:width .35s}
+  .fighter{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .fighter .face{font-size:40px;width:52px;text-align:center;flex:none}
+  .nm{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .hpbar{height:15px;background:#11152a;border-radius:9px;overflow:hidden;border:2px solid var(--line)}
+  .hpbar>i{display:block;height:100%;transition:width .4s}
+  .hp-e>i{background:linear-gradient(90deg,#d62f4d,#ff7d99)}.hp-s>i{background:linear-gradient(90deg,#2fbf6e,#5dffa0)}
+  .bubble{background:#11152a;border:2px solid var(--line);border-radius:13px;padding:10px 13px;font-size:13.5px;color:#dde2ff;margin:8px 0;font-style:italic}
+  .info{background:#11152a;border:2px solid var(--line);border-radius:12px;padding:13px;font-size:14.5px;line-height:1.55}
+  .info b{color:var(--accent)}
+  .center{text-align:center}.small{font-size:13px;color:#a6acd6;line-height:1.5}
+  .report-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+  .report-row .name{width:120px;font-weight:bold;font-size:13px}
+  .report-row .track{flex:1;height:14px;background:#11152a;border-radius:8px;overflow:hidden;border:2px solid var(--line)}
+  .report-row .track>i{display:block;height:100%}.report-row .pct{width:44px;text-align:right;font-weight:bold;font-size:13px}
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#000;border:2px solid var(--accent);color:var(--accent);padding:9px 18px;border-radius:999px;font-weight:bold;opacity:0;transition:opacity .25s,top .25s;pointer-events:none;z-index:60}
+  .toast.show{opacity:1;top:26px}
+  .matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .mcol{display:grid;gap:8px}
+  .mbtn{padding:12px;border-radius:11px;border:2px solid var(--line);background:#1c2342;color:var(--ink);cursor:pointer;font-family:inherit;font-size:15px}
+  .mbtn.sel{border-color:var(--accent);color:var(--accent)}
+  .mbtn.done{background:#13311f;border-color:#2fbf6e;color:var(--good);cursor:default}
+  .mbtn.bad{background:var(--accent2);color:#fff}
+  input[type=text]{width:100%;padding:13px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:16px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="wrap"><div class="panel" id="app"></div></div>
+<script>
+const app=document.getElementById('app');const toastEl=document.getElementById('toast');
+function toast(t){toastEl.innerHTML=t;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove('show'),1100);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function loadScores(){try{return JSON.parse(localStorage.getItem('sq_scores')||'{}')}catch(e){return{}}}
+function saveScore(k,c,t){const s=loadScores();const p=Math.round(c/t*100);if(s[k]==null||p>=s[k])s[k]=p;localStorage.setItem('sq_scores',JSON.stringify(s));}
+let muted=false;let actx;
+function beep(f,d,t){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t||'square';o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.12,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+const sfx={good:()=>{beep(660,.08);setTimeout(()=>beep(880,.12),80)},crit:()=>{[660,990,1320].forEach((f,i)=>setTimeout(()=>beep(f,.1),i*70))},bad:()=>beep(180,.18,'sawtooth'),click:()=>beep(440,.04),win:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16),i*110))};
+
+/* ============================ CONTENT ============================ */
+const SUBJECTS={
+ maths:{name:"Maths",emoji:"➗",boss:"Lord Decimal",bem:"🧮",cat:"Maths",
+   taunts:["You'll never solve me!","Reverse THIS percentage!","Inequality? More like in-your-face!"],
+   qs:[
+    {q:"Which symbol means 'greater than or equal to'?",o:["≥","≤",">","≠"],a:0,w:"≥ means greater than or equal to. (≤ is less-than-or-equal, > is greater than, ≠ is not equal.)"},
+    {q:"Which integers satisfy −2 < x ≤ 4?",o:["−1, 0, 1, 2, 3, 4","−2, −1, 0, 1, 2, 3, 4","0, 1, 2, 3","−2, −1, 0, 1, 2, 3"],a:0,w:"−2 is not included (strict <), but 4 is (≤): so −1, 0, 1, 2, 3, 4."},
+    {q:"How many faces, edges and vertices does a cube have?",o:["6 faces, 12 edges, 8 vertices","4 faces, 8 edges, 6 vertices","6 faces, 8 edges, 12 vertices","8 faces, 12 edges, 6 vertices"],a:0,w:"A cube: 6 faces (flat surfaces), 12 edges, 8 vertices (corners)."},
+    {q:"What is the volume of a cuboid 6 cm × 5 cm × 3 cm?",o:["90 cm³","14 cm³","30 cm³","900 cm³"],a:0,w:"Volume = L × W × H = 6 × 5 × 3 = 90 cm³."},
+    {q:"Convert 5 kg into grams.",o:["5000 g","500 g","50 g","50000 g"],a:0,w:"1 kg = 1000 g, so 5 kg = 5000 g."},
+    {q:"Density = ?",o:["mass ÷ volume","volume ÷ mass","mass × volume","mass + volume"],a:0,w:"Density = mass ÷ volume (the M/D/V triangle: M on top)."},
+    {q:"What is 20% of 6000?",o:["1200","120","300","600"],a:0,w:"6000 ÷ 100 = 60; 60 × 20 = 1200. (Or 1/5 of 6000 = 1200.)"},
+    {q:"What is the multiplier to INCREASE a number by 12%?",o:["1.12","0.88","0.12","12"],a:0,w:"100% + 12% = 112% = 1.12. (To decrease by 12% you'd use 0.88.)"},
+   ]},
+ geography:{name:"Geography",emoji:"🌍",boss:"Captain Carbon",bem:"🛢️",cat:"Geography",
+   taunts:["Burn those fossil fuels!","You can't name a biome!","Renewables? Never heard of them!"],
+   qs:[
+    {q:"What are the three fossil fuels?",o:["Coal, oil and natural gas","Wood, peat and uranium","Solar, wind and hydro","Petrol, diesel and wood"],a:0,w:"The three fossil fuels are coal, oil and natural gas — formed over millions of years in sedimentary rock."},
+    {q:"Which of these is a RENEWABLE energy source?",o:["Solar power","Coal","Oil","Natural gas"],a:0,w:"Solar (and wind & hydro) are renewable — they don't run out. Coal/oil/gas are finite fossil fuels."},
+    {q:"A disadvantage of fossil fuels is that they…",o:["Are finite and release greenhouse gases","Are too clean","Never run out","Are free"],a:0,w:"Fossil fuels are finite and release greenhouse gases, contributing to climate change."},
+    {q:"Which energy source contributes MOST to the UK's energy mix?",o:["Natural gas (≈39%)","Coal","Solar","Nuclear"],a:0,w:"Natural gas makes up the largest share (~39%); coal has declined and renewables are rising."},
+    {q:"A 'biome' is…",o:["A large-scale ecosystem","A single animal","A type of rock","A weather forecast"],a:0,w:"A biome is a large-scale ecosystem, e.g. tropical rainforest, tundra, hot desert."},
+    {q:"Tropical rainforests are found…",o:["Near the equator (low latitudes)","At the North Pole","Between 30° and 60°","Only in deserts"],a:0,w:"Tropical rainforests are in the low latitudes, near the equator (between the Tropics of Cancer and Capricorn)."},
+    {q:"Why do deciduous trees lose their leaves in winter?",o:["To conserve energy, water and nutrients","To attract animals","To grow taller","Because of pollution"],a:0,w:"They drop their leaves to conserve energy, water and nutrients over the cold winter."},
+    {q:"Which is an ABIOTIC (non-living) part of an ecosystem?",o:["Sunlight","Plants","Animals","People"],a:0,w:"Abiotic = non-living (sunlight, soil, water). Biotic = living (plants, animals)."},
+   ]},
+ rs:{name:"RS",emoji:"☯️",boss:"The Inquisitor",bem:"⚖️",cat:"RS",
+   taunts:["Define justice — if you can!","Is war ever just? You won't know!","Adl? Zakat? Clueless!"],
+   qs:[
+    {q:"'Justice' is best described as…",o:["Fairness applied consistently through laws and systems","Always being kind","Getting revenge","Treating the rich better"],a:0,w:"Justice = fairness applied consistently through laws and systems (it's more than just equal treatment)."},
+    {q:"The Arabic word for justice in Islam is…",o:["Adl","Zakat","Hajj","Salah"],a:0,w:"Adl means justice. Zakat is the charity given to support the poor."},
+    {q:"'Zakat' in Islam is…",o:["Charity given to support the poor","A type of prayer","A holy war","A pilgrimage"],a:0,w:"Zakat is charity to support the vulnerable — showing justice is a religious duty."},
+    {q:"'Pacifism' is the belief that…",o:["Violence and war are always wrong","War is always right","Only kings can fight","Religion must be banned"],a:0,w:"Pacifism = the belief that violence and war are always wrong."},
+    {q:"'Love your neighbour' and 'turn the other cheek' are teachings from…",o:["Christianity (Jesus)","Buddhism","Hinduism","Ancient Greece"],a:0,w:"These are Christian teachings (Jesus) — justice should include forgiveness, not revenge."},
+    {q:"Human rights are…",o:["Basic rights and freedoms all humans should have","Rights only for adults","Laws about money","Rules for one country"],a:0,w:"Human rights = basic rights and freedoms for all people (e.g. the Universal Declaration of Human Rights)."},
+    {q:"Just War Theory says that war…",o:["May be justified only under strict conditions","Is always wrong","Is always right","Should be fought for fun"],a:0,w:"Just War Theory: war can be justified only under strict conditions — just cause, last resort, proper authority, civilians protected."},
+    {q:"In Plato's ideas, a just society is one that is…",o:["Balanced, guided by reason","Ruled only by soldiers","Without any rules","Run by the richest"],a:0,w:"Plato said a just society is balanced (philosopher-kings, warriors, producers), guided by reason and wisdom."},
+   ]},
+ computing:{name:"Computing",emoji:"💻",boss:"The Glitch",bem:"🤖",cat:"Computing",
+   taunts:["Your password is weak!","You can't loop your way out!","Syntax error: YOU."],
+   qs:[
+    {q:"What is an algorithm?",o:["A step-by-step set of instructions to solve a problem","A type of computer virus","A social media app","A kind of password"],a:0,w:"An algorithm is a precise, step-by-step set of instructions for solving a problem."},
+    {q:"Which is the STRONGEST password?",o:["7hX!q2$Lp9@","password","julian2012","123456"],a:0,w:"Strong passwords are long with a mix of upper/lower case, numbers and symbols — and not personal/guessable."},
+    {q:"In Python, what does print(\"Hello\") do?",o:["Displays Hello on the screen","Prints to a printer","Deletes a file","Saves the program"],a:0,w:"print() outputs (displays) the text on the screen."},
+    {q:"A 'loop' in a program is used to…",o:["Repeat instructions","Make a decision","Store a value","Delete code"],a:0,w:"A loop repeats a set of instructions (iteration)."},
+    {q:"'Selection' in programming means…",o:["Making a decision with IF statements","Repeating code","Saving a file","Sending an email"],a:0,w:"Selection = making decisions, usually with IF / ELSE statements."},
+    {q:"A 'variable' is…",o:["A named store for a value that can change","A permanent number","A type of loop","A printer"],a:0,w:"A variable is a named storage location whose value can change as the program runs."},
+    {q:"In a flat-file database, a RECORD is…",o:["All the data about one item (a row)","One single letter","A type of password","The whole internet"],a:0,w:"A record = all the data about one item/person (a row). A field is one piece of data (a column)."},
+    {q:"'Phishing' is…",o:["Fake messages tricking you into giving personal info","A relaxing hobby","A type of loop","A safe website"],a:0,w:"Phishing = fake emails/messages designed to trick you into revealing personal information."},
+   ]},
+};
+const LANG={
+ french:{name:"French",emoji:"🇫🇷",boss:"Le Boss",bem:"🥖",cat:"French",
+   pairs:[["le foot","football"],["la natation","swimming"],["l'équitation","horse riding"],["l'escalade","climbing"],["l'escrime","fencing"],["je joue","I play"],["je fais","I do"],["il fait froid","it is cold"],["il fait chaud","it is hot"],["il pleut","it is raining"],["il neige","it is snowing"],["il y a du soleil","it is sunny"],["au printemps","in spring"],["en été","in summer"],["en hiver","in winter"],["j'adore","I love"],["je déteste","I hate"],["je n'aime pas","I do not like"],["à mon avis","in my opinion"],["les infos","the news"],["les feuilletons","soap operas"],["les dessins animés","cartoons"],["amusant","funny"],["ennuyeux","boring"],["je télécharge","I download"],["je partage","I share"],["la boulangerie","the bakery"],["la librairie","the book shop"],["une chemise","a shirt"],["une jupe","a skirt"],["souvent","often"],["tous les jours","every day"]]},
+ spanish:{name:"Spanish",emoji:"🇪🇸",boss:"El Jefe",bem:"🌮",cat:"Spanish",
+   pairs:[["el fútbol","football"],["la natación","swimming"],["la equitación","horse riding"],["el baloncesto","basketball"],["juego","I play"],["hago","I do"],["hace frío","it is cold"],["hace calor","it is hot"],["llueve","it is raining"],["nieva","it is snowing"],["hace sol","it is sunny"],["en primavera","in spring"],["en verano","in summer"],["en invierno","in winter"],["me encanta","I love"],["odio","I hate"],["no me gusta","I do not like"],["en mi opinión","in my opinion"],["las noticias","the news"],["las telenovelas","soap operas"],["divertido","funny"],["aburrido","boring"],["descargo","I download"],["comparto","I share"],["la panadería","the bakery"],["la librería","the book shop"],["una camisa","a shirt"],["una falda","a skirt"],["a menudo","often"],["todos los días","every day"],["nunca","never"],["a veces","sometimes"]]},
+};
+function vocabQs(key,n){const L=LANG[key];const all=L.pairs.slice();shuffle(all);const pick=all.slice(0,n);const ens=L.pairs.map(p=>p[1]);
+  return pick.map(p=>{const wrong=shuffle(ens.filter(e=>e!==p[1])).slice(0,3);const opts=shuffle([p[1],...wrong]);
+    return {q:'What does "'+p[0]+'" mean?',o:opts,a:opts.indexOf(p[1]),w:'"'+p[0]+'" = '+p[1]+'.',cat:L.cat};});}
+
+const WRITTEN={
+ Maths:[
+  {m:1,q:"Write 'x is greater than or equal to 1' as an inequality.",s:["x ≥ 1"]},
+  {m:2,q:"State the number of faces, edges and vertices of a cube.",s:["6 faces","12 edges and 8 vertices"]},
+  {m:2,q:"Find 30% of 200 — show your method.",s:["10% of 200 = 20","30% = 20 × 3 = 60"]},
+  {m:3,q:"A jumper costs £48.60 after a 10% reduction. Find its original price.",s:["After 10% off, 90% = £48.60","1% = £48.60 ÷ 90 = £0.54","100% = £0.54 × 100 = £54"]},
+ ],
+ Geography:[
+  {m:1,q:"Name the three fossil fuels.",s:["Coal, oil and natural gas"]},
+  {m:2,q:"Give one advantage and one disadvantage of using fossil fuels.",s:["Advantage: the infrastructure already exists, so they are cheap/easy to use","Disadvantage: they are finite and release greenhouse gases (climate change)"]},
+  {m:3,q:"Explain how rising wealth increases energy demand.",s:["Wealthier people have more money to spend on goods","Those goods (e.g. washing machines) use energy to make and to run","So overall energy demand rises"]},
+  {m:2,q:"Define 'biome' and give two examples.",s:["A biome is a large-scale ecosystem","Two examples, e.g. tropical rainforest, deciduous forest, tundra, hot desert"]},
+ ],
+ RS:[
+  {m:1,q:"What is meant by 'pacifism'?",s:["The belief that violence and war are always wrong"]},
+  {m:2,q:"Explain the Islamic understanding of justice.",s:["Justice (Adl) is commanded by Allah — everyone is treated fairly/equally","Muslims support the vulnerable, e.g. through Zakat (charity)"]},
+  {m:3,q:"'War can never be justified.' Evaluate this statement.",s:["Some agree — pacifists believe all violence is wrong","Others disagree — Just War Theory allows war under strict conditions (just cause, last resort, proper authority, civilians protected)","A judgement weighing up both sides"]},
+ ],
+ Computing:[
+  {m:1,q:"What is an algorithm?",s:["A step-by-step set of instructions to solve a problem"]},
+  {m:2,q:"Give two features of a strong password.",s:["Long (e.g. 12+ characters)","A mix of upper/lower case, numbers and symbols (and not reused/personal)"]},
+  {m:2,q:"In a database, explain the difference between a field and a record.",s:["A field is one piece of data — a column (e.g. 'surname')","A record is all the data about one item/person — a row"]},
+ ],
+ French:[{m:2,q:"Write a French sentence saying you play football, with an opinion.",s:["Je joue au foot…","…+ an opinion, e.g. j'adore / c'est amusant"]}],
+ Spanish:[{m:2,q:"Write a Spanish sentence saying you watch TV, with an opinion.",s:["Veo la televisión…","…+ an opinion, e.g. me encanta / es divertido"]}],
+};
+
+/* ============================ ENGINE ============================ */
+function home(){
+  app.innerHTML=`<h1>🎓 SubjectQuest</h1>
+   <div class="sub">Boss-battle quizzes, a Maths Dojo, language Vocab Match & mark-scheme questions — built from your Year 8 knowledge organisers.</div>
+   <button class="btn" onclick="sfx.click();map()">▶️ Start</button>
+   <p class="small center" style="margin-top:10px">Covers Maths · Geography · RS · Computing · French · Spanish</p>`;
+}
+function map(){
+  const s=loadScores();
+  const subj=[['maths','quizSub'],['geography','quizSub'],['rs','quizSub'],['computing','quizSub'],['french','quizLang'],['spanish','quizLang']];
+  let tiles='';
+  subj.forEach(([k,fn])=>{const o=SUBJECTS[k]||LANG[k];const sc=s[o.cat];tiles+=`<div class="tile" onclick="sfx.click();${fn}('${k}')">${sc!=null?`<span class="pct">${sc}%</span>`:''}<div class="em">${o.emoji}</div><b>${o.name}</b></div>`;});
+  tiles+=`<div class="tile" onclick="sfx.click();dojo()"><div class="em">🥋</div><b>Maths Dojo</b></div>`;
+  tiles+=`<div class="tile" onclick="sfx.click();matchMenu()"><div class="em">🔤</div><b>Vocab Match</b></div>`;
+  tiles+=`<div class="tile" onclick="sfx.click();writtenMenu()"><div class="em">📝</div><b>Written Exam</b></div>`;
+  tiles+=`<div class="tile" onclick="sfx.click();finalExam()"><div class="em">🎓</div><b>Final Exam</b></div>`;
+  tiles+=`<div class="tile" onclick="sfx.click();gapReport()"><div class="em">📊</div><b>Gap Report</b></div>`;
+  app.innerHTML=`<div class="topbar"><span class="tag">🎓 SubjectQuest</span></div>
+   <h2>Choose your challenge</h2><div class="sub">Beat the bosses, then sit the Final Exam.</div>
+   <div class="grid">${tiles}</div>
+   <button class="btn ghost" onclick="sfx.click();home()">🏠 Home</button>`;
+}
+/* ---- quiz battle (shared) ---- */
+let B;
+function quizSub(k){const o=SUBJECTS[k];startBattle(o.name,o.emoji,o.boss,o.bem,o.taunts,o.cat,shuffle(o.qs.slice()));}
+function quizLang(k){const o=LANG[k];startBattle(o.name,o.emoji,o.boss,o.bem,["Translate THIS!","¿Qué? You don't know!","Vocab fail incoming!"],o.cat,vocabQs(k,8));}
+function startBattle(name,emoji,boss,bem,taunts,cat,qs){B={name,emoji,boss,bem,taunts,cat,qs,i:0,score:0,streak:0,best:0,correct:0,hp:5,bossMax:qs.length,bossHP:qs.length,answered:false};drawBattle();}
+function drawBattle(){
+  if(B.i>=B.qs.length)return battleWin();if(B.hp<=0)return battleFaint();B.answered=false;
+  const q=B.qs[B.i],taunt=B.taunts[B.i%B.taunts.length];
+  app.innerHTML=`<div class="topbar"><span class="tag">${B.emoji} ${B.name}</span></div>
+   <div class="fighter"><div class="face">${B.bem}</div><div style="flex:1"><div class="nm"><b>${B.boss}</b><span>${B.bossHP}/${B.bossMax} HP</span></div><div class="hpbar hp-e"><i style="width:${B.bossHP/B.bossMax*100}%"></i></div></div></div>
+   <div class="bubble">"${taunt}"</div>
+   <div class="fighter"><div class="face">🧑‍🎓</div><div style="flex:1"><div class="nm"><b>You</b><span>${'❤️'.repeat(B.hp)}${'🖤'.repeat(5-B.hp)}</span></div><div class="hpbar hp-s"><i style="width:${B.hp/5*100}%"></i></div></div></div>
+   <div class="hud"><div class="stat"><b>${B.score}</b><span>Score</span></div><div class="stat streak ${B.streak>=2?'fire':''}"><b>${B.streak}${B.streak>=2?'🔥':''}</b><span>Combo</span></div><div class="stat"><b>${B.i+1}/${B.qs.length}</b><span>Q</span></div></div>
+   <div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div>
+   <button class="btn" id="next" style="display:none" onclick="sfx.click();bNext()">NEXT ➡️</button>`;
+  const opts=document.getElementById('opts');
+  q.o.map((t,k)=>({t,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.t;b.onclick=()=>bAns(b,o.k===q.a,q);opts.appendChild(b);});
+}
+function bAns(btn,correct,q){
+  if(B.answered)return;B.answered=true;
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
+  const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';
+  if(correct){B.correct++;B.streak++;B.best=Math.max(B.best,B.streak);B.bossHP=Math.max(0,B.bossHP-1);B.score+=100+(B.streak-1)*25;
+    if(B.streak>=3){sfx.crit();toast("💥 CRITICAL! x"+B.streak);}else{sfx.good();toast("✅ +"+(100+(B.streak-1)*25));}}
+  else{B.streak=0;B.hp--;btn.classList.remove('dim');btn.classList.add('wrong');sfx.bad();toast("💢 Boss hits back!");}
+  document.querySelector('.hp-e>i').style.width=Math.max(0,B.bossHP/B.bossMax*100)+'%';document.querySelector('.hp-s>i').style.width=B.hp/5*100+'%';
+  const n=document.getElementById('next');n.style.display='block';n.textContent=B.i>=B.qs.length-1?'🏁 FINISH':'NEXT ➡️';
+}
+function bNext(){if(B.hp<=0)return battleFaint();B.i++;drawBattle();}
+function battleFaint(){sfx.bad();app.innerHTML=`<h1>😵 Fainted!</h1><div class="center" style="font-size:56px">🤕</div><p class="center small" style="margin:14px 0">${B.boss} got 5 hits in — just a few gaps. Revise & retry!</p><button class="btn" onclick="sfx.click();drawBattleRetry()">🔁 Retry</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function drawBattleRetry(){B.i=0;B.score=0;B.streak=0;B.correct=0;B.hp=5;B.bossHP=B.bossMax;shuffle(B.qs);drawBattle();}
+function battleWin(){sfx.win();saveScore(B.cat,B.correct,B.qs.length);const pct=Math.round(B.correct/B.qs.length*100);
+  app.innerHTML=`<h1>🏆 ${B.boss} DEFEATED!</h1><div class="center" style="font-size:56px">${B.bem}💥</div>
+   <div class="hud" style="margin-top:14px"><div class="stat"><b>${B.score}</b><span>Score</span></div><div class="stat"><b>${pct}%</b><span>Accuracy</span></div><div class="stat"><b>${B.best}🔥</b><span>Best combo</span></div></div>
+   <p class="center small">${pct>=90?"🌟 Flawless!":pct>=70?"💪 Strong — one more for the perfect run!":"📚 Beaten — revise the misses & retry."}</p>
+   <button class="btn green" onclick="sfx.click();map()">🗺️ Map</button><button class="btn ghost" onclick="sfx.click();drawBattleRetry()">🔁 Replay</button>`;}
+
+/* ---- Maths Dojo ---- */
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+const DOJO=[
+ {n:'Percentage of an amount',gen(){const p=[10,20,25,50][rnd(0,3)],y=rnd(2,9)*100;return{q:`Find ${p}% of ${y}.`,ans:y*p/100,work:`${y} ÷ 100 = ${y/100}; × ${p} = ${y*p/100}.`}}},
+ {n:'Volume of a cuboid',gen(){const l=rnd(2,9),w=rnd(2,9),h=rnd(2,6);return{q:`Volume of a cuboid ${l} × ${w} × ${h} cm? (cm³)`,ans:l*w*h,work:`V = L×W×H = ${l}×${w}×${h} = ${l*w*h} cm³.`}}},
+ {n:'Metric conversion (kg→g)',gen(){const k=rnd(2,9);return{q:`Convert ${k} kg into grams.`,ans:k*1000,work:`1 kg = 1000 g, so ${k} kg = ${k*1000} g.`}}},
+ {n:'Increase by a percentage',gen(){const p=[10,20,50][rnd(0,2)],y=rnd(2,9)*100;return{q:`Increase ${y} by ${p}%.`,ans:y+y*p/100,work:`${p}% of ${y} = ${y*p/100}; ${y} + ${y*p/100} = ${y+y*p/100}.`}}},
+ {n:'Density',gen(){const d=rnd(2,9),v=rnd(2,6);return{q:`Density = ${d} g/cm³, volume = ${v} cm³. Find the mass. (Mass = Density × Volume)`,ans:d*v,work:`Mass = D × V = ${d} × ${v} = ${d*v} g.`}}},
+];
+let DJ;
+function dojo(){DJ={i:0,marks:0,total:8,answered:false};dojoQ();}
+function dojoQ(){
+  if(DJ.i>=DJ.total)return dojoResult();
+  const F=DOJO[rnd(0,DOJO.length-1)];DJ.cur={F,item:F.gen()};DJ.answered=false;
+  app.innerHTML=`<div class="topbar"><span class="tag">🥋 Maths Dojo ${DJ.i+1}/${DJ.total}</span></div>
+   <div class="hud"><div class="stat"><b>${DJ.marks}</b><span>Marks</span></div><div class="stat"><b>${DJ.i+1}/${DJ.total}</b><span>Q</span></div></div>
+   <div class="info"><b>${F.n}</b></div><div class="q" style="margin-top:8px">${DJ.cur.item.q}</div>
+   <input type="text" id="din" inputmode="decimal" placeholder="Type your answer (number only)">
+   <button class="btn" id="dsub" onclick="dojoCheck()">✅ Check</button>
+   <div class="explain" id="dex"></div>
+   <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
+  const inp=document.getElementById('din');inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')dojoCheck();});
+}
+function dojoCheck(){if(DJ.answered)return;const v=parseFloat(document.getElementById('din').value);const it=DJ.cur.item;const ok=!isNaN(v)&&Math.abs(v-it.ans)<0.01;DJ.answered=true;
+  const ex=document.getElementById('dex');if(ok){DJ.marks++;sfx.good();ex.innerHTML="✅ <b>Correct!</b> "+it.work;}else{sfx.bad();ex.innerHTML="❌ <b>Answer: "+it.ans+"</b><br>"+it.work;}ex.style.display='block';
+  const s=document.getElementById('dsub');s.textContent=DJ.i>=DJ.total-1?'🏁 Finish':'Next ➡️';s.onclick=()=>{DJ.i++;dojoQ();};}
+function dojoResult(){const pct=Math.round(DJ.marks/DJ.total*100);sfx.win();saveScore('Maths',DJ.marks,DJ.total);
+  app.innerHTML=`<h1>🥋 ${DJ.marks}/${DJ.total}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div>
+   <p class="center small">${pct>=80?'Maths master!':pct>=50?'Good — keep drilling!':'Practice makes perfect.'}</p>
+   <button class="btn" onclick="sfx.click();dojo()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+/* ---- Vocab Match ---- */
+let VM;
+function matchMenu(){app.innerHTML=`<div class="topbar"><span class="tag">🔤 Vocab Match</span></div><h2>Pick a language</h2>
+  <div class="grid"><div class="tile" onclick="sfx.click();vocabMatch('french')"><div class="em">🇫🇷</div><b>French</b></div><div class="tile" onclick="sfx.click();vocabMatch('spanish')"><div class="em">🇪🇸</div><b>Spanish</b></div></div>
+  <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function vocabMatch(key){const L=LANG[key];const pool=shuffle(L.pairs.slice()).slice(0,6);
+  VM={key,pairs:pool,left:shuffle(pool.map(p=>p[0])),right:shuffle(pool.map(p=>p[1])),selL:null,selR:null,done:0,tries:0};drawVM();}
+function drawVM(){const L=LANG[VM.key];
+  const lcol=VM.left.map(w=>`<button class="mbtn" id="L_${btoa(unescape(encodeURIComponent(w))).replace(/=/g,'')}" onclick="vmPick('L','${encodeURIComponent(w)}')">${w}</button>`).join('');
+  const rcol=VM.right.map(w=>`<button class="mbtn" id="R_${btoa(unescape(encodeURIComponent(w))).replace(/=/g,'')}" onclick="vmPick('R','${encodeURIComponent(w)}')">${w}</button>`).join('');
+  app.innerHTML=`<div class="topbar"><span class="tag">${L.emoji} ${L.name} Match</span></div>
+   <div class="sub">Tap a ${L.name} word, then its English meaning. Matched: <b>${VM.done}/${VM.pairs.length}</b></div>
+   <div class="matchgrid"><div class="mcol">${lcol}</div><div class="mcol">${rcol}</div></div>
+   <button class="btn ghost" onclick="sfx.click();matchMenu()">⬅️ Languages</button>`;
+}
+function vmId(side,w){return side+'_'+btoa(unescape(encodeURIComponent(w))).replace(/=/g,'');}
+function vmPick(side,enc){const w=decodeURIComponent(enc);const el=document.getElementById(vmId(side,w));if(!el||el.classList.contains('done'))return;sfx.click();
+  if(side==='L'){if(VM.selL){const p=document.getElementById(vmId('L',VM.selL));if(p)p.classList.remove('sel');}VM.selL=w;el.classList.add('sel');}
+  else{if(VM.selR){const p=document.getElementById(vmId('R',VM.selR));if(p)p.classList.remove('sel');}VM.selR=w;el.classList.add('sel');}
+  if(VM.selL&&VM.selR){VM.tries++;const correct=VM.pairs.some(p=>p[0]===VM.selL&&p[1]===VM.selR);
+    const lEl=document.getElementById(vmId('L',VM.selL)),rEl=document.getElementById(vmId('R',VM.selR));
+    if(correct){lEl.classList.add('done');rEl.classList.add('done');lEl.classList.remove('sel');rEl.classList.remove('sel');VM.done++;sfx.good();VM.selL=null;VM.selR=null;
+      if(VM.done>=VM.pairs.length){sfx.win();setTimeout(()=>{app.querySelector('.sub').innerHTML='🎉 All matched! '+VM.pairs.length+' pairs in '+VM.tries+' tries.';},50);}}
+    else{lEl.classList.add('bad');rEl.classList.add('bad');sfx.bad();const a=VM.selL,b=VM.selR;VM.selL=null;VM.selR=null;
+      setTimeout(()=>{const x=document.getElementById(vmId('L',a)),y=document.getElementById(vmId('R',b));if(x&&!x.classList.contains('done')){x.classList.remove('bad','sel');}if(y&&!y.classList.contains('done')){y.classList.remove('bad','sel');}},600);}}
+}
+
+/* ---- Written Exam ---- */
+let WR;
+function writtenMenu(){let t='';Object.keys(WRITTEN).forEach(k=>{const em=(Object.values(SUBJECTS).find(s=>s.cat===k)||Object.values(LANG).find(s=>s.cat===k)||{emoji:'📝'}).emoji;t+=`<div class="tile" onclick="sfx.click();wrStart('${k}')"><div class="em">${em}</div><b>${k}</b></div>`;});
+  app.innerHTML=`<div class="topbar"><span class="tag">📝 Written Exam</span></div><h2>Mark-scheme questions</h2><div class="sub">Type your answer, reveal the mark scheme, then mark yourself honestly.</div><div class="grid">${t}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function wrStart(k){WR={k,list:WRITTEN[k],i:0,marks:0,max:WRITTEN[k].reduce((a,q)=>a+q.m,0)};wrQ();}
+function wrQ(){if(WR.i>=WR.list.length)return wrResult();const q=WR.list[WR.i];
+  app.innerHTML=`<div class="topbar"><span class="tag">📝 ${WR.k} ${WR.i+1}/${WR.list.length}</span></div>
+   <div class="hud"><div class="stat"><b>${WR.marks}</b><span>Marks</span></div><div class="stat"><b>${q.m}</b><span>This Q</span></div></div>
+   <div class="q">[${q.m} mark${q.m>1?'s':''}] ${q.q}</div>
+   <textarea rows="4" placeholder="Write your answer (optional)..." style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:15px;font-family:inherit"></textarea>
+   <button class="btn" id="rev" onclick="wrReveal()">👀 Reveal mark scheme</button><div class="explain" id="ms"></div><div id="mk"></div>
+   <button class="btn ghost" onclick="sfx.click();writtenMenu()">⬅️ Topics</button>`;}
+function wrReveal(){const q=WR.list[WR.i];const ms=document.getElementById('ms');ms.innerHTML="<b>Mark scheme (1 mark per point):</b><ul style='margin:6px 0 0 18px'>"+q.s.map(p=>`<li style='margin:4px 0'>${p}</li>`).join('')+"</ul>";ms.style.display='block';document.getElementById('rev').style.display='none';sfx.click();
+  let b='';for(let m=0;m<=q.m;m++)b+=`<button class="btn sm ${m===q.m?'green':'ghost'}" onclick="wrScore(${m})">${m}</button>`;document.getElementById('mk').innerHTML=`<div class="small" style="margin-top:10px">How many marks did you get?</div><div>${b}</div>`;}
+function wrScore(m){WR.marks+=m;sfx.good();WR.i++;wrQ();}
+function wrResult(){const pct=Math.round(WR.marks/WR.max*100);sfx.win();
+  app.innerHTML=`<h1>📝 ${WR.marks}/${WR.max}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><div class="sub">${WR.k} • ${pct}%</div>
+   <button class="btn" onclick="sfx.click();wrStart('${WR.k}')">🔁 Retry</button><button class="btn ghost" onclick="sfx.click();writtenMenu()">⬅️ Topics</button>`;}
+
+/* ---- Final Exam ---- */
+let FE;
+function finalExam(){let all=[];Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>all.push(Object.assign({cat:s.cat},q))));
+  all=all.concat(vocabQs('french',5)).concat(vocabQs('spanish',5));shuffle(all);
+  FE={qs:all.slice(0,25),i:0,correct:0,stat:{},answered:false};feRender();}
+function feRender(){if(FE.i>=FE.qs.length)return feResult();FE.answered=false;const q=FE.qs[FE.i],prog=Math.round(FE.i/FE.qs.length*100);
+  app.innerHTML=`<span class="cat" style="background:var(--accent2)">🎓 FINAL EXAM</span>
+   <div class="hud"><div class="stat"><b>${FE.i+1}/${FE.qs.length}</b><span>Q</span></div><div class="stat"><b>${FE.correct}</b><span>Correct</span></div><div class="stat"><b>${FE.i?Math.round(FE.correct/FE.i*100):0}%</b><span>Running</span></div></div>
+   <div class="bar"><i style="width:${prog}%"></i></div><span class="cat">${q.cat}</span><div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div>
+   <button class="btn" id="next" style="display:none" onclick="sfx.click();feNext()">NEXT ➡️</button>`;
+  const opts=document.getElementById('opts');q.o.map((t,k)=>({t,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.t;b.onclick=()=>feChoose(b,o.k===q.a,q);opts.appendChild(b);});}
+function feChoose(btn,correct,q){if(FE.answered)return;FE.answered=true;FE.stat[q.cat]=FE.stat[q.cat]||{c:0,t:0};FE.stat[q.cat].t++;
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
+  const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>Correct!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';
+  if(correct){FE.correct++;FE.stat[q.cat].c++;toast("✅");}else{btn.classList.remove('dim');btn.classList.add('wrong');toast("❌");}
+  const n=document.getElementById('next');n.style.display='block';if(FE.i>=FE.qs.length-1)n.textContent='🏁 FINISH';}
+function feNext(){FE.i++;feRender();}
+function feResult(){const sc=loadScores();for(const c in FE.stat){const p=Math.round(FE.stat[c].c/FE.stat[c].t*100);if(sc[c]==null||p>=sc[c])sc[c]=p;}localStorage.setItem('sq_scores',JSON.stringify(sc));
+  const pct=Math.round(FE.correct/FE.qs.length*100);let g,gm;
+  if(pct>=90){g="Grade 9 🏆";gm="🧠✨";}else if(pct>=80){g="Grade 8";gm="📈🔥";}else if(pct>=70){g="Grade 7";gm="💪";}else if(pct>=55){g="Grade 5–6";gm="👍";}else if(pct>=40){g="Grade 4";gm="🛠️";}else{g="Below pass";gm="📚";}
+  const ranked=Object.keys(FE.stat).map(c=>({c,p:Math.round(FE.stat[c].c/FE.stat[c].t*100)})).sort((a,b)=>a.p-b.p);
+  const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
+  app.innerHTML=`<h1>🎓 FINAL EXAM</h1><div class="center" style="font-size:50px">${gm}</div>
+   <div class="hud"><div class="stat"><b>${FE.correct}/${FE.qs.length}</b><span>Score</span></div><div class="stat"><b>${pct}%</b><span>%</span></div><div class="stat"><b>${g}</b><span>Grade</span></div></div>
+   <h3 style="color:var(--accent);margin:8px 0 4px">By subject (weakest first):</h3>${rows}
+   <button class="btn" onclick="sfx.click();finalExam()">🔁 Retake</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+/* ---- Gap Report ---- */
+function gapReport(){const s=loadScores();const cats=['Maths','Geography','RS','Computing','French','Spanish'];
+  const ranked=cats.map(c=>({c,p:s[c]})).filter(x=>x.p!=null).sort((a,b)=>a.p-b.p);
+  const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
+  const weak=ranked.filter(r=>r.p<70).map(r=>r.c);
+  app.innerHTML=`<h1>📊 Gap Report</h1><div class="sub">${ranked.length}/6 subjects attempted</div>${rows||'<p class="small center">Beat some bosses first!</p>'}
+   ${weak.length?`<div class="info" style="margin-top:12px"><b>🎯 Revise these first:</b> ${weak.join(', ')}.</div>`:(ranked.length?'<div class="info" style="margin-top:12px">🎉 Every attempted subject ≥70%!</div>':'')}
+   <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+home();
+</script>
+</body>
+</html>

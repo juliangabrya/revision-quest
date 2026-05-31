@@ -678,6 +678,7 @@ function map(){
     <div class="sub">${done.length}/${STAGES.length} bosses defeated</div>
     <div class="map">${nodes}</div>
     <button class="btn danger" onclick="sfx.click();finalExam()">🎓 TAKE THE FINAL EXAM (all topics)</button>
+    <button class="btn" onclick="sfx.click();histWritten()">📝 WRITTEN (mark-scheme) QUESTIONS</button>
     ${ allDone ? `<button class="btn" onclick="sfx.click();report()">🏆 SEE YOUR GAP REPORT</button>`:'' }
     <button class="btn ghost" onclick="sfx.click();title()">🏠 Home</button>
   `;
@@ -994,6 +995,63 @@ function feResult(){
     <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>
   `;
 }
+
+/* ---------- WRITTEN (mark-scheme) QUESTIONS ---------- */
+const WRITTEN_H={
+ "Medieval Church":[
+  {m:1,q:"In what year was Magna Carta signed, and by which king?",s:["1215, by King John"]},
+  {m:2,q:"Give two reasons the Pope launched the Crusades.",s:["To recapture the Holy Land (Jerusalem)","To unite Christians / promise salvation (forgiveness of sins)"]},
+  {m:3,q:"Explain why King John had a poor relationship with the Church.",s:["He quarrelled with Pope Innocent III over the Archbishop of Canterbury","England was placed under an Interdict (churches closed)","John was excommunicated — cut off from the Church"]},
+ ],
+ "Civil War":[
+  {m:1,q:"What is meant by 'regicide'?",s:["The deliberate killing of a monarch"]},
+  {m:2,q:"Describe two long-term causes of the English Civil War.",s:["Religion — Charles married a Catholic & Archbishop Laud made churches more Catholic","Money or Power — e.g. the Ship Money tax forced on everyone, or closing Parliament in 1629"]},
+  {m:3,q:"Explain how the Civil War led to England becoming a republic.",s:["Parliament's New Model Army (Cromwell) defeated the Royalists","Charles I was put on trial and executed in 1649","With no monarch, England became a republic (Cromwell later became Lord Protector)"]},
+ ],
+ "Abolition":[
+  {m:1,q:"In what year was the Abolition Act passed?",s:["1807"]},
+  {m:2,q:"Describe two roles people played in ending the slave trade.",s:["Wilberforce — the MP who led the campaign in Parliament","Clarkson (evidence/Abolitionist Society), Equiano (ex-slave author) or women (sugar boycotts) — any other role"]},
+  {m:3,q:"Explain why the Abolition Act was passed in 1807.",s:["Religious & moral ideas (Quakers, Evangelical Christians) turned opinion against slavery","Campaigners — Clarkson, Wilberforce, Equiano — plus public pressure like the sugar boycotts","Slave revolts (Haiti 1791, Jamaica 1831) made slavery costly and harder to control"]},
+ ],
+ "Ottomans":[
+  {m:1,q:"Who conquered Constantinople in 1453?",s:["Sultan Mehmed II ('the Conqueror')"]},
+  {m:3,q:"Explain why the Ottoman Empire lasted for over 600 years.",s:["A powerful, skilled military (the Janissaries)","The Sultan's total control + good geography (Constantinople controlled trade)","Tolerance of different religions (millets) and a strong economy"]},
+ ],
+ "British Empire":[
+  {m:1,q:"What does 'decolonisation' mean?",s:["When countries are given their independence back after being colonised"]},
+  {m:3,q:"Explain why the British Empire fell.",s:["External pressure — after WWII, the Atlantic Charter and US/Cold-War opposition to empire","Nationalism — leaders like Gandhi; colonial soldiers expected freedom after fighting in WWII","Economic problems — Britain was bankrupt after WWII and couldn't afford the empire"]},
+ ],
+ "Industrial Revolution":[
+  {m:2,q:"Describe two ways the Industrial Revolution was NOT 'freeing' for the working class.",s:["Child labour — children (avg age ~10) worked in dangerous mines, mills and as chimney sweeps","Overcrowded, unsanitary slums spread disease (typhus, cholera); harsh workhouses (1834 New Poor Law)"]},
+  {m:3,q:"Explain the causes of the Industrial Revolution.",s:["The Agricultural Revolution gave more food → a bigger population and workers moving to cities","New inventions (e.g. the Spinning Jenny) made production more efficient and profitable","Empire & slavery supplied cheap raw materials (cotton), plus plentiful iron and coal"]},
+ ],
+};
+let HW;
+function histWritten(){
+  let t='';Object.keys(WRITTEN_H).forEach(k=>{t+=`<div class="node" onclick="sfx.click();hwStart('${k}')"><div class="ico">📝</div><div class="meta"><b>${k}</b><span>${WRITTEN_H[k].length} questions</span></div><div class="status">▶️</div></div>`;});
+  panel.innerHTML=`<h1>📝 Written Questions</h1><div class="sub">1, 2 & 3-mark exam-style questions. Answer in your head (or on paper), reveal the mark scheme, then mark yourself.</div><div class="map">${t}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Back to map</button>`;
+}
+function hwStart(k){HW={k,list:WRITTEN_H[k],i:0,marks:0,max:WRITTEN_H[k].reduce((a,q)=>a+q.m,0)};hwQ();}
+function hwQ(){
+  if(HW.i>=HW.list.length)return hwResult();const q=HW.list[HW.i];
+  panel.innerHTML=`<span class="cat">📝 ${HW.k} • ${HW.i+1}/${HW.list.length}</span>
+   <div class="hud"><div class="stat"><b>${HW.marks}</b><span>Marks</span></div><div class="stat"><b>${q.m}</b><span>This Q</span></div></div>
+   <div class="q">[${q.m} mark${q.m>1?'s':''}] ${q.q}</div>
+   <textarea rows="4" placeholder="Write your answer (optional)..." style="width:100%;padding:12px;border-radius:12px;border:2px solid #3a2d63;background:#150f29;color:#f5f3ff;font-size:15px;font-family:inherit"></textarea>
+   <button class="btn" id="rev" onclick="hwReveal()">👀 Reveal mark scheme</button>
+   <div class="explain" id="ms"></div><div id="mk"></div>
+   <button class="btn ghost" onclick="sfx.click();histWritten()">⬅️ Topics</button>`;
+}
+function hwReveal(){const q=HW.list[HW.i];const ms=document.getElementById('ms');
+  ms.innerHTML="<b>Mark scheme (1 mark per point):</b><ul style='margin:6px 0 0 18px'>"+q.s.map(p=>`<li style='margin:5px 0'>${p}</li>`).join('')+"</ul>";ms.style.display='block';document.getElementById('rev').style.display='none';sfx.click();
+  let b='';for(let m=0;m<=q.m;m++)b+=`<button class="btn" style="display:inline-block;width:auto;padding:9px 16px;margin:4px" onclick="hwScore(${m})">${m}</button>`;
+  document.getElementById('mk').innerHTML=`<div style="margin-top:10px;color:#b7aee0">How many marks did you get?</div><div>${b}</div>`;}
+function hwScore(m){HW.marks+=m;sfx.good&&sfx.good();HW.i++;hwQ();}
+function hwResult(){const pct=Math.round(HW.marks/HW.max*100);sfx.win&&sfx.win();
+  panel.innerHTML=`<h1>📝 ${HW.marks}/${HW.max} marks</h1><div class="meme"><div class="img">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><div class="cap">${HW.k}<br>${pct}%</div></div>
+   <p style="text-align:center;color:#cfc7f0;margin:14px 0">${pct>=80?'Exam-ready on this topic!':pct>=50?'Solid — tighten up the points you missed.':'Re-read the lesson and try again!'}</p>
+   <button class="btn" onclick="sfx.click();hwStart('${HW.k}')">🔁 Retry topic</button>
+   <button class="btn ghost" onclick="sfx.click();histWritten()">⬅️ Topics</button>`;}
 
 title();
 </script>
