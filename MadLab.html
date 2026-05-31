@@ -180,7 +180,13 @@ function hub(){
         <span>1, 2 & 3-mark exam questions with mark schemes — type your answer and mark yourself.</span></div>
       <div class="station" onclick="SFX.click();prolab()">
         <div class="em">🧫</div><b>Pro Lab (Realistic)</b>
-        <span>Test tubes, beakers, flasks, a Bunsen & a distillation rig + ~115 chemicals. Mix anything, distil bromine & chromyl chloride, run gas tests.</span></div>
+        <span>Test tubes, beakers, flasks, a Bunsen & a distillation rig + ~120 chemicals. Mix anything, distil bromine & chromyl chloride, run gas tests.</span></div>
+      <div class="station" onclick="SFX.click();magnet()">
+        <div class="em">🧲</div><b>Magnet Lab</b>
+        <span>See real magnetic field lines, sprinkle iron filings, and watch two magnets attract or repel. Compasses line up live.</span></div>
+      <div class="station" onclick="SFX.click();genetics()">
+        <div class="em">🧬</div><b>Genetics Lab</b>
+        <span>Build a Punnett square, pick the parents' genes and see the offspring ratios — plus how genetic modification works.</span></div>
     </div>
     <p class="small center" style="margin-top:14px">💡 Turn sound on for fizzes, pops & bangs. Everything works offline & saves your progress.</p>
   `;
@@ -1248,50 +1254,124 @@ function proLoop(){
 
 function drawDistill(ctx,W,H,sx){
   ctx.save();ctx.translate(sx,0);
-  // progress distillation
-  if(PRO.distilling&&PRO.distillate){PRO.distillate.amount=Math.min(0.7,PRO.distillate.amount+0.0045);PRO.targetLevel=Math.max(0.12,PRO.level-0.0015)}
-  // ---- flask (left, round-bottom) over bunsen ----
-  const fx=120,fy=200,fr=58;
-  // stand
-  ctx.fillStyle='#2a3850';ctx.fillRect(20,360,80,10);ctx.fillRect(34,150,8,210);
-  // bunsen + flame
-  ctx.fillStyle='#3a4760';ctx.fillRect(fx-10,fy+fr+30,20,34);ctx.fillRect(fx-26,fy+fr+62,52,8);
-  if(PRO.heating){for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(fx,fy+fr+14,13-i*4,30-i*8,0,0,6.28);ctx.fill()}ctx.globalAlpha=1}
-  // flask liquid
-  const lvl=PRO.level;
-  if(lvl>0.01){ctx.save();ctx.beginPath();ctx.arc(fx,fy,fr-4,0,6.28);ctx.clip();
-    ctx.fillStyle=PRO.color;const top=fy+fr-(fr*1.4)*lvl;ctx.fillRect(fx-fr,top,fr*2,fr*2);
-    if(PRO.distilling){ctx.fillStyle='rgba(255,255,255,.5)';for(let k=0;k<6;k++){const bx=fx-20+Math.random()*40,by=top+10+Math.random()*30;ctx.beginPath();ctx.arc(bx,by,2+Math.random()*3,0,6.28);ctx.fill()}}
+  if(PRO.distilling&&PRO.distillate){PRO.distillate.amount=Math.min(0.7,PRO.distillate.amount+0.004);PRO.targetLevel=Math.max(0.1,PRO.level-0.0012)}
+  const fx=118, fy=252, fr=50, neckTop=128, neckW=28;
+  // clamp stand
+  ctx.fillStyle='#2a3850';ctx.fillRect(16,362,66,10);ctx.fillRect(28,150,8,212);
+  // bunsen + flame under the flask
+  ctx.fillStyle='#3a4760';ctx.fillRect(fx-9,fy+fr+16,18,28);ctx.fillRect(fx-23,fy+fr+42,46,8);
+  if(PRO.heating){for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.8;ctx.beginPath();ctx.ellipse(fx,fy+fr+6,12-i*4,24-i*7,0,0,6.28);ctx.fill()}ctx.globalAlpha=1}
+  // ---- flask liquid (fills the BOTTOM of the round flask) ----
+  const lvl=Math.max(0,Math.min(1,PRO.level));
+  if(lvl>0.01){ctx.save();ctx.beginPath();ctx.arc(fx,fy,fr-3,0,6.28);ctx.clip();
+    const liqH=(fr*2-6)*lvl, liqY=(fy+fr-3)-liqH;
+    ctx.fillStyle=PRO.color;ctx.fillRect(fx-fr,liqY,fr*2,liqH);
+    ctx.fillStyle='rgba(255,255,255,.12)';ctx.fillRect(fx-fr,liqY,fr*2,4);
+    if(PRO.distilling||PRO.heating){ctx.fillStyle='rgba(255,255,255,.5)';for(let k=0;k<7;k++){const bx=fx-fr+8+Math.random()*(fr*2-16),by=liqY+5+Math.random()*Math.max(2,liqH-8);if(by<fy+fr-4){ctx.beginPath();ctx.arc(bx,by,2+Math.random()*3,0,6.28);ctx.fill()}}}
     ctx.restore();}
-  // flask glass + neck
-  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();ctx.arc(fx,fy,fr,Math.PI*0.72,Math.PI*0.28,false);
-  ctx.moveTo(fx-18,fy-fr+12);ctx.lineTo(fx-18,fy-fr-34);ctx.moveTo(fx+18,fy-fr+12);ctx.lineTo(fx+18,fy-fr-34);ctx.stroke();
-  // ---- condenser (sloping tube to the right) ----
-  const x1=fx+18,y1=fy-fr-30,x2=320,y2=150;
-  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x1,y1+14);ctx.lineTo(x2,y2+14);ctx.stroke();
-  // water jacket hint
-  ctx.strokeStyle='rgba(90,180,255,.35)';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(x1+30,y1+22);ctx.lineTo(x2-20,y2+22);ctx.stroke();
-  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText('condenser',150,128);
-  // droplets running down to receiver when distilling
-  if(PRO.distilling&&PRO.distillate){ctx.fillStyle=PRO.distillate.c;for(let k=0;k<5;k++){const t=((PRO.t*0.02+k*0.2)%1);const dx=x2+(0)+ (t)*40;const dy=y2+14+t*70;ctx.beginPath();ctx.arc(360,y2+14+t*78,3,0,6.28);ctx.fill()}}
-  // ---- receiver (conical flask, right) ----
-  const rx=360,rtop=230,rbot=350;
-  if(PRO.distillate&&PRO.distillate.amount>0.01){const amt=PRO.distillate.amount;
-    ctx.fillStyle=PRO.distillate.c;const liqTop=rbot-(rbot-rtop-10)*amt;
-    ctx.beginPath();ctx.moveTo(rx-14- (rbot-liqTop)*0.0,liqTop);
-    // simple trapezoid fill
-    const wTop=14+(liqTop-rtop)*0.0, wBot=46;
-    ctx.moveTo(rx-(14+(rbot-liqTop)*0.27),liqTop);ctx.lineTo(rx+(14+(rbot-liqTop)*0.27),liqTop);ctx.lineTo(rx+wBot,rbot-3);ctx.lineTo(rx-wBot,rbot-3);ctx.closePath();ctx.fill();}
-  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();
-  ctx.moveTo(rx-14,rtop);ctx.lineTo(rx-46,rbot);ctx.lineTo(rx+46,rbot);ctx.lineTo(rx+14,rtop);ctx.stroke();
-  ctx.fillStyle='#8fb3d9';ctx.fillText('receiving flask',rx-44,rtop-8);
+  // ---- flask glass + neck ----
+  ctx.strokeStyle='rgba(160,210,255,.7)';ctx.lineWidth=4;
+  ctx.beginPath();ctx.arc(fx,fy,fr,0,6.28);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(fx-neckW/2,fy-fr+10);ctx.lineTo(fx-neckW/2,neckTop);ctx.moveTo(fx+neckW/2,fy-fr+10);ctx.lineTo(fx+neckW/2,neckTop);ctx.stroke();
+  // thermometer in the neck
+  ctx.strokeStyle='#cfd6e6';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(fx,neckTop-4);ctx.lineTo(fx,fy-fr-6);ctx.stroke();
+  ctx.fillStyle=PRO.heating?'#ff4d4d':'#5fb8ff';ctx.beginPath();ctx.arc(fx,fy-fr-4,5,0,6.28);ctx.fill();
+  ctx.fillStyle='#8fb3d9';ctx.font='10px Trebuchet MS';ctx.fillText('°C',fx+8,neckTop-2);
+  // ---- side-arm + Liebig condenser (slopes down-right) ----
+  const ax=fx+neckW/2-2, ay=neckTop+8, cx2=346, cy2=232;
+  ctx.strokeStyle='rgba(90,170,255,.30)';ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(ax+10,ay+2);ctx.lineTo(cx2-8,cy2-2);ctx.stroke();
+  ctx.strokeStyle='rgba(160,210,255,.85)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ax,ay-3);ctx.lineTo(cx2,cy2-3);ctx.stroke();
+  ctx.strokeStyle='rgba(90,170,255,.6)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(ax+44,ay+10);ctx.lineTo(ax+34,ay+28);ctx.moveTo(cx2-44,cy2-14);ctx.lineTo(cx2-34,cy2-32);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='10px Trebuchet MS';ctx.fillText('Liebig condenser',ax+6,ay-10);
+  // droplets running into the receiver
+  if(PRO.distilling&&PRO.distillate){ctx.fillStyle=PRO.distillate.c;for(let k=0;k<4;k++){const t=((PRO.t*0.018+k*0.25)%1);ctx.beginPath();ctx.arc(ax+(cx2-ax)*t,(ay-3)+((cy2-3)-(ay-3))*t,2.6,0,6.28);ctx.fill()}}
+  // ---- receiver (conical flask, fills bottom-up) ----
+  const rx=356, rTop=242, rBot=350, hTop=12, hBot=40;
+  if(PRO.distillate&&PRO.distillate.amount>0.005){const amt=Math.min(1,PRO.distillate.amount/0.7);
+    const liqY=rBot-(rBot-rTop-6)*amt;const wTop=hBot+(hTop-hBot)*((liqY-rTop)/(rBot-rTop));
+    ctx.fillStyle=PRO.distillate.c;ctx.beginPath();ctx.moveTo(rx-wTop,liqY);ctx.lineTo(rx+wTop,liqY);ctx.lineTo(rx+hBot,rBot-3);ctx.lineTo(rx-hBot,rBot-3);ctx.closePath();ctx.fill();}
+  ctx.strokeStyle='rgba(160,210,255,.7)';ctx.lineWidth=4;ctx.beginPath();
+  ctx.moveTo(rx-hTop,rTop);ctx.lineTo(rx-hBot,rBot);ctx.lineTo(rx+hBot,rBot);ctx.lineTo(rx+hTop,rTop);
+  ctx.moveTo(rx-hTop,rTop);ctx.lineTo(rx-hTop,rTop-14);ctx.moveTo(rx+hTop,rTop);ctx.lineTo(rx+hTop,rTop-14);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText('receiver',rx-24,rBot+16);
   // labels
-  ctx.fillStyle='#cfe0f5';ctx.font='12px Trebuchet MS';
-  ctx.fillText(PRO.contents.length+' chemical'+(PRO.contents.length===1?'':'s')+' in flask',20,28);
-  if(PRO.distillate&&PRO.distillate.amount>0.02){ctx.fillStyle=PRO.distillate.c==='#dfeeff'||PRO.distillate.c==='#cfe6ff'?'#bcd':'#ff9a9a';ctx.font='bold 13px Trebuchet MS';ctx.fillText('collected: '+PRO.distillate.name,205,210);}
+  ctx.fillStyle='#cfe0f5';ctx.font='12px Trebuchet MS';ctx.fillText(PRO.contents.length+' in flask',16,26);
+  if(PRO.distillate&&PRO.distillate.amount>0.02){const pale=PRO.distillate.c==='#dfeeff'||PRO.distillate.c==='#cfe6ff';ctx.fillStyle=pale?'#bcd6ee':'#ff9a9a';ctx.font='bold 13px Trebuchet MS';ctx.fillText('collected: '+PRO.distillate.name,150,58);}
   ctx.restore();
+}
+
+/* ===================== STATION 9 — MAGNET LAB ===================== */
+let MG;
+function magnet(){stopLoop();MG={flip:false,filings:false,second:false,repel:false};drawMG();}
+function drawMG(){
+  root.innerHTML=`
+   <div class="topbar"><span class="tag">🧲 Magnet Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="mg" width="560" height="320"></canvas>
+   <div class="toolbar" style="margin-top:10px">
+     <button class="tool" onclick="MG.flip=!MG.flip;SFX.click();drawMG()">🔄 Flip magnet</button>
+     <button class="tool" onclick="MG.filings=!MG.filings;SFX.click();drawMG()">${MG.filings?'🧭 Compasses':'⚙️ Iron filings'}</button>
+     <button class="tool" onclick="MG.second=!MG.second;SFX.click();drawMG()">${MG.second?'➖ One magnet':'➕ Second magnet'}</button>
+     ${MG.second?`<button class="tool" onclick="MG.repel=!MG.repel;SFX.click();drawMG()">${MG.repel?'🚫 Repelling':'🧲 Attracting'}</button>`:''}
+   </div>
+   <div class="info" id="mginfo"></div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('mg');MG.cv=cv;MG.ctx=cv.getContext('2d');MG.t=0;
+  document.getElementById('mginfo').innerHTML=MG.second?(MG.repel?"Two <b>like poles</b> facing (N–N or S–S) <b>repel</b> — the field lines bend away from each other.":"<b>Opposite poles</b> facing (N–S) <b>attract</b> — the field lines join up between them."):"A bar magnet's <b>field lines</b> run from <b>North → South</b>. A compass needle lines up with the field. The three magnetic metals are <b>iron, nickel and cobalt</b>.";
+  mgLoop();
+}
+function mgPoles(){
+  const cy=160,hw=50,W=560,poles=[],mags=[];
+  if(!MG.second){const mx=W/2,nLeft=!MG.flip;poles.push({x:mx-hw,y:cy,q:nLeft?1:-1});poles.push({x:mx+hw,y:cy,q:nLeft?-1:1});mags.push({x:mx,hw,nLeft});}
+  else{const mx1=W/2-118,mx2=W/2+118,n1=!MG.flip;
+    poles.push({x:mx1-hw,y:cy,q:n1?1:-1});poles.push({x:mx1+hw,y:cy,q:n1?-1:1});mags.push({x:mx1,hw,nLeft:n1});
+    const rightSign=n1?-1:1;const m2Left=MG.repel?rightSign:-rightSign;
+    poles.push({x:mx2-hw,y:cy,q:m2Left});poles.push({x:mx2+hw,y:cy,q:-m2Left});mags.push({x:mx2,hw,nLeft:m2Left>0});}
+  return {poles,mags,cy,hw};
+}
+function mgField(px,py,poles){let fx=0,fy=0;for(const p of poles){const dx=px-p.x,dy=py-p.y;let r2=dx*dx+dy*dy;if(r2<80)r2=80;const r=Math.sqrt(r2);const f=p.q/(r2*r);fx+=f*dx;fy+=f*dy;}return [fx,fy];}
+function mgLoop(){
+  if(!MG)return;const {ctx,cv}=MG,W=cv.width,H=cv.height;MG.t++;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1424';ctx.fillRect(0,0,W,H);
+  const {poles,mags,cy,hw}=mgPoles();
+  // field visualisation
+  if(MG.filings){ctx.strokeStyle='rgba(150,180,220,.5)';ctx.lineWidth=2;
+    for(let x=18;x<W;x+=22)for(let y=18;y<H;y+=22){const [fx,fy]=mgField(x,y,poles);const a=Math.atan2(fy,fx);const L=7;ctx.beginPath();ctx.moveTo(x-Math.cos(a)*L,y-Math.sin(a)*L);ctx.lineTo(x+Math.cos(a)*L,y+Math.sin(a)*L);ctx.stroke();}}
+  else{for(let x=60;x<W;x+=72)for(let y=44;y<H;y+=68){const [fx,fy]=mgField(x,y,poles);const a=Math.atan2(fy,fx);
+    ctx.strokeStyle='rgba(120,150,190,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,13,0,6.28);ctx.stroke();
+    ctx.strokeStyle='#ff4d6d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a)*11,y+Math.sin(a)*11);ctx.stroke();
+    ctx.strokeStyle='#dfe9ff';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-Math.cos(a)*11,y-Math.sin(a)*11);ctx.stroke();}}
+  // draw magnets
+  mags.forEach(m=>{const x=m.x,w=m.hw;
+    ctx.fillStyle=m.nLeft?'#e8413f':'#3a6bd6';ctx.fillRect(x-w-8,cy-20,w+8,40);
+    ctx.fillStyle=m.nLeft?'#3a6bd6':'#e8413f';ctx.fillRect(x,cy-20,w+8,40);
+    ctx.strokeStyle='#0a1424';ctx.lineWidth=2;ctx.strokeRect(x-w-8,cy-20,(w+8)*2,40);
+    ctx.fillStyle='#fff';ctx.font='bold 18px Trebuchet MS';ctx.textAlign='center';
+    ctx.fillText(m.nLeft?'N':'S',x-w/2-4,cy+6);ctx.fillText(m.nLeft?'S':'N',x+w/2+4,cy+6);ctx.textAlign='start';});
+  raf=requestAnimationFrame(mgLoop);
+}
+
+/* ===================== STATION 10 — GENETICS LAB ===================== */
+let GN;
+function genetics(){stopLoop();GN={dad:'Bb',mum:'Bb'};drawGN();}
+function gnRatio(a,b){if(b===0)return a+':0';if(a===0)return'0:'+b;const g=(x,y)=>y?g(y,x%y):x;const k=g(a,b);return (a/k)+':'+(b/k);}
+function drawGN(){
+  const opts=['BB','Bb','bb'];const d=GN.dad.split(''),m=GN.mum.split('');
+  const cells=[[ [d[0],m[0]].sort().join(''),[d[1],m[0]].sort().join('') ],[ [d[0],m[1]].sort().join(''),[d[1],m[1]].sort().join('') ]];
+  const flat=[cells[0][0],cells[0][1],cells[1][0],cells[1][1]];
+  const brown=flat.filter(g=>g.includes('B')).length,blue=4-brown;
+  const sel=(who,v)=>`<button class="tool" style="${GN[who]===v?'border-color:var(--acid);color:var(--acid)':''}" onclick="GN.${who}='${v}';SFX.click();drawGN()">${v}</button>`;
+  let grid=`<table style="margin:12px auto;border-collapse:separate;border-spacing:6px;font-weight:bold"><tr><td></td><td style="color:#8fb3d9">${d[0]}</td><td style="color:#8fb3d9">${d[1]}</td></tr>`;
+  for(let r=0;r<2;r++){grid+=`<tr><td style="color:#8fb3d9">${m[r]}</td>`;for(let c=0;c<2;c++){const g=cells[r][c];const bg=g.includes('B')?'#6a4a2b':'#2a5b8a';grid+=`<td style="padding:16px 20px;background:${bg};border-radius:10px;font-size:18px;color:#fff">${g}</td>`}grid+=`</tr>`}
+  grid+=`</table>`;
+  root.innerHTML=`<div class="topbar"><span class="tag">🧬 Genetics Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <h2 class="center">Punnett Square — eye colour</h2>
+   <div class="small center">B = brown (dominant) • b = blue (recessive)</div>
+   <div class="center" style="margin-top:8px;color:#cfe0f5"><b>Father:</b> ${opts.map(o=>sel('dad',o)).join('')}</div>
+   <div class="center" style="color:#cfe0f5"><b>Mother:</b> ${opts.map(o=>sel('mum',o)).join('')}</div>
+   ${grid}
+   <div class="info center"><b>🟤 ${brown}/4 brown-eyed</b> &nbsp;&nbsp; <b>🔵 ${blue}/4 blue-eyed</b><br>Ratio (brown : blue) = <b>${gnRatio(brown,blue)}</b>.${(blue>0&&d.includes('B')&&m.includes('B'))?' Two brown-eyed carriers can still have a blue-eyed child! 👀':''}</div>
+   <div class="info" style="margin-top:8px"><b>🧬 Genetic modification:</b> scientists can deliberately alter an organism's genes — e.g. crops engineered for higher yields or to make their own insecticide, or bacteria altered to produce medicines like insulin.</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
 }
 
 /* boot */
