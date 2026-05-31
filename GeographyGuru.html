@@ -11,8 +11,7 @@
  h2{font-size:22px;text-align:center;margin-bottom:6px}
  .sub{text-align:center;color:#a6acd6;margin-bottom:16px;font-size:14px;line-height:1.5}
  .btn{margin-top:12px;width:100%;padding:14px;border:none;border-radius:13px;cursor:pointer;font-size:17px;font-weight:bold;font-family:inherit;color:#101;background:linear-gradient(180deg,var(--accent),#d6a800);box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .06s}
- .btn:active{transform:translateY(4px)}
- .btn.ghost{background:#222843;color:var(--ink)} .btn.green{background:linear-gradient(180deg,var(--good),#2fbf6e);color:#031}
+ .btn:active{transform:translateY(4px)} .btn.ghost{background:#222843;color:var(--ink)} .btn.green{background:linear-gradient(180deg,var(--good),#2fbf6e);color:#031}
  .btn.sm{width:auto;display:inline-block;padding:9px 15px;font-size:15px;margin:4px}
  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}@media(min-width:640px){.grid{grid-template-columns:1fr 1fr 1fr}}
  .tile{background:linear-gradient(180deg,#1c2342,#141831);border:2px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:center;transition:transform .12s,border-color .15s;position:relative}
@@ -43,32 +42,41 @@
  .mbtn{padding:12px;border-radius:11px;border:2px solid var(--line);background:#1c2342;color:var(--ink);cursor:pointer;font-family:inherit;font-size:15px}.mbtn.sel{border-color:var(--accent);color:var(--accent)}.mbtn.done{background:#13311f;border-color:#2fbf6e;color:var(--good);cursor:default}.mbtn.bad{background:var(--accent2);color:#fff}
  input[type=text]{width:100%;padding:13px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:16px;font-family:inherit}
  textarea{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:15px;font-family:inherit}
+ input[type=range]{width:100%}
+ .keys{display:flex;gap:3px;overflow-x:auto;padding:8px 0;justify-content:center}
+ .key{flex:none;width:40px;height:120px;border-radius:0 0 7px 7px;border:2px solid #11152a;background:#f3f3ff;color:#222;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:11px;font-weight:bold}
+ .key.blk{background:#222a44;color:#eef;height:80px;width:30px}
+ .key:active{background:var(--accent)}
+ .rxbox{margin:14px 0;border-radius:16px;padding:46px 16px;text-align:center;font-size:22px;font-weight:bold;cursor:pointer;border:2px solid var(--line)}
 </style></head><body>
 <div class="toast" id="toast"></div><div class="wrap"><div class="panel" id="app"></div></div>
 <script>
-const GAME={"file": "GeographyGuru", "id": "geo", "name": "GeographyGuru", "emoji": "🌍", "accent": "#3ddc84", "accent2": "#ff7a3c", "tagline": "Power through Energy & Biomes and become a geography legend.", "topics": [{"key": "energy", "name": "Endless Energy", "emoji": "🔌", "boss": "Captain Carbon", "bem": "🛢️", "taunts": ["Burn those fossil fuels!", "Renewables? Never!", "You can't read an energy mix!"], "qs": [{"q": "What are the three fossil fuels?", "o": ["Coal, oil and natural gas", "Wood, peat and uranium", "Solar, wind and hydro", "Petrol, diesel and wood"], "a": 0, "w": "Coal, oil and natural gas — formed over millions of years in sedimentary rock."}, {"q": "Which is a RENEWABLE energy source?", "o": ["Solar power", "Coal", "Oil", "Natural gas"], "a": 0, "w": "Solar (and wind & hydro) are renewable — they don't run out."}, {"q": "A disadvantage of fossil fuels is that they…", "o": ["Are finite and release greenhouse gases", "Are too clean", "Never run out", "Are free"], "a": 0, "w": "They are finite and release greenhouse gases (climate change)."}, {"q": "Which source contributes MOST to the UK's energy mix?", "o": ["Natural gas (≈39%)", "Coal", "Solar", "Nuclear"], "a": 0, "w": "Natural gas (~39%); coal has declined, renewables rising."}, {"q": "Which is NOT a reason energy demand has increased?", "o": ["Shrinking population", "Growing population", "Rising wealth", "More manufacturing"], "a": 0, "w": "Demand rose due to growing population, rising wealth and more manufacturing."}]}, {"key": "biomes", "name": "Brilliant Biomes", "emoji": "🌿", "boss": "The Wild", "bem": "🦌", "taunts": ["Name a biome!", "You'll get lost in here!", "Abiotic or biotic? You won't know!"], "qs": [{"q": "A 'biome' is…", "o": ["A large-scale ecosystem", "A single animal", "A type of rock", "A weather forecast"], "a": 0, "w": "A biome is a large-scale ecosystem (e.g. rainforest, tundra, desert)."}, {"q": "Tropical rainforests are found…", "o": ["Near the equator (low latitudes)", "At the North Pole", "Between 30° and 60°", "Only in deserts"], "a": 0, "w": "In the low latitudes near the equator."}, {"q": "Why do deciduous trees lose their leaves in winter?", "o": ["To conserve energy, water and nutrients", "To attract animals", "To grow taller", "Because of pollution"], "a": 0, "w": "To conserve energy, water and nutrients over winter."}, {"q": "Which is an ABIOTIC (non-living) part of an ecosystem?", "o": ["Sunlight", "Plants", "Animals", "People"], "a": 0, "w": "Abiotic = non-living (sunlight, soil, water). Biotic = living."}, {"q": "Deciduous forests are found at latitudes of about…", "o": ["30°–60°", "0°–10°", "66°–90°", "Only at the poles"], "a": 0, "w": "Deciduous forests lie between roughly 30° and 60°."}]}], "written": {"Geography": [{"m": 1, "q": "Name the three fossil fuels.", "s": ["Coal, oil and natural gas"]}, {"m": 2, "q": "Give one advantage and one disadvantage of using fossil fuels.", "s": ["Advantage: infrastructure already exists, so cheap/easy to use", "Disadvantage: finite and release greenhouse gases"]}, {"m": 3, "q": "Explain how rising wealth increases energy demand.", "s": ["Wealthier people have more money for goods", "Those goods use energy to make and run", "So energy demand rises"]}, {"m": 2, "q": "Define 'biome' and give two examples.", "s": ["A large-scale ecosystem", "Two of: tropical rainforest, deciduous forest, tundra, hot desert"]}]}};
+const GAME={"file": "GeographyGuru", "id": "geo", "name": "GeographyGuru", "emoji": "🌍", "accent": "#3ddc84", "accent2": "#ff7a3c", "tagline": "Power through Energy & Biomes and become a geography legend.", "extras": [{"type": "order", "title": "The water cycle", "steps": ["Evaporation — water heats and turns to vapour", "Condensation — vapour cools into clouds", "Precipitation — rain or snow falls", "Collection — water flows back into seas & rivers"]}], "topics": [{"key": "energy", "name": "Endless Energy", "emoji": "🔌", "boss": "Captain Carbon", "bem": "🛢️", "taunts": ["Burn those fossil fuels!", "Renewables? Never!", "Read an energy mix? Ha!"], "qs": [{"q": "The three fossil fuels are?", "o": ["Coal, oil and natural gas", "Wood, peat and uranium", "Solar, wind and hydro", "Petrol, diesel and wood"], "a": 0, "w": "Coal, oil and natural gas."}, {"q": "Which is RENEWABLE?", "o": ["Solar power", "Coal", "Oil", "Natural gas"], "a": 0, "w": "Solar/wind/hydro are renewable."}, {"q": "A disadvantage of fossil fuels?", "o": ["Finite and release greenhouse gases", "Too clean", "Never run out", "Free"], "a": 0, "w": "Finite + release greenhouse gases."}, {"q": "Which contributes MOST to the UK's energy mix?", "o": ["Natural gas (≈39%)", "Coal", "Solar", "Nuclear"], "a": 0, "w": "Natural gas (~39%)."}, {"q": "Which is NOT a reason energy demand rose?", "o": ["Shrinking population", "Growing population", "Rising wealth", "More manufacturing"], "a": 0, "w": "Demand rose from growing population, wealth & manufacturing."}]}, {"key": "biomes", "name": "Brilliant Biomes", "emoji": "🌿", "boss": "The Wild", "bem": "🦌", "taunts": ["Name a biome!", "Abiotic or biotic?", "You'll get lost!"], "qs": [{"q": "A 'biome' is…", "o": ["A large-scale ecosystem", "A single animal", "A type of rock", "A weather forecast"], "a": 0, "w": "A large-scale ecosystem."}, {"q": "Tropical rainforests are found…", "o": ["Near the equator (low latitudes)", "At the North Pole", "Between 30° and 60°", "Only in deserts"], "a": 0, "w": "Near the equator."}, {"q": "Why do deciduous trees lose leaves in winter?", "o": ["To conserve energy, water and nutrients", "To attract animals", "To grow taller", "Pollution"], "a": 0, "w": "To conserve energy, water & nutrients."}, {"q": "Which is ABIOTIC (non-living)?", "o": ["Sunlight", "Plants", "Animals", "People"], "a": 0, "w": "Abiotic = non-living (sunlight, soil, water)."}, {"q": "Deciduous forests are found at about…", "o": ["30°–60°", "0°–10°", "66°–90°", "Only at the poles"], "a": 0, "w": "Roughly 30°–60°."}]}], "written": {"Geography": [{"m": 1, "q": "Name the three fossil fuels.", "s": ["Coal, oil and natural gas"]}, {"m": 2, "q": "One advantage and one disadvantage of fossil fuels.", "s": ["Advantage: cheap/easy — infrastructure exists", "Disadvantage: finite and release greenhouse gases"]}, {"m": 3, "q": "Explain how rising wealth increases energy demand.", "s": ["Wealthier people buy more goods", "Goods use energy to make and run", "So demand rises"]}, {"m": 2, "q": "Define 'biome' and give two examples.", "s": ["A large-scale ecosystem", "Two of: rainforest, deciduous forest, tundra, desert"]}]}};
 document.documentElement.style.setProperty('--accent',GAME.accent);
 document.documentElement.style.setProperty('--accent2',GAME.accent2);
 const app=document.getElementById('app'),toastEl=document.getElementById('toast');
 function toast(t){toastEl.innerHTML=t;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove('show'),1100);}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function ex(t){return (GAME.extras||[]).find(e=>e.type===t);}
 function loadScores(){try{return JSON.parse(localStorage.getItem('rqg_'+GAME.id)||'{}')}catch(e){return{}}}
 function saveScore(k,c,t){const s=loadScores();const p=Math.round(c/t*100);if(s[k]==null||p>=s[k])s[k]=p;localStorage.setItem('rqg_'+GAME.id,JSON.stringify(s));}
 let muted=false,actx;
-function beep(f,d,t){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t||'square';o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.12,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+function ac(){actx=actx||new(window.AudioContext||window.webkitAudioContext)();return actx;}
+function beep(f,d,t){if(muted)return;try{const a=ac();const o=a.createOscillator(),g=a.createGain();o.type=t||'square';o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.start();o.stop(a.currentTime+d)}catch(e){}}
+function tone(f,d){try{const a=ac();const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.25,a.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.start();o.stop(a.currentTime+d)}catch(e){}}
 const sfx={good:()=>{beep(660,.08);setTimeout(()=>beep(880,.12),80)},crit:()=>{[660,990,1320].forEach((f,i)=>setTimeout(()=>beep(f,.1),i*70))},bad:()=>beep(180,.18,'sawtooth'),click:()=>beep(440,.04),win:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16),i*110))};
 
-function home(){app.innerHTML=`<h1>${GAME.emoji} ${GAME.name}</h1><div class="sub">${GAME.tagline}</div><button class="btn" onclick="sfx.click();map()">▶️ Start</button><p class="small center" style="margin-top:10px">Boss battles · mark-scheme questions · final exam</p>`;}
-function map(){
- const s=loadScores();let tiles='';
+function home(){app.innerHTML=`<h1>${GAME.emoji} ${GAME.name}</h1><div class="sub">${GAME.tagline}</div><button class="btn" onclick="sfx.click();map()">▶️ Start</button><p class="small center" style="margin-top:10px">Boss battles · interactive labs · mark-scheme questions</p>`;}
+const EXTRA_TILE={calc:['🥋','Number Dojo','dojo'],vocab:['🔤','Vocab Match','vocabMatch'],tts:['🔊','Hear It!','ttsLab'],piano:['🎹','Play Piano','piano'],binary:['🔢','Binary Lab','binaryLab'],reaction:['⚡','Reaction Test','reaction'],colour:['🎨','Colour Mixer','colourLab'],order:['🔀','Order It!','orderLab']};
+function map(){const s=loadScores();let tiles='';
  GAME.topics.forEach((t,i)=>{const sc=s[t.key];tiles+=`<div class="tile" onclick="sfx.click();quizTopic(${i})">${sc!=null?`<span class="pct">${sc}%</span>`:''}<div class="em">${t.emoji}</div><b>${t.name}</b></div>`;});
- if(GAME.extra&&GAME.extra.type==='calc')tiles+=`<div class="tile" onclick="sfx.click();dojo()"><div class="em">🥋</div><b>Number Dojo</b></div>`;
- if(GAME.extra&&GAME.extra.type==='vocab')tiles+=`<div class="tile" onclick="sfx.click();vocabMatch()"><div class="em">🔤</div><b>Vocab Match</b></div>`;
+ (GAME.extras||[]).forEach(e=>{const t=EXTRA_TILE[e.type];if(t)tiles+=`<div class="tile" onclick="sfx.click();${t[2]}()"><div class="em">${t[0]}</div><b>${t[1]}</b></div>`;});
  tiles+=`<div class="tile" onclick="sfx.click();writtenMenu()"><div class="em">📝</div><b>Written Exam</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();finalExam()"><div class="em">🎓</div><b>Final Exam</b></div>`;
  tiles+=`<div class="tile" onclick="sfx.click();gapReport()"><div class="em">📊</div><b>Gap Report</b></div>`;
- app.innerHTML=`<div class="topbar"><span class="tag">${GAME.emoji} ${GAME.name}</span></div><h2>Choose your challenge</h2><div class="sub">Beat the bosses, then sit the Final Exam.</div><div class="grid">${tiles}</div><button class="btn ghost" onclick="sfx.click();home()">🏠 Home</button>`;
-}
+ app.innerHTML=`<div class="topbar"><span class="tag">${GAME.emoji} ${GAME.name}</span></div><h2>Choose your challenge</h2><div class="sub">Beat the bosses, mess with the labs, then sit the Final Exam.</div><div class="grid">${tiles}</div><button class="btn ghost" onclick="sfx.click();home()">🏠 Home</button>`;}
+
 let B;
 function quizTopic(i){const t=GAME.topics[i];B={t,qs:shuffle(t.qs.slice()),i:0,score:0,streak:0,best:0,correct:0,hp:5,bossMax:t.qs.length,bossHP:t.qs.length,answered:false};drawBattle();}
 function drawBattle(){if(B.i>=B.qs.length)return battleWin();if(B.hp<=0)return battleFaint();B.answered=false;const t=B.t,q=B.qs[B.i],taunt=t.taunts[B.i%t.taunts.length];
@@ -80,7 +88,7 @@ function drawBattle(){if(B.i>=B.qs.length)return battleWin();if(B.hp<=0)return b
   <div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div><button class="btn" id="next" style="display:none" onclick="sfx.click();bNext()">NEXT ➡️</button>`;
  const opts=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.tx;b.onclick=()=>bAns(b,o.k===q.a,q);opts.appendChild(b);});}
 function bAns(btn,correct,q){if(B.answered)return;B.answered=true;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
- const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';
+ const exx=document.getElementById('explain');exx.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>Answer:</b> ")+q.w;exx.style.display='block';
  if(correct){B.correct++;B.streak++;B.best=Math.max(B.best,B.streak);B.bossHP=Math.max(0,B.bossHP-1);B.score+=100+(B.streak-1)*25;if(B.streak>=3){sfx.crit();toast("💥 CRITICAL! x"+B.streak);}else{sfx.good();toast("✅ +"+(100+(B.streak-1)*25));}}
  else{B.streak=0;B.hp--;btn.classList.remove('dim');btn.classList.add('wrong');sfx.bad();toast("💢 Boss hits back!");}
  document.querySelector('.hp-e>i').style.width=Math.max(0,B.bossHP/B.bossMax*100)+'%';document.querySelector('.hp-s>i').style.width=B.hp/5*100+'%';
@@ -94,8 +102,7 @@ function battleWin(){sfx.win();saveScore(B.t.key,B.correct,B.qs.length);const pc
   <p class="center small">${pct>=90?"🌟 Flawless!":pct>=70?"💪 Strong — one more for the perfect run!":"📚 Beaten — revise & retry."}</p>
   <button class="btn green" onclick="sfx.click();map()">🗺️ Map</button><button class="btn ghost" onclick="sfx.click();battleRetry()">🔁 Replay</button>`;}
 
-/* ---- Number Dojo (calc) ---- */
-function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+/* Number Dojo */
 const DOJO=[
  {n:'Percentage of an amount',gen(){const p=[10,20,25,50][rnd(0,3)],y=rnd(2,9)*100;return{q:`Find ${p}% of ${y}.`,ans:y*p/100,work:`${y} ÷ 100 = ${y/100}; × ${p} = ${y*p/100}.`}}},
  {n:'Volume of a cuboid',gen(){const l=rnd(2,9),w=rnd(2,9),h=rnd(2,6);return{q:`Volume of a cuboid ${l}×${w}×${h} cm? (cm³)`,ans:l*w*h,work:`V = L×W×H = ${l}×${w}×${h} = ${l*w*h} cm³.`}}},
@@ -109,17 +116,16 @@ function dojoQ(){if(DJ.i>=DJ.total)return dojoResult();const F=DOJO[rnd(0,DOJO.l
  app.innerHTML=`<div class="topbar"><span class="tag">🥋 Dojo ${DJ.i+1}/${DJ.total}</span></div><div class="hud"><div class="stat"><b>${DJ.marks}</b><span>Marks</span></div><div class="stat"><b>${DJ.i+1}/${DJ.total}</b><span>Q</span></div></div>
   <div class="info"><b>${F.n}</b></div><div class="q" style="margin-top:8px">${DJ.cur.item.q}</div><input type="text" id="din" inputmode="decimal" placeholder="Answer (number only)"><button class="btn" id="dsub" onclick="dojoCheck()">✅ Check</button><div class="explain" id="dex"></div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
  const inp=document.getElementById('din');inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')dojoCheck();});}
-function dojoCheck(){if(DJ.answered)return;const v=parseFloat(document.getElementById('din').value),it=DJ.cur.item,ok=!isNaN(v)&&Math.abs(v-it.ans)<0.01;DJ.answered=true;const ex=document.getElementById('dex');
- if(ok){DJ.marks++;sfx.good();ex.innerHTML="✅ <b>Correct!</b> "+it.work;}else{sfx.bad();ex.innerHTML="❌ <b>Answer: "+it.ans+"</b><br>"+it.work;}ex.style.display='block';
+function dojoCheck(){if(DJ.answered)return;const v=parseFloat(document.getElementById('din').value),it=DJ.cur.item,ok=!isNaN(v)&&Math.abs(v-it.ans)<0.01;DJ.answered=true;const exx=document.getElementById('dex');
+ if(ok){DJ.marks++;sfx.good();exx.innerHTML="✅ <b>Correct!</b> "+it.work;}else{sfx.bad();exx.innerHTML="❌ <b>Answer: "+it.ans+"</b><br>"+it.work;}exx.style.display='block';
  const s=document.getElementById('dsub');s.textContent=DJ.i>=DJ.total-1?'🏁 Finish':'Next ➡️';s.onclick=()=>{DJ.i++;dojoQ();};}
 function dojoResult(){const pct=Math.round(DJ.marks/DJ.total*100);sfx.win();app.innerHTML=`<h1>🥋 ${DJ.marks}/${DJ.total}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><button class="btn" onclick="sfx.click();dojo()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 
-/* ---- Vocab Match ---- */
+/* Vocab Match */
 let VM;
-function vocabMatch(){const pool=shuffle(GAME.extra.pairs.slice()).slice(0,6);VM={pairs:pool,left:shuffle(pool.map(p=>p[0])),right:shuffle(pool.map(p=>p[1])),selL:null,selR:null,done:0,tries:0};drawVM();}
+function vocabMatch(){const pool=shuffle(ex('vocab').pairs.slice()).slice(0,6);VM={pairs:pool,left:shuffle(pool.map(p=>p[0])),right:shuffle(pool.map(p=>p[1])),selL:null,selR:null,done:0,tries:0};drawVM();}
 function vmId(side,w){return side+'_'+btoa(unescape(encodeURIComponent(w))).replace(/[^a-zA-Z0-9]/g,'');}
-function drawVM(){
- const lcol=VM.left.map(w=>`<button class="mbtn" id="${vmId('L',w)}" onclick="vmPick('L','${encodeURIComponent(w)}')">${w}</button>`).join('');
+function drawVM(){const lcol=VM.left.map(w=>`<button class="mbtn" id="${vmId('L',w)}" onclick="vmPick('L','${encodeURIComponent(w)}')">${w}</button>`).join('');
  const rcol=VM.right.map(w=>`<button class="mbtn" id="${vmId('R',w)}" onclick="vmPick('R','${encodeURIComponent(w)}')">${w}</button>`).join('');
  app.innerHTML=`<div class="topbar"><span class="tag">🔤 ${GAME.name} Match</span></div><div class="sub" id="vmsub">Tap a word, then its English meaning. Matched: <b>${VM.done}/${VM.pairs.length}</b></div><div class="matchgrid"><div class="mcol">${lcol}</div><div class="mcol">${rcol}</div></div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 function vmPick(side,enc){const w=decodeURIComponent(enc);const el=document.getElementById(vmId(side,w));if(!el||el.classList.contains('done'))return;sfx.click();
@@ -131,7 +137,74 @@ function vmPick(side,enc){const w=decodeURIComponent(enc);const el=document.getE
   else{lEl.classList.add('bad');rEl.classList.add('bad');sfx.bad();const a=VM.selL,b=VM.selR;VM.selL=null;VM.selR=null;
    setTimeout(()=>{const x=document.getElementById(vmId('L',a)),y=document.getElementById(vmId('R',b));if(x&&!x.classList.contains('done'))x.classList.remove('bad','sel');if(y&&!y.classList.contains('done'))y.classList.remove('bad','sel');},600);}}}
 
-/* ---- Written ---- */
+/* TTS Hear It */
+let TTS;
+function ttsLab(){TTS=ex('tts');const btns=TTS.pairs.map((p,i)=>`<button class="opt" style="text-align:center" onclick="ttsSpeak(${i})">🔊 ${p[0]}</button>`).join('');
+ app.innerHTML=`<div class="topbar"><span class="tag">🔊 Hear It!</span></div><h2>Listen & learn</h2><div class="sub">Tap a word to hear it spoken aloud and see its meaning.</div><div class="opts">${btns}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function ttsSpeak(i){const p=TTS.pairs[i];toast(p[0]+' = '+p[1]);try{const u=new SpeechSynthesisUtterance(p[0]);u.lang=TTS.lang;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){toast('(speech not available)');}}
+
+/* Piano */
+const NOTES=[['C',261.63,0],['C#',277.18,1],['D',293.66,0],['D#',311.13,1],['E',329.63,0],['F',349.23,0],['F#',369.99,1],['G',392.00,0],['G#',415.30,1],['A',440.00,0],['A#',466.16,1],['B',493.88,0],['C',523.25,0]];
+function piano(){const keys=NOTES.map((n,i)=>`<button class="key ${n[2]?'blk':''}" onmousedown="playNote(${i})" ontouchstart="event.preventDefault();playNote(${i})">${n[0]}</button>`).join('');
+ app.innerHTML=`<div class="topbar"><span class="tag">🎹 Play Piano</span></div><h2>Mini Keyboard</h2><div class="sub">Tap the keys to play! White = natural notes, dark = sharps (#).</div>
+  <div class="keys">${keys}</div>
+  <div class="info" style="margin-top:12px"><b>Note values:</b> semibreve = 4 beats · minim = 2 · crotchet = 1 · quaver = ½.<br><b>Dynamics:</b> forte (f) = loud · piano (p) = quiet · crescendo = gradually louder.<br>Try playing C–D–E–F–G–A–B–C — that's a scale! 🎶</div>
+  <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function playNote(i){tone(NOTES[i][1],0.6);}
+
+/* Binary Lab */
+let BIN;
+function binaryLab(){BIN={bits:[0,0,0,0,0,0,0,0],target:rnd(1,255)};drawBin();}
+function drawBin(){const vals=[128,64,32,16,8,4,2,1];const total=BIN.bits.reduce((s,b,i)=>s+(b?vals[i]:0),0);
+ const cells=BIN.bits.map((b,i)=>`<button class="mbtn" style="${b?'background:var(--good);color:#031':''}" onclick="binToggle(${i})"><div style="font-size:10px;color:#9aa">${vals[i]}</div><div style="font-size:22px">${b}</div></button>`).join('');
+ const win=total===BIN.target;
+ app.innerHTML=`<div class="topbar"><span class="tag">🔢 Binary Lab</span></div><h2>Make the number</h2><div class="sub">Toggle the bits (1 = on) so the binary number equals the target. Each bit is worth the value above it.</div>
+  <div class="hud"><div class="stat"><b>${BIN.target}</b><span>Target</span></div><div class="stat"><b>${total}</b><span>Your total</span></div></div>
+  <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:5px">${cells}</div>
+  <div class="info" style="margin-top:10px">Binary: <b>${BIN.bits.join('')}</b> = decimal <b>${total}</b> ${win?'✅ <b style="color:var(--good)">MATCH!</b>':''}<br>Computers store everything as binary — 8 bits = 1 byte.</div>
+  <button class="btn" onclick="sfx.click();BIN.target=rnd(1,255);BIN.bits=[0,0,0,0,0,0,0,0];drawBin()">🎲 New target</button>
+  <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
+ if(win)sfx.win();}
+function binToggle(i){BIN.bits[i]=BIN.bits[i]?0:1;sfx.click();drawBin();}
+
+/* Reaction Test */
+let RXN;
+function reaction(){RXN={state:'idle',best:null};drawRxn();}
+function drawRxn(){let box;
+ if(RXN.state==='idle')box=`<div class="rxbox" style="background:#2c3760" onclick="rxnStart()">⚡ Click to start</div>`;
+ else if(RXN.state==='wait')box=`<div class="rxbox" style="background:#7a2230">Wait for GREEN…</div>`;
+ else if(RXN.state==='go')box=`<div class="rxbox" style="background:#1f8a4a;color:#fff" onclick="rxnClick()">CLICK NOW!</div>`;
+ else box=`<div class="rxbox" style="background:#2c3760" onclick="rxnStart()">${RXN.ms} ms${RXN.best!=null?' · best '+RXN.best+' ms':''}<br><span style="font-size:13px;font-weight:normal">click to go again</span></div>`;
+ app.innerHTML=`<div class="topbar"><span class="tag">⚡ Reaction Test</span></div><div class="sub"><b>Reaction time</b> is a real component of fitness — vital in sport. How fast are you?</div>${box}<button class="btn ghost" onclick="sfx.click();reaction()">🔄 Reset</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function rxnStart(){RXN.state='wait';drawRxn();const d=900+Math.random()*2400;RXN.timer=setTimeout(()=>{RXN.state='go';RXN.t0=performance.now();drawRxn();},d);}
+function rxnClick(){if(RXN.state!=='go')return;const ms=Math.round(performance.now()-RXN.t0);RXN.ms=ms;if(RXN.best==null||ms<RXN.best)RXN.best=ms;RXN.state='done';sfx.good();drawRxn();}
+
+/* Colour Mixer */
+function colourLab(){app.innerHTML=`<div class="topbar"><span class="tag">🎨 Colour Mixer</span></div><h2>Mix a colour</h2><div class="sub">Screens make colours from Red, Green & Blue light. Drag the sliders!</div>
+  <div id="sw" style="height:90px;border-radius:14px;border:2px solid var(--line);background:rgb(128,128,128)"></div>
+  <div class="small" style="margin-top:8px">🔴 Red</div><input type="range" id="cr" min="0" max="255" value="128" oninput="updCol()">
+  <div class="small">🟢 Green</div><input type="range" id="cg" min="0" max="255" value="128" oninput="updCol()">
+  <div class="small">🔵 Blue</div><input type="range" id="cb" min="0" max="255" value="128" oninput="updCol()">
+  <div class="info center" id="cv" style="margin-top:8px">rgb(128, 128, 128)</div>
+  <div class="info" style="margin-top:8px"><b>Primary colours (paint):</b> red, yellow, blue.<br><b>Mix two primaries → a secondary:</b> red+yellow = orange · yellow+blue = green · blue+red = purple.</div>
+  <div class="opts" style="grid-template-columns:repeat(3,1fr);display:grid;margin-top:8px">
+   <button class="opt center" onclick="setCol(255,0,0)">Red</button><button class="opt center" onclick="setCol(255,165,0)">Orange</button><button class="opt center" onclick="setCol(255,255,0)">Yellow</button>
+   <button class="opt center" onclick="setCol(0,180,0)">Green</button><button class="opt center" onclick="setCol(0,90,255)">Blue</button><button class="opt center" onclick="setCol(140,0,200)">Purple</button></div>
+  <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;updCol();}
+function updCol(){const r=+document.getElementById('cr').value,g=+document.getElementById('cg').value,b=+document.getElementById('cb').value;document.getElementById('sw').style.background='rgb('+r+','+g+','+b+')';document.getElementById('cv').textContent='rgb('+r+', '+g+', '+b+')';}
+function setCol(r,g,b){document.getElementById('cr').value=r;document.getElementById('cg').value=g;document.getElementById('cb').value=b;sfx.click();updCol();}
+
+/* Order It */
+let ORD;
+function orderLab(){const e=ex('order');ORD={steps:e.steps,title:e.title,chosen:[],pool:shuffle(e.steps.map((s,i)=>({s,i})))};drawOrd();}
+function drawOrd(){const pool=ORD.pool.map(o=>`<button class="mbtn" ${ORD.chosen.includes(o.i)?'disabled style="opacity:.3"':''} onclick="ordPick(${o.i})">${o.s}</button>`).join('');
+ const chosen=ORD.chosen.map((i,n)=>`<b>${n+1}.</b> ${ORD.steps[i]}`).join('<br>');
+ app.innerHTML=`<div class="topbar"><span class="tag">🔀 Order It!</span></div><h2>${ORD.title}</h2><div class="sub">Click the steps in the correct order.</div>
+  <div class="opts">${pool}</div><div class="info" style="margin-top:10px">${chosen||'<span class="small">your order will appear here…</span>'}</div>
+  <button class="btn ghost" onclick="sfx.click();orderLab()">🔁 Reset</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function ordPick(i){const expected=ORD.chosen.length;if(i===expected){ORD.chosen.push(i);sfx.good();if(ORD.chosen.length===ORD.steps.length){sfx.win();setTimeout(()=>toast('🎉 Correct order!'),50);}drawOrd();}else{sfx.bad();toast('❌ Not the next step — try again');}}
+
+/* Written */
 let WR;
 function writtenMenu(){let t='';Object.keys(GAME.written).forEach(k=>{t+=`<div class="tile" onclick="sfx.click();wrStart('${k}')"><div class="em">📝</div><b>${k}</b></div>`;});
  app.innerHTML=`<div class="topbar"><span class="tag">📝 Written Exam</span></div><h2>Mark-scheme questions</h2><div class="sub">Answer, reveal the mark scheme, then mark yourself honestly.</div><div class="grid">${t}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
@@ -144,14 +217,14 @@ function wrReveal(){const q=WR.list[WR.i];const ms=document.getElementById('ms')
 function wrScore(m){WR.marks+=m;sfx.good();WR.i++;wrQ();}
 function wrResult(){const pct=Math.round(WR.marks/WR.max*100);sfx.win();app.innerHTML=`<h1>📝 ${WR.marks}/${WR.max}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><div class="sub">${WR.k} • ${pct}%</div><button class="btn" onclick="sfx.click();wrStart('${WR.k}')">🔁 Retry</button><button class="btn ghost" onclick="sfx.click();writtenMenu()">⬅️ Topics</button>`;}
 
-/* ---- Final Exam ---- */
+/* Final Exam */
 let FE;
 function finalExam(){let all=[];GAME.topics.forEach(t=>t.qs.forEach(q=>all.push(Object.assign({cat:t.name},q))));shuffle(all);FE={qs:all.slice(0,Math.min(20,all.length)),i:0,correct:0,stat:{},answered:false};feRender();}
 function feRender(){if(FE.i>=FE.qs.length)return feResult();FE.answered=false;const q=FE.qs[FE.i],prog=Math.round(FE.i/FE.qs.length*100);
  app.innerHTML=`<span class="cat" style="background:var(--accent2)">🎓 FINAL EXAM</span><div class="hud"><div class="stat"><b>${FE.i+1}/${FE.qs.length}</b><span>Q</span></div><div class="stat"><b>${FE.correct}</b><span>Correct</span></div><div class="stat"><b>${FE.i?Math.round(FE.correct/FE.i*100):0}%</b><span>Running</span></div></div><div class="bar"><i style="width:${prog}%"></i></div><span class="cat">${q.cat}</span><div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div><button class="btn" id="next" style="display:none" onclick="sfx.click();feNext()">NEXT ➡️</button>`;
  const opts=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.tx;b.onclick=()=>feChoose(b,o.k===q.a,q);opts.appendChild(b);});}
 function feChoose(btn,correct,q){if(FE.answered)return;FE.answered=true;FE.stat[q.cat]=FE.stat[q.cat]||{c:0,t:0};FE.stat[q.cat].t++;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
- const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>Correct!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';if(correct){FE.correct++;FE.stat[q.cat].c++;toast("✅");}else{btn.classList.remove('dim');btn.classList.add('wrong');toast("❌");}
+ const exx=document.getElementById('explain');exx.innerHTML=(correct?"✅ <b>Correct!</b> ":"❌ <b>Answer:</b> ")+q.w;exx.style.display='block';if(correct){FE.correct++;FE.stat[q.cat].c++;toast("✅");}else{btn.classList.remove('dim');btn.classList.add('wrong');toast("❌");}
  const n=document.getElementById('next');n.style.display='block';if(FE.i>=FE.qs.length-1)n.textContent='🏁 FINISH';}
 function feNext(){FE.i++;feRender();}
 function feResult(){const sc=loadScores();for(const c in FE.stat){const p=Math.round(FE.stat[c].c/FE.stat[c].t*100);if(sc[c]==null||p>=sc[c])sc[c]=p;}localStorage.setItem('rqg_'+GAME.id,JSON.stringify(sc));
@@ -160,9 +233,9 @@ function feResult(){const sc=loadScores();for(const c in FE.stat){const p=Math.r
  const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
  app.innerHTML=`<h1>🎓 FINAL EXAM</h1><div class="center" style="font-size:50px">${gm}</div><div class="hud"><div class="stat"><b>${FE.correct}/${FE.qs.length}</b><span>Score</span></div><div class="stat"><b>${pct}%</b><span>%</span></div><div class="stat"><b>${g}</b><span>Grade</span></div></div><h3 style="color:var(--accent);margin:8px 0 4px">By topic (weakest first):</h3>${rows}<button class="btn" onclick="sfx.click();finalExam()">🔁 Retake</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 
-/* ---- Gap Report ---- */
-function gapReport(){const s=loadScores();const cats=GAME.topics.map(t=>t.key),names={};GAME.topics.forEach(t=>names[t.key]=t.name);
- const ranked=cats.map(c=>({c:names[c],p:s[c]})).filter(x=>x.p!=null).sort((a,b)=>a.p-b.p);
+/* Gap Report */
+function gapReport(){const s=loadScores();const names={};GAME.topics.forEach(t=>names[t.key]=t.name);
+ const ranked=GAME.topics.map(t=>({c:t.name,p:s[t.key]})).filter(x=>x.p!=null).sort((a,b)=>a.p-b.p);
  const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
  const weak=ranked.filter(r=>r.p<70).map(r=>r.c);
  app.innerHTML=`<h1>📊 Gap Report</h1><div class="sub">${GAME.name}</div>${rows||'<p class="small center">Beat some bosses first!</p>'}${weak.length?`<div class="info" style="margin-top:12px"><b>🎯 Revise these first:</b> ${weak.join(', ')}.</div>`:(ranked.length?'<div class="info" style="margin-top:12px">🎉 Every attempted topic ≥70%!</div>':'')}<button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
