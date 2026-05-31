@@ -187,8 +187,27 @@ function hub(){
       <div class="station" onclick="SFX.click();genetics()">
         <div class="em">🧬</div><b>Genetics Lab</b>
         <span>Build a Punnett square, pick the parents' genes and see the offspring ratios — plus how genetic modification works.</span></div>
+      <div class="station" onclick="SFX.click();cellExplorer()">
+        <div class="em">🔬</div><b>Cell Explorer</b>
+        <span>Zoom into an animal or plant cell — click the organelles (nucleus, mitochondria, chloroplast…) to learn what each does.</span></div>
+      <div class="station" onclick="SFX.click();dnaLab()">
+        <div class="em">🧬</div><b>DNA Explorer</b>
+        <span>An animated double helix you can unzip to see the base pairs (A–T, C–G). Gene → chromosome → DNA, visualised.</span></div>
+      <div class="station" onclick="SFX.click();periodic()">
+        <div class="em">⚛️</div><b>Periodic Table</b>
+        <span>Click any element for its facts; highlight Group 1, Group 7 & Group 0 to spot the patterns.</span></div>
+      <div class="station" onclick="SFX.click();phScale()">
+        <div class="em">🌈</div><b>pH Scale</b>
+        <span>Slide from acid to alkali and watch the indicator colours, with real-world examples at every pH.</span></div>
+      <div class="station" onclick="SFX.click();waveLab()">
+        <div class="em">🌊</div><b>Wave Lab</b>
+        <span>Tweak frequency & amplitude on animated transverse and longitudinal waves, plus an EM-spectrum map.</span></div>
+      <div class="station" onclick="SFX.click();rateLab()">
+        <div class="em">💥</div><b>Reaction Rate</b>
+        <span>Collision theory live: crank up temperature & concentration and watch the particles collide faster.</span></div>
     </div>
-    <p class="small center" style="margin-top:14px">💡 Turn sound on for fizzes, pops & bangs. Everything works offline & saves your progress.</p>
+    <p class="small center" style="margin-top:14px">💡 <b>Did you know?</b> ${FACTS[Math.floor(Math.random()*FACTS.length)]}</p>
+    <p class="small center">🔊 Turn sound on for fizzes, pops & bangs. Works offline & saves your progress.</p>
   `;
 }
 
@@ -370,6 +389,8 @@ const ORGANS=[
   {id:"liver",name:"Liver",em:"🟤",fn:"Makes bile, which helps digest fats. Also cleans the blood.",job:"makes bile to help digestion"},
   {id:"stomach",name:"Stomach",em:"🟣",fn:"Adds acid and enzymes to break food down — digestion happens here.",job:"adds acid to break down food"},
   {id:"intestine",name:"Small intestine",em:"🌀",fn:"Where digestion is completed and soluble food is absorbed into the blood. (The large intestine absorbs water.)",job:"absorbs digested food"},
+  {id:"kidneys",name:"Kidneys",em:"🫘",fn:"Filter the blood, removing waste and excess water to make urine.",job:"filter the blood to make urine"},
+  {id:"bladder",name:"Bladder",em:"🟡",fn:"Stores urine until it leaves the body.",job:"store urine"},
 ];
 let BIO;
 function bio(){stopLoop();BIO={opened:false,quiz:false,qIndex:0,score:0,order:[]};renderBio()}
@@ -418,7 +439,9 @@ function organShape(o){const shapes={
   lungs:`<ellipse cx="178" cy="185" rx="24" ry="38" fill="#e89bb0"/><ellipse cx="242" cy="185" rx="24" ry="38" fill="#e89bb0"/>`,
   liver:`<path d="M140 200 q70 -22 96 -2 q-6 34 -52 40 q-44 2 -44 -38z" fill="#8a4a2b"/>`,
   stomach:`<path d="M236 200 q40 6 30 50 q-10 36 -48 22 q-26 -12 -6 -44 q12 -22 24 -28z" fill="#b85ea0"/>`,
-  intestine:`<path d="M170 260 q-14 24 16 28 q40 4 18 28 q-28 18 8 30 q40 10 20 34" fill="none" stroke="#e0a24e" stroke-width="15" stroke-linecap="round"/>`};
+  intestine:`<path d="M170 260 q-14 24 16 28 q40 4 18 28 q-28 18 8 30 q40 10 20 34" fill="none" stroke="#e0a24e" stroke-width="15" stroke-linecap="round"/>`,
+  kidneys:`<path d="M150 250 q-16 -18 2 -34 q20 -6 16 18 q-2 22 -18 16z" fill="#7a2b2b"/><path d="M270 250 q16 -18 -2 -34 q-20 -6 -16 18 q2 22 18 16z" fill="#7a2b2b"/>`,
+  bladder:`<ellipse cx="210" cy="330" rx="24" ry="20" fill="#e3c24a"/>`};
   return `<g class="organ" data-id="${o.id}" style="cursor:pointer" onclick="clickOrgan('${o.id}')">${shapes[o.id]}</g>`}
 function wireScalpel(){const svg=document.getElementById('frog');const sc=document.getElementById('scalpel');if(!sc)return;
   let dragging=false,startY=0,traveled=0;
@@ -876,7 +899,7 @@ function wrResult(){const pct=Math.round(WR.marks/WR.max*100);SFX.win();
 /* ===================== STATION 8 — PRO LAB (realistic) ===================== */
 const PCHEM={},PLIST=[];
 function ad(id,n,f,cat,c,ex){PCHEM[id]=Object.assign({id,n,f,cat,c},ex||{});PLIST.push(id)}
-const RANK={K:1,Na:2,Li:3,Ca:4,Mn:4.5,Cr:4.7,Mg:5,Al:6,Zn:7,Fe:8,Ni:8.5,Sn:9,W:9.5,Pb:10,H:11,Cu:12,Hg:12.5,Ag:13,Au:14,Pt:15};
+const RANK={K:1,Na:2,Li:3,Ca:4,Mn:4.5,Cr:4.7,Mg:5,Al:6,Ti:6.5,Zn:7,Fe:8,Co:8.2,Ni:8.5,Sn:9,W:9.5,Pb:10,H:11,Cu:12,Hg:12.5,Ag:13,Au:14,Pt:15};
 const HRANK={F:1,Cl:2,Br:3,I:4,At:5};
 /* --- Acids --- */
 ad('hcl','Hydrochloric acid','HCl','acid','#e9f0c8',{acid:1,strong:1});
@@ -1013,6 +1036,21 @@ ad('naclo3','Sodium chlorate','NaClO₃','salt','#eef2f5',{sol:1,oxidiser:1});
 ad('glycerol','Glycerol (glycerine)','C₃H₈O₃','other','#eef0e0',{fuel:1});
 ad('sugar','Sugar (sucrose)','C₁₂H₂₂O₁₁','other','#f0eede',{fuel:1,sol:1});
 ad('charcoal','Charcoal','C','other','#1c1c1c',{fuel:1});
+/* --- Even more chemicals --- */
+ad('sulfurous','Sulfurous acid','H₂SO₃','acid','#eef0d0',{acid:1});
+ad('nitrous','Nitrous acid','HNO₂','acid','#eef0d0',{acid:1});
+ad('cobalt','Cobalt','Co','metal','#7f93c0',{metal:'Co'});
+ad('titanium','Titanium','Ti','metal','#bfc6cf',{metal:'Ti'});
+ad('helium','Helium','He','gas','#dfe9ff',{});
+ad('neon','Neon','Ne','gas','#ffae3c',{});
+ad('argon','Argon','Ar','gas','#dfe9ff',{});
+ad('agcl','Silver chloride','AgCl','salt','#f0f0f0',{});
+ad('dryice','Dry ice (solid CO₂)','CO₂(s)','other','#eef7ff',{});
+ad('ln2','Liquid nitrogen','N₂(l)','other','#dff0ff',{});
+ad('bromwater','Bromine water','Br₂(aq)','halogen','#e0a040',{hal:'Br'});
+ad('chlorwater','Chlorine water','Cl₂(aq)','halogen','#e0f070',{hal:'Cl'});
+ad('iodinesol','Iodine solution','I₂(aq)','halogen','#7a4b9b',{hal:'I'});
+ad('nh4so4','Ammonium sulfate','(NH₄)₂SO₄','salt','#eef2f5',{sol:1,anion:'sulfate'});
 
 const PRECIP={ // sorted-id pair -> {col, name}
  'agno3|nacl':{c:'#f4f4f4',t:'a white precipitate of silver chloride'},
@@ -1373,6 +1411,199 @@ function drawGN(){
    <div class="info" style="margin-top:8px"><b>🧬 Genetic modification:</b> scientists can deliberately alter an organism's genes — e.g. crops engineered for higher yields or to make their own insecticide, or bacteria altered to produce medicines like insulin.</div>
    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
 }
+
+/* ===================== STATION 11 — CELL EXPLORER ===================== */
+const CELL_ORG=[
+ {id:'membrane',n:'Cell membrane',x:230,y:160,both:1,info:'Controls what enters and leaves the cell.'},
+ {id:'cytoplasm',n:'Cytoplasm',x:120,y:230,both:1,info:'Jelly-like fluid where most of the cell\'s chemical reactions happen.'},
+ {id:'nucleus',n:'Nucleus',x:230,y:160,both:1,info:'The control centre — contains the DNA (genetic instructions).'},
+ {id:'mito',n:'Mitochondria',x:330,y:110,both:1,info:'Where aerobic respiration happens, releasing energy — the "powerhouse" of the cell.'},
+ {id:'ribo',n:'Ribosomes',x:160,y:110,both:1,info:'Tiny structures that make proteins.'},
+ {id:'wall',n:'Cell wall',x:230,y:40,plant:1,info:'Made of cellulose — gives a plant cell strength and a fixed shape.'},
+ {id:'chloro',n:'Chloroplast',x:320,y:235,plant:1,info:'Contains chlorophyll and carries out photosynthesis.'},
+ {id:'vacuole',n:'Vacuole',x:200,y:170,plant:1,info:'A large sac of cell sap that keeps the plant cell firm (turgid).'},
+];
+let CE;
+function cellExplorer(){stopLoop();CE={plant:false,sel:'nucleus'};drawCE();}
+function drawCE(){
+  const list=CELL_ORG.filter(o=>o.both||(CE.plant&&o.plant));
+  const btns=list.map(o=>`<button class="tool" style="font-size:12px;${CE.sel===o.id?'border-color:var(--acid);color:var(--acid)':''}" onclick="CE.sel='${o.id}';drawCE()">${o.n}</button>`).join('');
+  const selO=list.find(o=>o.id===CE.sel)||list[0];
+  root.innerHTML=`<div class="topbar"><span class="tag">🔬 Cell Explorer</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <div class="toolbar" style="margin-bottom:6px">
+     <button class="tool" style="${!CE.plant?'border-color:var(--acid);color:var(--acid)':''}" onclick="CE.plant=false;CE.sel='nucleus';drawCE()">🐾 Animal cell</button>
+     <button class="tool" style="${CE.plant?'border-color:var(--acid);color:var(--acid)':''}" onclick="CE.plant=true;CE.sel='nucleus';drawCE()">🌿 Plant cell</button></div>
+   <canvas id="ce" width="460" height="300"></canvas>
+   <div class="toolbar" style="margin-top:8px">${btns}</div>
+   <div class="info" id="ceinfo"><b>${selO.n}</b> — ${selO.info}</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('ce');CE.cv=cv;CE.ctx=cv.getContext('2d');CE.t=0;ceLoop();
+}
+function ceLoop(){
+  if(!CE)return;const {ctx,cv}=CE,W=cv.width,H=cv.height;CE.t++;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1424';ctx.fillRect(0,0,W,H);const plant=CE.plant;
+  if(plant){ctx.fillStyle='#1f5e2e';ctx.fillRect(34,24,392,252);ctx.fillStyle='#2e7d4f';ctx.fillRect(46,36,368,228);}
+  else {ctx.fillStyle='#5a3b6b';ctx.beginPath();ctx.ellipse(230,150,196,124,0,0,6.28);ctx.fill();}
+  if(plant){ctx.fillStyle='#2f8fb0';ctx.beginPath();ctx.ellipse(200,160,124,86,0,0,6.28);ctx.fill();}
+  ctx.fillStyle='rgba(255,255,255,.10)';for(let i=0;i<22;i++){const x=70+((i*53+CE.t)%320),y=50+((i*37+Math.floor(CE.t*0.5))%200);ctx.beginPath();ctx.arc(x,y,2,0,6.28);ctx.fill();}
+  ctx.fillStyle='#7a4fa0';ctx.beginPath();ctx.arc(230,150,36,0,6.28);ctx.fill();ctx.fillStyle='#4a2d63';ctx.beginPath();ctx.arc(230,150,13,0,6.28);ctx.fill();
+  [[330,110],[140,225]].forEach((m,i)=>{ctx.save();ctx.translate(m[0],m[1]);ctx.rotate(Math.sin(CE.t*0.03+i)*0.3);ctx.fillStyle='#d4694f';ctx.beginPath();ctx.ellipse(0,0,22,11,0,0,6.28);ctx.fill();ctx.restore();});
+  if(plant){[[320,225],[150,100]].forEach(m=>{ctx.fillStyle='#2ecc71';ctx.beginPath();ctx.ellipse(m[0],m[1],20,11,0.5,0,6.28);ctx.fill();});}
+  ctx.fillStyle='#ffd23f';for(let i=0;i<14;i++){const x=90+((i*61)%300),y=60+((i*47)%190);ctx.beginPath();ctx.arc(x,y,2.5,0,6.28);ctx.fill();}
+  const sel=CELL_ORG.find(o=>o.id===CE.sel);
+  if(sel){if(sel.id==='membrane'||sel.id==='wall'){ctx.strokeStyle='#ffd23f';ctx.lineWidth=4;if(plant)ctx.strokeRect(34,24,392,252);else{ctx.beginPath();ctx.ellipse(230,150,196,124,0,0,6.28);ctx.stroke();}}
+    else{const g=ctx.createRadialGradient(sel.x,sel.y-10,2,sel.x,sel.y-10,42);g.addColorStop(0,'rgba(255,210,63,.5)');g.addColorStop(1,'rgba(255,210,63,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(sel.x,sel.y-10,42,0,6.28);ctx.fill();}}
+  raf=requestAnimationFrame(ceLoop);
+}
+
+/* ===================== STATION 12 — DNA EXPLORER ===================== */
+let DNA;
+function dnaLab(){stopLoop();DNA={unzip:false};drawDNA();}
+function drawDNA(){
+  root.innerHTML=`<div class="topbar"><span class="tag">🧬 DNA Explorer</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="dna" width="460" height="340"></canvas>
+   <div class="toolbar" style="margin-top:8px"><button class="tool" onclick="DNA.unzip=!DNA.unzip;SFX.click()">🔓 ${DNA.unzip?'Re-zip the helix':'Unzip the strands'}</button></div>
+   <div class="info">DNA is a <b>double helix</b>. The rungs are <b>base pairs</b> that always match: <b style="color:#ff6b6b">A–T</b> and <b style="color:#5fd16b">C–G</b>. A <b>gene</b> is a section of DNA that codes for a feature; a <b>chromosome</b> is a long coiled strand of DNA (humans have <b>46</b>).</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('dna');DNA.cv=cv;DNA.ctx=cv.getContext('2d');DNA.t=0;dnaLoop();
+}
+function dnaLoop(){
+  if(!DNA)return;const {ctx,cv}=DNA,W=cv.width,H=cv.height;DNA.t++;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1424';ctx.fillRect(0,0,W,H);
+  const cx=W/2,amp=46,k=0.045,sp=DNA.t*0.035,off=DNA.unzip?64:0;
+  const xA=y=>cx+Math.sin(y*k+sp)*amp-off, xB=y=>cx-Math.sin(y*k+sp)*amp+off;
+  ctx.lineWidth=5;ctx.strokeStyle='#6f9bff';ctx.beginPath();for(let y=20;y<H-8;y+=5){const x=xA(y);if(y===20)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();
+  ctx.strokeStyle='#ff8db0';ctx.beginPath();for(let y=20;y<H-8;y+=5){const x=xB(y);if(y===20)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();
+  const cols={A:'#ff6b6b',T:'#ffb03c',C:'#5fd16b',G:'#ffd23f'};
+  for(let y=34;y<H-14;y+=26){const a=xA(y),b=xB(y),idx=Math.floor(y/26)%2,b1=idx?'A':'C',b2=idx?'T':'G';
+    if(!DNA.unzip){ctx.strokeStyle='rgba(200,220,255,.35)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a,y);ctx.lineTo(b,y);ctx.stroke();}
+    ctx.textAlign='center';ctx.font='bold 10px Trebuchet MS';
+    ctx.fillStyle=cols[b1];ctx.beginPath();ctx.arc(a,y,8,0,6.28);ctx.fill();ctx.fillStyle='#06101e';ctx.fillText(b1,a,y+3);
+    ctx.fillStyle=cols[b2];ctx.beginPath();ctx.arc(b,y,8,0,6.28);ctx.fill();ctx.fillStyle='#06101e';ctx.fillText(b2,b,y+3);ctx.textAlign='start';}
+  raf=requestAnimationFrame(dnaLoop);
+}
+
+/* ===================== STATION 13 — PERIODIC TABLE ===================== */
+const PT_EL=[
+ {sym:'H',name:'Hydrogen',z:1,col:1,row:1,cat:'nonmetal',fact:'The lightest element — burns with a squeaky pop.'},
+ {sym:'He',name:'Helium',z:2,col:18,row:1,cat:'noble',fact:'A noble gas — unreactive; makes balloons float.'},
+ {sym:'Li',name:'Lithium',z:3,col:1,row:2,cat:'alkali',fact:'A soft Group 1 metal that reacts with water.'},
+ {sym:'Be',name:'Beryllium',z:4,col:2,row:2,cat:'alkaline'},
+ {sym:'B',name:'Boron',z:5,col:13,row:2,cat:'metalloid'},
+ {sym:'C',name:'Carbon',z:6,col:14,row:2,cat:'nonmetal',fact:'Forms diamond, graphite and all living things.'},
+ {sym:'N',name:'Nitrogen',z:7,col:15,row:2,cat:'nonmetal',fact:'Makes up 78% of the air.'},
+ {sym:'O',name:'Oxygen',z:8,col:16,row:2,cat:'nonmetal',fact:'Needed for respiration & combustion; relights a glowing splint.'},
+ {sym:'F',name:'Fluorine',z:9,col:17,row:2,cat:'halogen',fact:'The most reactive halogen (top of Group 7).'},
+ {sym:'Ne',name:'Neon',z:10,col:18,row:2,cat:'noble',fact:'Glows orange-red in neon signs.'},
+ {sym:'Na',name:'Sodium',z:11,col:1,row:3,cat:'alkali',fact:'Group 1 metal; fizzes and ignites on water.'},
+ {sym:'Mg',name:'Magnesium',z:12,col:2,row:3,cat:'alkaline',fact:'Burns with a bright white light.'},
+ {sym:'Al',name:'Aluminium',z:13,col:13,row:3,cat:'post'},
+ {sym:'Si',name:'Silicon',z:14,col:14,row:3,cat:'metalloid',fact:'Used in computer chips.'},
+ {sym:'P',name:'Phosphorus',z:15,col:15,row:3,cat:'nonmetal'},
+ {sym:'S',name:'Sulfur',z:16,col:16,row:3,cat:'nonmetal',fact:'Yellow solid; burns with a blue flame.'},
+ {sym:'Cl',name:'Chlorine',z:17,col:17,row:3,cat:'halogen',fact:'Group 7; a green toxic gas; kills bacteria in pools.'},
+ {sym:'Ar',name:'Argon',z:18,col:18,row:3,cat:'noble'},
+ {sym:'K',name:'Potassium',z:19,col:1,row:4,cat:'alkali',fact:'Group 1; even more reactive than sodium.'},
+ {sym:'Ca',name:'Calcium',z:20,col:2,row:4,cat:'alkaline',fact:'In bones, teeth and limestone.'},
+ {sym:'Fe',name:'Iron',z:26,col:8,row:4,cat:'transition',fact:'A magnetic metal; rusts; the main metal in steel.'},
+ {sym:'Cu',name:'Copper',z:29,col:11,row:4,cat:'transition',fact:'Reddish; a great conductor; forms blue salts.'},
+ {sym:'Zn',name:'Zinc',z:30,col:12,row:4,cat:'transition'},
+ {sym:'Br',name:'Bromine',z:35,col:17,row:4,cat:'halogen',fact:'Group 7; a red-brown liquid at room temperature.'},
+ {sym:'Kr',name:'Krypton',z:36,col:18,row:4,cat:'noble'},
+];
+let PT;
+function periodic(){stopLoop();PT={sel:'Na',hi:null};drawPT();}
+function ptGroupLabel(c){return c===1?'Group 1 — alkali metals':c===2?'Group 2 — alkaline earth metals':c===17?'Group 7 — halogens':c===18?'Group 0 — noble gases':(c>=3&&c<=12)?'Transition metals':'a main-group element';}
+function drawPT(){
+  const cc={alkali:'#ff6b6b',alkaline:'#ffb03c',nonmetal:'#5fd16b',halogen:'#9b5de5',noble:'#39e6ff',metalloid:'#caa15a',transition:'#f2a93b',post:'#8fb3d9'};
+  const cells=PT_EL.map(e=>{const hi=(PT.hi==='g1'&&e.col===1)||(PT.hi==='g7'&&e.col===17)||(PT.hi==='g0'&&e.col===18);
+    return `<button onclick="SFX.click();PT.sel='${e.sym}';drawPT()" style="grid-column:${e.col};grid-row:${e.row};background:${cc[e.cat]||'#445'};border:2px solid ${PT.sel===e.sym?'#fff':(hi?'#ffd23f':'transparent')};${hi?'box-shadow:0 0 9px #ffd23f;':''}border-radius:6px;color:#06101e;font-weight:bold;cursor:pointer;padding:5px 1px;font-family:inherit;font-size:11px;line-height:1.05">${e.sym}<br><span style="font-size:8px;font-weight:normal">${e.z}</span></button>`;}).join('');
+  const s=PT_EL.find(e=>e.sym===PT.sel);
+  root.innerHTML=`<div class="topbar"><span class="tag">⚛️ Periodic Table</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <div class="toolbar"><button class="tool" style="font-size:12px;${PT.hi==='g1'?'border-color:var(--acid);color:var(--acid)':''}" onclick="PT.hi=PT.hi==='g1'?null:'g1';drawPT()">Highlight Group 1</button><button class="tool" style="font-size:12px;${PT.hi==='g7'?'border-color:var(--acid);color:var(--acid)':''}" onclick="PT.hi=PT.hi==='g7'?null:'g7';drawPT()">Group 7</button><button class="tool" style="font-size:12px;${PT.hi==='g0'?'border-color:var(--acid);color:var(--acid)':''}" onclick="PT.hi=PT.hi==='g0'?null:'g0';drawPT()">Group 0</button></div>
+   <div style="display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin:10px 0">${cells}</div>
+   <div class="info"><b>${s.name} (${s.sym})</b> · atomic number <b>${s.z}</b><br>${ptGroupLabel(s.col)}. ${s.fact||''}</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+}
+
+/* ===================== STATION 14 — pH SCALE ===================== */
+let PH;
+function phScale(){stopLoop();PH={v:7};drawPH();}
+function drawPH(){
+  const ex=['Battery acid 🔋','Stomach acid','Lemon juice 🍋','Vinegar','Acid rain ☔','Black coffee ☕','Milk 🥛','Pure water 💧','Sea water 🌊','Baking soda','Soap 🧼','Ammonia','Bleach','Oven cleaner','Drain cleaner'];
+  const cols=['#d2222d','#e6492d','#ee6b1f','#f3941c','#f7c52b','#d8e02b','#a7e02b','#5fd16b','#3fd1a0','#3fc9d1','#3f9bd1','#3f6bd1','#5b3fd1','#8b3fd1','#b13fd1'];
+  const v=PH.v,label=v<7?'ACID 🔴':v>7?'ALKALI 🟣':'NEUTRAL 🟢';
+  const bar=cols.map((c,i)=>`<div style="flex:1;background:${c};height:36px;border:2px solid ${i===v?'#fff':'transparent'};transition:transform .1s;${i===v?'transform:scaleY(1.25);z-index:2':''}"></div>`).join('');
+  root.innerHTML=`<div class="topbar"><span class="tag">🌈 pH Scale</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <h2 class="center">pH <b style="color:var(--acid)">${v}</b> — ${label}</h2>
+   <div style="display:flex;gap:1px;border-radius:8px;overflow:hidden;margin:12px 0">${bar}</div>
+   <input type="range" min="0" max="14" value="${v}" oninput="PH.v=+this.value;SFX.click();drawPH()">
+   <div style="display:flex;justify-content:space-between;color:#8fb3d9;font-size:12px"><span>0 strong acid</span><span>7 neutral</span><span>14 strong alkali</span></div>
+   <div class="info center" style="margin-top:10px">A typical substance at pH ${v}: <b>${ex[v]}</b>.<br>Universal indicator here turns <b>${v<3?'red':v<6?'orange/yellow':v<8?'green':v<11?'blue':'purple'}</b>.</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+}
+
+/* ===================== STATION 15 — WAVE LAB ===================== */
+let WV;
+function waveLab(){stopLoop();WV={freq:3,amp:40,longi:false};drawWV();}
+function drawWV(){
+  root.innerHTML=`<div class="topbar"><span class="tag">🌊 Wave Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="wv" width="460" height="190"></canvas>
+   <div class="toolbar" style="margin-top:6px"><button class="tool" style="${!WV.longi?'border-color:var(--acid);color:var(--acid)':''}" onclick="WV.longi=false;drawWV()">〰️ Transverse</button><button class="tool" style="${WV.longi?'border-color:var(--acid);color:var(--acid)':''}" onclick="WV.longi=true;drawWV()">||| Longitudinal</button></div>
+   <div class="small">Frequency: <b id="fl">${WV.freq}</b></div><input type="range" min="1" max="8" value="${WV.freq}" oninput="WV.freq=+this.value;document.getElementById('fl').textContent=this.value">
+   <div class="small">Amplitude: <b id="al">${WV.amp}</b></div><input type="range" min="8" max="70" value="${WV.amp}" oninput="WV.amp=+this.value;document.getElementById('al').textContent=this.value">
+   <div class="info">Higher <b>frequency</b> = higher <b>energy</b>. <b>Transverse</b> waves vibrate at 90° to travel (light, water); <b>longitudinal</b> waves vibrate along travel, making compressions & rarefactions (sound).</div>
+   <div style="display:flex;height:24px;border-radius:6px;overflow:hidden;margin-top:8px;font-size:9px;color:#000;text-align:center;line-height:24px">
+     <div style="flex:1;background:#c0392b">radio</div><div style="flex:1;background:#e67e22">micro</div><div style="flex:1;background:#f39c12">IR</div><div style="flex:1;background:#2ecc71">visible</div><div style="flex:1;background:#3498db">UV</div><div style="flex:1;background:#9b59b6">X-ray</div><div style="flex:1;background:#6b3fa0;color:#fff">gamma</div></div>
+   <div class="small center">← lower energy &nbsp;·&nbsp; the EM spectrum &nbsp;·&nbsp; higher energy →</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('wv');WV.cv=cv;WV.ctx=cv.getContext('2d');WV.t=0;wvLoop();
+}
+function wvLoop(){
+  if(!WV)return;const {ctx,cv}=WV,W=cv.width,H=cv.height;WV.t++;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1424';ctx.fillRect(0,0,W,H);const cy=H/2;
+  if(!WV.longi){ctx.strokeStyle='#39e6ff';ctx.lineWidth=3;ctx.beginPath();for(let x=0;x<W;x++){const y=cy-Math.sin(x*0.012*WV.freq+WV.t*0.1)*WV.amp;if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();}
+  else{for(let i=4;i<W;i+=6){const d=Math.sin(i*0.012*WV.freq+WV.t*0.1)*7;const a=0.35+0.65*((Math.cos(i*0.012*WV.freq+WV.t*0.1)+1)/2);ctx.fillStyle='rgba(57,230,255,'+a.toFixed(2)+')';ctx.beginPath();ctx.arc(i+d,cy,3.2,0,6.28);ctx.fill();}}
+  raf=requestAnimationFrame(wvLoop);
+}
+
+/* ===================== STATION 16 — REACTION RATE ===================== */
+let RT;
+function rateLab(){stopLoop();RT={temp:45,conc:22};drawRT();}
+function drawRT(){
+  root.innerHTML=`<div class="topbar"><span class="tag">💥 Reaction Rate</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="rt" width="460" height="230"></canvas>
+   <div class="small">🌡️ Temperature: <b id="tl">${RT.temp}</b></div><input type="range" min="10" max="100" value="${RT.temp}" oninput="RT.temp=+this.value;document.getElementById('tl').textContent=this.value;rtInit()">
+   <div class="small">🧪 Concentration (particles): <b id="cl">${RT.conc}</b></div><input type="range" min="6" max="55" value="${RT.conc}" oninput="RT.conc=+this.value;document.getElementById('cl').textContent=this.value;rtInit()">
+   <div class="info" id="rtinfo">Collision theory: <b>more particles</b> (concentration) and <b>faster particles</b> (temperature) → <b>more frequent collisions</b> → faster reaction.</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('rt');RT.cv=cv;RT.ctx=cv.getContext('2d');rtInit();rtLoop();
+}
+function rtInit(){if(!RT||!RT.cv)return;const cv=RT.cv,sp=RT.temp/22;RT.p=[];for(let i=0;i<RT.conc;i++)RT.p.push({x:18+Math.random()*(cv.width-36),y:18+Math.random()*(cv.height-36),vx:(Math.random()-.5)*sp*2,vy:(Math.random()-.5)*sp*2});RT.coll=0;RT.frames=0;}
+function rtLoop(){
+  if(!RT)return;const {ctx,cv}=RT,W=cv.width,H=cv.height;RT.frames++;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a1424';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(120,180,255,.3)';ctx.lineWidth=2;ctx.strokeRect(8,8,W-16,H-16);
+  const sp=RT.temp/22;
+  RT.p.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<14||p.x>W-14)p.vx*=-1;if(p.y<14||p.y>H-14)p.vy*=-1;
+    const cur=Math.hypot(p.vx,p.vy)||0.01;if(Math.abs(cur-sp)>0.8){p.vx*=sp/cur;p.vy*=sp/cur;}
+    ctx.fillStyle='#39e6ff';ctx.beginPath();ctx.arc(p.x,p.y,5,0,6.28);ctx.fill();});
+  for(let i=0;i<RT.p.length;i++)for(let j=i+1;j<RT.p.length;j++){const a=RT.p[i],b=RT.p[j];if(Math.abs(a.x-b.x)<11&&Math.abs(a.y-b.y)<11){RT.coll++;ctx.fillStyle='rgba(255,210,63,.6)';ctx.beginPath();ctx.arc((a.x+b.x)/2,(a.y+b.y)/2,7,0,6.28);ctx.fill();}}
+  if(RT.frames%30===0){const rate=Math.round(RT.coll/30);const e=document.getElementById('rtinfo');if(e)e.innerHTML=`Collision theory: more & faster particles → more collisions → faster reaction.<br><b>Collision rate now: ~${rate}/frame</b> ${rate>20?'🔥 fast!':rate>8?'⚡ moderate':'🐢 slow'}`;RT.coll=0;}
+  raf=requestAnimationFrame(rtLoop);
+}
+
+const FACTS=[
+ 'Helium is so light it can drift right out of the atmosphere into space.',
+ 'A lightning bolt is about 5× hotter than the surface of the Sun.',
+ 'Sound can\'t travel through space — there are no particles to vibrate.',
+ 'Water expands when it freezes — that\'s why ice floats.',
+ 'Bananas are slightly radioactive (they contain potassium-40).',
+ 'Sharks are older than trees.',
+ 'The only letter not on the periodic table is the letter J.',
+ 'Hot water can sometimes freeze faster than cold (the Mpemba effect).',
+ 'Your body contains enough carbon to make about 9,000 pencils.',
+ 'Honey never spoils — 3,000-year-old honey is still edible.',
+];
 
 /* boot */
 hub();
