@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚗️ MAD LAB — Interactive Science Quest 🔬</title>
+<style>
+  :root{
+    --bg:#070b14; --panel:#0e1626; --panel2:#13203a; --line:#244064;
+    --neon:#39e6ff; --neon2:#7cff6b; --acid:#ffe14d; --danger:#ff4d6d; --pur:#b06bff;
+    --ink:#eaf4ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Trebuchet MS','Segoe UI',sans-serif;color:var(--ink);
+    background:radial-gradient(1200px 700px at 70% -10%, #16263f 0%, var(--bg) 60%);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;overflow-x:hidden}
+  .wrap{width:100%;max-width:880px}
+  .panel{background:linear-gradient(180deg,#0f1a2e,#0b1322);border:2px solid var(--line);
+    border-radius:20px;padding:20px;box-shadow:0 24px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05)}
+  h1{font-size:30px;text-align:center;letter-spacing:.04em;text-shadow:0 0 18px rgba(57,230,255,.5), 0 2px 0 #000}
+  h2{font-size:22px;margin-bottom:6px}
+  .sub{text-align:center;color:#8fb3d9;margin-bottom:14px;font-size:14px}
+  .glow{color:var(--neon)}
+  .btn{margin-top:12px;width:100%;padding:14px;border:none;border-radius:13px;cursor:pointer;
+    font-size:17px;font-weight:bold;font-family:inherit;color:#012;
+    background:linear-gradient(180deg,var(--neon),#1ec8e6);box-shadow:0 5px 0 #128199, 0 10px 18px rgba(0,0,0,.4);transition:transform .06s}
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #128199}
+  .btn.ghost{background:#16243d;color:var(--ink);box-shadow:0 5px 0 #0a1322}
+  .btn.green{background:linear-gradient(180deg,var(--neon2),#3fd44f);color:#031;box-shadow:0 5px 0 #1f8a2a}
+  .btn.red{background:linear-gradient(180deg,var(--danger),#d62f4d);color:#fff;box-shadow:0 5px 0 #8c1226}
+  .btn.gold{background:linear-gradient(180deg,var(--acid),#e6b800);color:#221;box-shadow:0 5px 0 #9c7e00}
+  .btn.sm{width:auto;display:inline-block;padding:10px 16px;font-size:15px;margin:4px}
+  .btnrow{display:flex;gap:10px;margin-top:12px}
+
+  .stations{display:grid;grid-template-columns:1fr;gap:14px;margin-top:6px}
+  @media(min-width:620px){.stations{grid-template-columns:1fr 1fr}}
+  .station{background:linear-gradient(180deg,#13203a,#0d1729);border:2px solid var(--line);
+    border-radius:18px;padding:18px;cursor:pointer;text-align:center;transition:transform .12s,border-color .15s,box-shadow .15s;position:relative;overflow:hidden}
+  .station:hover{transform:translateY(-5px);border-color:var(--neon);box-shadow:0 14px 30px rgba(57,230,255,.18)}
+  .station .em{font-size:50px;filter:drop-shadow(0 0 14px rgba(57,230,255,.4))}
+  .station b{display:block;font-size:18px;margin-top:6px}
+  .station span{font-size:12.5px;color:#8fb3d9;display:block;margin-top:4px;line-height:1.4}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+  .tag{font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--neon)}
+  .muteBtn{background:#16243d;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px}
+
+  canvas{display:block;border-radius:14px;background:#08101f;width:100%;touch-action:none}
+  .lab{display:grid;gap:12px}
+  @media(min-width:680px){.lab{grid-template-columns:1.25fr 1fr}}
+  .shelf{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;align-content:start}
+  .reagent{display:flex;align-items:center;gap:8px;background:#13203a;border:2px solid var(--line);
+    border-radius:12px;padding:8px 9px;cursor:pointer;transition:transform .08s,border-color .12s;text-align:left}
+  .reagent:hover{transform:translateY(-2px);border-color:var(--neon)}
+  .reagent .rem{font-size:22px;flex:none}
+  .reagent .rn{font-size:12.5px;font-weight:bold;line-height:1.1}
+  .reagent .rf{font-size:10.5px;color:#8fb3d9}
+  .info{background:#0c1424;border:2px solid var(--line);border-radius:13px;padding:13px;font-size:14px;line-height:1.5;min-height:64px}
+  .info b{color:var(--acid)}
+  .eq{font-family:'Courier New',monospace;background:#091020;border:1px dashed var(--line);border-radius:10px;padding:8px 10px;margin-top:8px;color:var(--neon2);font-size:14px;word-break:break-word}
+  .discCount{font-size:13px;color:#8fb3d9}
+  .pillrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .pill{font-size:11px;padding:4px 9px;border-radius:999px;background:#0c1424;border:1px solid var(--line);color:#5b7da3}
+  .pill.got{background:#0e2a16;border-color:#2fae50;color:var(--neon2)}
+  .warn{color:var(--danger);font-weight:bold}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+  .tool{background:#13203a;border:2px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;font-size:14px;font-weight:bold;color:var(--ink)}
+  .tool.active{border-color:var(--acid);color:var(--acid);box-shadow:0 0 12px rgba(255,225,77,.3)}
+  input[type=range]{width:100%;accent-color:var(--neon)}
+  .stateLbl{font-size:26px;font-weight:bold;text-align:center;letter-spacing:.05em}
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#000;border:2px solid var(--neon);color:var(--neon);
+    padding:10px 20px;border-radius:999px;font-weight:bold;font-size:15px;opacity:0;transition:opacity .25s, top .25s;pointer-events:none;z-index:60;text-align:center}
+  .toast.show{opacity:1;top:26px}
+  .hud{display:flex;gap:10px;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+  .stat{flex:1;min-width:78px;background:#0c1424;border:2px solid var(--line);border-radius:14px;padding:8px;text-align:center}
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:10px;color:#8fb3d9;text-transform:uppercase;letter-spacing:.06em}
+  .streak.fire b{color:var(--acid);text-shadow:0 0 12px var(--acid)}
+  .center{text-align:center}
+  .small{font-size:13px;color:#8fb3d9;line-height:1.5}
+  svg{width:100%;height:auto;display:block}
+  .shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+  .glowbtn{animation:gl 1.6s infinite}
+  @keyframes gl{0%,100%{box-shadow:0 5px 0 #1f8a2a,0 0 0 rgba(124,255,107,0)}50%{box-shadow:0 5px 0 #1f8a2a,0 0 22px rgba(124,255,107,.6)}}
+  .pulse{animation:pulse .45s}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+  /* exam arena */
+  .topicgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(min-width:620px){.topicgrid{grid-template-columns:1fr 1fr 1fr}}
+  .topic{background:#13203a;border:2px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;text-align:center;transition:transform .1s,border-color .12s;position:relative}
+  .topic:hover{transform:translateY(-3px);border-color:var(--neon)}
+  .topic .em{font-size:30px}
+  .topic b{display:block;font-size:13.5px;margin-top:4px}
+  .topic .score{position:absolute;top:6px;right:8px;font-size:11px;color:var(--neon2);font-weight:bold}
+  .fighter{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .fighter .face{font-size:42px;flex:none;width:56px;text-align:center}
+  .fighter .bars{flex:1}
+  .fighter .nm{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .hpbar{height:16px;background:#0c1424;border-radius:10px;overflow:hidden;border:2px solid var(--line)}
+  .hpbar>i{display:block;height:100%;transition:width .4s}
+  .hp-enemy>i{background:linear-gradient(90deg,#d62f4d,#ff7d99)}
+  .hp-self>i{background:linear-gradient(90deg,#2cb96a,#5dffa0)}
+  .bubble{background:#0c1424;border:2px solid var(--line);border-radius:14px;padding:10px 13px;font-size:13.5px;color:#dcd6f5;margin:8px 0;font-style:italic}
+  .q{font-size:19px;font-weight:bold;line-height:1.35;margin:8px 0 12px}
+  .opts{display:grid;gap:9px}
+  .opt{text-align:left;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#13203a;color:var(--ink);font-size:15.5px;cursor:pointer;transition:transform .08s,background .12s;font-family:inherit}
+  .opt:hover{background:#1b2c4a;transform:translateY(-2px)}
+  .opt.correct{background:var(--neon2);color:#031;border-color:#2fae50;font-weight:bold}
+  .opt.wrong{background:var(--danger);color:#fff;border-color:#d62f4d;font-weight:bold}
+  .opt.dim{opacity:.4}
+  .explain{margin-top:12px;background:#0c1424;border-left:5px solid var(--acid);border-radius:10px;padding:12px;font-size:14px;line-height:1.5;color:#dcd6f5;display:none}
+  .explain b{color:var(--acid)}
+  .report-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+  .report-row .name{width:130px;font-weight:bold;font-size:13px}
+  .report-row .track{flex:1;height:14px;background:#0c1424;border-radius:8px;overflow:hidden;border:2px solid var(--line)}
+  .report-row .track>i{display:block;height:100%}
+  .report-row .pct{width:44px;text-align:right;font-weight:bold;font-size:13px}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="wrap"><div class="panel" id="app"></div></div>
+
+<script>
+const root=document.getElementById('app');
+const toastEl=document.getElementById('toast');
+let muted=false;
+function toast(t,ms){toastEl.innerHTML=t;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove('show'),ms||1500)}
+
+/* ---------------- SOUND ---------------- */
+let actx;function AC(){actx=actx||new (window.AudioContext||window.webkitAudioContext)();return actx}
+function tone(f,d,t,vol){if(muted)return;try{const a=AC();const o=a.createOscillator(),g=a.createGain();o.type=t||'square';o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(vol||.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.start();o.stop(a.currentTime+d)}catch(e){}}
+function noise(d,vol,ff){if(muted)return;try{const a=AC();const n=a.sampleRate*d;const buf=a.createBuffer(1,n,a.sampleRate);const dt=buf.getChannelData(0);for(let i=0;i<n;i++)dt[i]=(Math.random()*2-1)*Math.pow(1-i/n,1.5);const s=a.createBufferSource();s.buffer=buf;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=ff||2000;const g=a.createGain();g.gain.value=vol||.3;s.connect(f);f.connect(g);g.connect(a.destination);s.start()}catch(e){}}
+const SFX={fizz:()=>noise(1.0,.22,1600),pop:()=>{tone(700,.06);setTimeout(()=>tone(950,.07),50)},
+  bang:()=>{noise(.5,.5,500);tone(70,.5,'sawtooth',.3)},whoosh:()=>noise(.7,.25,800),flame:()=>noise(.9,.3,1200),
+  ding:()=>{tone(880,.1);setTimeout(()=>tone(1320,.16),90)},cut:()=>noise(.18,.25,3000),
+  click:()=>tone(440,.04),win:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.16),i*110))};
+function toggleMute(){muted=!muted;document.querySelectorAll('#muteBtn').forEach(b=>b.textContent=muted?'🔇':'🔊')}
+let raf=null;function stopLoop(){if(raf){cancelAnimationFrame(raf);raf=null}}
+
+/* color helpers */
+function hx(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function rgb(r,g,b){return '#'+[r,g,b].map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0')).join('')}
+function blend(c1,c2,t){const a=hx(c1),b=hx(c2);return rgb(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t)}
+
+/* ====================================================================== */
+/*  HUB                                                                   */
+/* ====================================================================== */
+function hub(){
+  stopLoop();
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">🔬 MAD LAB</span>
+      <button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <h1>⚗️ MAD LAB ⚗️</h1>
+    <div class="sub">Year 8 Science • Mix it. Cut it. Melt it. Then <span class="glow">ace the exam.</span></div>
+    <div class="stations">
+      <div class="station" onclick="SFX.click();chem()">
+        <div class="em">⚗️</div><b>Reaction Chamber</b>
+        <span>Mix chemicals, set them alight & test gases — combustion, displacement, EXPLOSIONS. 11 reactions to discover.</span></div>
+      <div class="station" onclick="SFX.click();bio()">
+        <div class="em">🐸</div><b>Dissection Bay</b>
+        <span>Cut open a frog, explore the organs of digestion & breathing, then ace the labelling challenge.</span></div>
+      <div class="station" onclick="SFX.click();matter()">
+        <div class="em">🔥❄️</div><b>Matter Morpher</b>
+        <span>Heat & cool molecules. Watch solid → liquid → gas happen with the particle model in real time.</span></div>
+      <div class="station" onclick="SFX.click();arena()">
+        <div class="em">🧠</div><b>Exam Arena</b>
+        <span>Boss-battle quizzes across all 11 topics — straight from your knowledge organisers. Unlocks a Gap Report.</span></div>
+      <div class="station" onclick="SFX.click();circuits()">
+        <div class="em">⚡</div><b>Circuit Lab</b>
+        <span>Build series & parallel circuits, flip the switch, break a bulb — watch the current flow and bulbs glow.</span></div>
+      <div class="station" onclick="SFX.click();forcelab()">
+        <div class="em">🧮</div><b>Force Lab</b>
+        <span>Balance a seesaw with moments, then practise force calculations (pressure, work, weight…) with worked answers.</span></div>
+      <div class="station" onclick="SFX.click();written()">
+        <div class="em">📝</div><b>Written Exam</b>
+        <span>1, 2 & 3-mark exam questions with mark schemes — type your answer and mark yourself.</span></div>
+      <div class="station" onclick="SFX.click();prolab()">
+        <div class="em">🧫</div><b>Pro Lab (Realistic)</b>
+        <span>Test tubes, beakers, flasks, a Bunsen & a distillation rig + ~115 chemicals. Mix anything, distil bromine & chromyl chloride, run gas tests.</span></div>
+    </div>
+    <p class="small center" style="margin-top:14px">💡 Turn sound on for fizzes, pops & bangs. Everything works offline & saves your progress.</p>
+  `;
+}
+
+/* ====================================================================== */
+/*  STATION 1 — REACTION CHAMBER                                          */
+/* ====================================================================== */
+const REAGENTS={
+  water:{n:"Water",f:"H₂O",em:"💧",c:"#5fb8ff"},
+  acid:{n:"Hydrochloric Acid",f:"HCl",em:"🧪",c:"#fff07a"},
+  base:{n:"Sodium Hydroxide",f:"NaOH",em:"🧴",c:"#ffc1ec"},
+  indicator:{n:"Universal Indicator",f:"pH dye",em:"🌈",c:"#8fe06b"},
+  magnesium:{n:"Magnesium",f:"Mg",em:"🔩",c:"#cdd6e6",solid:1},
+  bakingsoda:{n:"Baking Soda",f:"NaHCO₃",em:"🧂",c:"#ffffff",solid:1},
+  vinegar:{n:"Vinegar",f:"CH₃COOH",em:"🍶",c:"#f6e3a0"},
+  sodium:{n:"Sodium metal",f:"Na",em:"⚪",c:"#e9e9e9",solid:1},
+  coppersulfate:{n:"Copper Sulfate",f:"CuSO₄",em:"🔷",c:"#1f7bff"},
+  iron:{n:"Iron nail",f:"Fe",em:"🔧",c:"#9aa3b0",solid:1},
+  peroxide:{n:"Hydrogen Peroxide",f:"H₂O₂",em:"🫧",c:"#dff0ff"},
+  catalyst:{n:"Catalyst (yeast)",f:"cat.",em:"🟤",c:"#caa15a",solid:1},
+  methane:{n:"Methane gas",f:"CH₄",em:"💨",c:"#bfe9ff",solid:1},
+  carbonate:{n:"Copper Carbonate",f:"CuCO₃",em:"🟢",c:"#3fa86b",solid:1},
+  limewater:{n:"Limewater",f:"Ca(OH)₂",em:"🥛",c:"#eef7ff"},
+};
+const RX={
+  "acid|base":{id:"neutral",name:"Neutralisation",eq:"HCl + NaOH → NaCl + H₂O",
+    desc:"Acid + alkali cancel out → salt + water. It's <b>exothermic</b> (gives out heat) — the beaker warms up! 🌡️",fx:"heat",col:"#9fe6c0"},
+  "acid|magnesium":{id:"acidmetal",name:"Acid + Metal",eq:"Mg + 2HCl → MgCl₂ + H₂",
+    desc:"A reactive metal in acid <b>fizzes</b> and gives off <b>hydrogen gas</b> 🫧. A flame would make a squeaky <b>POP</b>!",fx:"fizz",col:"#eafff0"},
+  "bakingsoda|vinegar":{id:"volcano",name:"Baking-Soda Volcano",eq:"NaHCO₃ + CH₃COOH → CO₂ + H₂O + salt",
+    desc:"Acid + carbonate erupt in <b>carbon dioxide</b> foam 🌋. CO₂ is the gas making it fizz over. (Try the limewater test now!)",fx:"foam",col:"#fff7d6",co2:1},
+  "sodium|water":{id:"boom",name:"Alkali Metal BOOM",eq:"2Na + 2H₂O → 2NaOH + H₂ (💥)",
+    desc:"<span class='warn'>WHOA!</span> Group 1 metals react <b>violently</b> with water — so much heat the hydrogen <b>ignites</b>! 🔥 Never do this for real.",fx:"boom",col:"#ffd089"},
+  "coppersulfate|iron":{id:"displace",name:"Displacement",eq:"Fe + CuSO₄ → FeSO₄ + Cu",
+    desc:"Iron is <b>more reactive</b> than copper, so it kicks copper out of solution. Blue fades, orange copper coats the nail! 🟠",fx:"displace",col:"#7fcaa0"},
+  "catalyst|peroxide":{id:"toothpaste",name:"Elephant's Toothpaste",eq:"2H₂O₂ → 2H₂O + O₂ (catalyst)",
+    desc:"A <b>catalyst</b> speeds up the breakdown of peroxide, blasting out <b>oxygen</b> trapped in foam — a giant tower! 🦣🪥",fx:"toothpaste",col:"#eafaff"},
+  "acid|indicator":{id:"red",name:"Indicator → RED",eq:"low pH (1–3) → red",
+    desc:"Universal indicator turns <b>red</b> in a strong <b>acid</b>. Colour = pH! 🔴",fx:"recolor",col:"#ff5a4d"},
+  "base|indicator":{id:"purple",name:"Indicator → PURPLE",eq:"high pH (12–14) → purple",
+    desc:"Universal indicator turns <b>purple</b> in a strong <b>alkali</b>. 🟣",fx:"recolor",col:"#a25cff"},
+};
+const RX_TOTAL=11; // 8 above + combustion + thermal + limewater
+let CH;
+function chemLoadDisc(){try{return JSON.parse(localStorage.getItem('madlab_disc')||'[]')}catch(e){return[]}}
+function chemSaveDisc(a){try{localStorage.setItem('madlab_disc',JSON.stringify(a))}catch(e){}}
+const DISC_NAMES={neutral:"Neutralisation",acidmetal:"Acid + Metal",volcano:"Baking-Soda Volcano",boom:"Alkali Metal BOOM",
+  displace:"Displacement",toothpaste:"Elephant's Toothpaste",red:"Indicator → RED",purple:"Indicator → PURPLE",
+  combustion:"Combustion 🔥",thermal:"Thermal Decomposition",limetest:"Limewater CO₂ test"};
+
+function chem(){
+  stopLoop();const disc=chemLoadDisc();
+  let shelf='';for(const k in REAGENTS){const r=REAGENTS[k];
+    shelf+=`<button class="reagent" onclick="addReagent('${k}')"><span class="rem">${r.em}</span>
+      <span><span class="rn">${r.n}</span><br><span class="rf">${r.f}</span></span></button>`;}
+  let pills='';for(const id in DISC_NAMES){const got=disc.includes(id);
+    pills+=`<span class="pill ${got?'got':''}">${got?'✅ '+DISC_NAMES[id]:'❓ ???'}</span>`}
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">⚗️ Reaction Chamber</span>
+      <button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <div class="lab">
+      <div>
+        <canvas id="beaker" width="420" height="380"></canvas>
+        <div class="info" id="rxinfo">Click chemicals to pour them in. Combine the right pair — or hit 🔥 <b>Apply heat</b> — to trigger a reaction!</div>
+        <div class="btnrow">
+          <button class="btn gold sm" style="margin:0;flex:1" onclick="applyHeat()">🔥 Apply heat / flame</button>
+          <button class="btn red sm" style="margin:0;flex:1" onclick="cleanBeaker()">🚿 Clean</button>
+        </div>
+        <div class="topbar" style="margin-top:8px"><span class="discCount">Discoveries: <b id="discN">${disc.length}</b>/${RX_TOTAL}</span></div>
+        <div class="pillrow" id="pills">${pills}</div>
+      </div>
+      <div class="shelf">${shelf}</div>
+    </div>
+    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>
+  `;
+  const cv=document.getElementById('beaker');
+  CH={cv,ctx:cv.getContext('2d'),contents:[],reacted:[],level:0,targetLevel:0,
+      color:"#0a2036",targetColor:"#0a2036",bubbles:[],parts:[],foam:0,targetFoam:0,
+      heat:0,targetHeat:0,copperNail:0,shakeT:0,flameT:0,co2:false,cloudy:0,t:0,disc};
+  chemLoop();
+}
+function setInfo(h){const e=document.getElementById('rxinfo');if(e)e.innerHTML=h}
+function gotDisc(id){if(!CH.disc.includes(id)){CH.disc.push(id);chemSaveDisc(CH.disc);SFX.ding();
+  toast("🧪 Discovery: <b>"+DISC_NAMES[id]+"</b>!");const dN=document.getElementById('discN');if(dN)dN.textContent=CH.disc.length;refreshPills();}}
+function refreshPills(){const p=document.getElementById('pills');if(!p)return;let s='';
+  for(const id in DISC_NAMES){const got=CH.disc.includes(id);s+=`<span class="pill ${got?'got':''}">${got?'✅ '+DISC_NAMES[id]:'❓ ???'}</span>`}p.innerHTML=s;}
+
+function addReagent(k){
+  if(!CH)return;const r=REAGENTS[k];SFX.whoosh();
+  if(!r.solid){CH.targetLevel=Math.min(0.62,CH.targetLevel+0.16);CH.targetColor=blend(CH.targetColor,r.c,0.45)}
+  else CH.targetLevel=Math.max(CH.targetLevel,0.2);
+  for(let i=0;i<10;i++)CH.bubbles.push(mkBubble());
+  if(!CH.contents.includes(k))CH.contents.push(k);
+  setInfo(`Added <b>${r.n}</b> (${r.f}). ${CH.contents.length<2?"Add one more thing…":"Mixing…"}`);
+  // limewater test for CO2
+  if(k==='limewater'&&CH.co2){CH.cloudy=1;CH.targetColor='#dfe9f0';gotDisc('limetest');
+    setInfo(`<b>Limewater turned cloudy/milky!</b> ✅ That confirms the gas produced was <b>carbon dioxide</b>. This is the standard test for CO₂.<div class="eq">CO₂ + limewater → cloudy white</div>`);return;}
+  for(const other of CH.contents){if(other!==k)tryReaction(k,other);}
+}
+function tryReaction(a,b){const key=[a,b].sort().join('|');const rx=RX[key];if(!rx)return;
+  if(CH.reacted.includes(rx.id))return;CH.reacted.push(rx.id);
+  if(rx.co2)CH.co2=true;triggerFX(rx);gotDisc(rx.id);
+  setInfo(`<b>${rx.name}!</b> ${rx.desc}<div class="eq">${rx.eq}</div>`);}
+function applyHeat(){
+  if(!CH)return;SFX.flame();CH.flameT=40;CH.targetHeat=1;
+  for(let i=0;i<30;i++)CH.parts.push({x:180+Math.random()*60,y:90,vx:(Math.random()-.5)*2,vy:-2-Math.random()*3,life:1,
+    c:['#ffd089','#ff7a3c','#ffe14d'][Math.floor(Math.random()*3)],r:3+Math.random()*4});
+  if(CH.contents.includes('methane')){
+    if(!CH.reacted.includes('combustion')){CH.reacted.push('combustion');CH.co2=true;CH.shakeT=10;SFX.bang();
+      setInfo(`<b>Combustion! 🔥</b> Burning a fuel (methane) in <b>oxygen</b> releases energy and makes <b>carbon dioxide + water</b>. It's <b>exothermic</b>. (Test the gas with limewater!)<div class="eq">methane + oxygen → carbon dioxide + water</div>`);
+      gotDisc('combustion');}
+  } else if(CH.contents.includes('carbonate')){
+    if(!CH.reacted.includes('thermal')){CH.reacted.push('thermal');CH.co2=true;
+      CH.targetColor=blend(CH.targetColor,'#222',0.3);for(let i=0;i<20;i++)CH.bubbles.push(mkBubble(0.5));
+      setInfo(`<b>Thermal decomposition!</b> Heat <b>breaks down</b> the metal carbonate into a metal oxide + <b>carbon dioxide</b>. (Test with limewater!)<div class="eq">copper carbonate → copper oxide + carbon dioxide</div>`);
+      gotDisc('thermal');}
+  } else {
+    setInfo("🔥 You heat the beaker… add a <b>fuel (methane)</b> to see combustion, or a <b>metal carbonate</b> for thermal decomposition!");
+  }
+}
+function triggerFX(rx){switch(rx.fx){
+  case "heat":CH.targetColor=blend(CH.targetColor,rx.col,0.6);CH.targetHeat=1;for(let i=0;i<24;i++)CH.bubbles.push(mkBubble(0.4));break;
+  case "fizz":CH.fizzing=true;SFX.fizz();setTimeout(()=>CH.fizzing&&SFX.pop(),900);CH.targetColor=blend(CH.targetColor,rx.col,0.4);break;
+  case "foam":CH.targetFoam=1;CH.fizzing=true;SFX.fizz();CH.targetColor=blend(CH.targetColor,rx.col,0.4);break;
+  case "boom":CH.shakeT=22;SFX.bang();explode();CH.targetColor='#ff9a3c';CH.targetLevel=Math.min(CH.targetLevel,0.25);break;
+  case "displace":CH.displacing=true;CH.copperNail=0;CH.targetColor=rx.col;break;
+  case "toothpaste":CH.targetFoam=1.6;CH.fizzing=true;SFX.fizz();setTimeout(()=>SFX.fizz(),700);CH.targetColor=blend(CH.targetColor,rx.col,0.5);break;
+  case "recolor":CH.targetColor=rx.col;CH.targetFoam=0;for(let i=0;i<14;i++)CH.bubbles.push(mkBubble());SFX.pop();break;}}
+function explode(){for(let i=0;i<60;i++){const a=Math.random()*6.28,s=2+Math.random()*6;
+  CH.parts.push({x:210,y:230,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,c:['#ffd089','#ff7a3c','#ffe14d','#ff4d4d'][Math.floor(Math.random()*4)],r:3+Math.random()*4})}}
+function mkBubble(sp){return {x:130+Math.random()*160,y:330,r:2+Math.random()*5,vy:-(0.6+Math.random()*1.4)*(sp?2:1),wob:Math.random()*6.28}}
+function cleanBeaker(){if(!CH)return;SFX.whoosh();Object.assign(CH,{contents:[],reacted:[],targetLevel:0,targetColor:'#0a2036',
+  targetFoam:0,foam:0,targetHeat:0,heat:0,fizzing:false,displacing:false,copperNail:0,bubbles:[],parts:[],co2:false,cloudy:0,flameT:0});
+  setInfo("Beaker rinsed. 🚿 Fresh start — what'll you make?");}
+
+function chemLoop(){
+  if(!CH)return;const {ctx,cv}=CH;CH.t++;
+  CH.level+=(CH.targetLevel-CH.level)*0.08;CH.foam+=(CH.targetFoam-CH.foam)*0.06;CH.heat+=(CH.targetHeat-CH.heat)*0.05;
+  CH.color=blend(CH.color,CH.targetColor,0.06);
+  if(CH.displacing){CH.copperNail=Math.min(1,CH.copperNail+0.004);CH.color=blend(CH.color,'#7fcaa0',0.01)}
+  const W=cv.width,H=cv.height;let sx=0;if(CH.shakeT>0){sx=(Math.random()-.5)*CH.shakeT;CH.shakeT*=0.9;if(CH.shakeT<0.5)CH.shakeT=0}
+  ctx.clearRect(0,0,W,H);ctx.save();ctx.translate(sx,0);
+  const bx=W/2;const left=120,right=300,top=70,bot=350,innerL=left+8,innerR=right-8;
+  const liqTop=bot-(bot-top-20)*CH.level;
+  if(CH.heat>0.02){const g=ctx.createRadialGradient(bx,360,5,bx,360,120);g.addColorStop(0,`rgba(255,120,40,${.4*CH.heat})`);g.addColorStop(1,'rgba(255,120,40,0)');ctx.fillStyle=g;ctx.fillRect(0,250,W,H-250)}
+  // bunsen flame under beaker while heating
+  if(CH.flameT>0){CH.flameT--;ctx.save();for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.7;
+    ctx.beginPath();ctx.ellipse(bx,360+ i*4,14-i*4,30-i*8,0,0,6.28);ctx.fill()}ctx.restore();ctx.globalAlpha=1}
+  if(CH.level>0.01){ctx.fillStyle=CH.color;ctx.beginPath();ctx.moveTo(innerL,liqTop);
+    for(let x=innerL;x<=innerR;x+=6){const y=liqTop+Math.sin((x*0.06)+CH.t*0.08)*3;ctx.lineTo(x,y)}
+    ctx.lineTo(innerR,bot-6);ctx.lineTo(innerL,bot-6);ctx.closePath();ctx.fill();
+    if(CH.cloudy>0){ctx.fillStyle='rgba(255,255,255,'+(0.5*CH.cloudy)+')';ctx.fillRect(innerL,liqTop,innerR-innerL,bot-6-liqTop)}
+    ctx.fillStyle='rgba(255,255,255,.10)';ctx.fillRect(innerL,liqTop+6,innerR-innerL,8)}
+  if(CH.contents.includes('iron')&&CH.level>0.1){ctx.save();ctx.translate(bx+30,liqTop+20);ctx.rotate(0.5);
+    ctx.fillStyle=CH.copperNail>0?blend('#9aa3b0','#c2622e',CH.copperNail):'#9aa3b0';ctx.fillRect(-5,0,10,80);ctx.fillRect(-9,-4,18,8);ctx.restore()}
+  if(CH.fizzing&&CH.t%3===0&&CH.level>0.05)CH.bubbles.push(mkBubble());
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  CH.bubbles=CH.bubbles.filter(b=>{b.y+=b.vy;b.wob+=0.2;b.x+=Math.sin(b.wob)*0.6;if(b.y<liqTop+2||b.y<top)return false;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,6.28);ctx.fill();return true});
+  if(CH.foam>0.02){const fcol=blend(CH.color,'#ffffff',0.55);const cnt=Math.floor(60*CH.foam);
+    for(let i=0;i<cnt;i++){const fx=innerL+Math.random()*(innerR-innerL);const fy=liqTop-Math.random()*(80*CH.foam)-(CH.foam>1?Math.random()*120*(CH.foam-1):0);
+      ctx.fillStyle=fcol;ctx.globalAlpha=.85;ctx.beginPath();ctx.arc(fx,fy,4+Math.random()*7,0,6.28);ctx.fill()}ctx.globalAlpha=1}
+  CH.parts=CH.parts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.16;p.life-=0.02;if(p.life<=0)return false;ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);ctx.fill();ctx.globalAlpha=1;return true});
+  ctx.lineWidth=5;ctx.strokeStyle='rgba(160,210,255,.55)';ctx.beginPath();
+  ctx.moveTo(left-10,top-8);ctx.lineTo(left,top+4);ctx.lineTo(left,bot);ctx.lineTo(right,bot);ctx.lineTo(right,top+4);ctx.lineTo(right+10,top-8);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(left+14,top+30);ctx.lineTo(left+14,bot-20);ctx.stroke();
+  ctx.strokeStyle='rgba(160,210,255,.3)';ctx.lineWidth=2;for(let i=1;i<=4;i++){const y=bot-(bot-top-20)*(i/6);ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(left+16,y);ctx.stroke()}
+  // thermometer
+  const x=W-40,y=90,heat=CH.heat;ctx.fillStyle='rgba(160,210,255,.4)';ctx.fillRect(x-5,y,10,160);ctx.beginPath();ctx.arc(x,y+170,15,0,6.28);ctx.fill();
+  ctx.fillStyle=heat>0.5?'#ff4d4d':'#5fb8ff';ctx.beginPath();ctx.arc(x,y+170,10,0,6.28);ctx.fill();ctx.fillRect(x-3,y+150-(heat*110),6,heat*110+20);
+  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText(heat>0.5?'HOT🔥':'cool',x-12,y-6);
+  ctx.restore();raf=requestAnimationFrame(chemLoop);
+}
+
+/* ====================================================================== */
+/*  STATION 2 — DISSECTION BAY                                            */
+/* ====================================================================== */
+const ORGANS=[
+  {id:"heart",name:"Heart",em:"❤️",fn:"Pumps blood around the body, carrying oxygen (in red blood cells) and glucose (in plasma).",job:"pumps blood around the body"},
+  {id:"lungs",name:"Lungs",em:"🫁",fn:"Where gas exchange happens — oxygen in, carbon dioxide out. Air reaches the alveoli (air sacs).",job:"do gas exchange (breathing)"},
+  {id:"liver",name:"Liver",em:"🟤",fn:"Makes bile, which helps digest fats. Also cleans the blood.",job:"makes bile to help digestion"},
+  {id:"stomach",name:"Stomach",em:"🟣",fn:"Adds acid and enzymes to break food down — digestion happens here.",job:"adds acid to break down food"},
+  {id:"intestine",name:"Small intestine",em:"🌀",fn:"Where digestion is completed and soluble food is absorbed into the blood. (The large intestine absorbs water.)",job:"absorbs digested food"},
+];
+let BIO;
+function bio(){stopLoop();BIO={opened:false,quiz:false,qIndex:0,score:0,order:[]};renderBio()}
+function renderBio(){
+  const organSVG=ORGANS.map(o=>organShape(o)).join('');
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">🐸 Dissection Bay</span>
+      <button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <div class="center small" id="biostep" style="margin-bottom:6px">
+      ${BIO.opened?'🔎 Click an organ to learn what it does. Ready? Start the challenge!':'🔪 Drag the scalpel down the dashed line (or click "Make incision") to open the frog.'}</div>
+    <div style="max-width:440px;margin:0 auto">
+    <svg id="frog" viewBox="0 0 420 480">
+      <defs><radialGradient id="bg" cx="50%" cy="35%"><stop offset="0%" stop-color="#143a2a"/><stop offset="100%" stop-color="#0a1f17"/></radialGradient></defs>
+      <rect x="0" y="0" width="420" height="480" fill="url(#bg)" rx="16"/>
+      <ellipse cx="80" cy="120" rx="34" ry="20" fill="#6fae5a" transform="rotate(-30 80 120)"/>
+      <ellipse cx="340" cy="120" rx="34" ry="20" fill="#6fae5a" transform="rotate(30 340 120)"/>
+      <ellipse cx="70" cy="360" rx="26" ry="58" fill="#6fae5a" transform="rotate(25 70 360)"/>
+      <ellipse cx="350" cy="360" rx="26" ry="58" fill="#6fae5a" transform="rotate(-25 350 360)"/>
+      <ellipse cx="210" cy="240" rx="120" ry="170" fill="#7cc063"/>
+      <ellipse cx="210" cy="240" rx="120" ry="170" fill="none" stroke="#4e8a3c" stroke-width="3"/>
+      <ellipse cx="160" cy="70" rx="26" ry="24" fill="#7cc063" stroke="#4e8a3c" stroke-width="3"/>
+      <ellipse cx="260" cy="70" rx="26" ry="24" fill="#7cc063" stroke="#4e8a3c" stroke-width="3"/>
+      <circle cx="160" cy="64" r="9" fill="#0a0f0a"/><circle cx="260" cy="64" r="9" fill="#0a0f0a"/>
+      <circle cx="163" cy="61" r="3" fill="#fff"/><circle cx="263" cy="61" r="3" fill="#fff"/>
+      <path d="M175 95 Q210 112 245 95" stroke="#4e8a3c" stroke-width="3" fill="none"/>
+      <g id="organs" style="opacity:${BIO.opened?1:0};transition:opacity .6s">${organSVG}</g>
+      <g id="skin">
+        <path id="flapL" d="M210 110 Q120 130 110 360 Q160 390 210 380 Z" fill="#74b85b" stroke="#4e8a3c" stroke-width="2"
+          style="transform-origin:210px 240px;transition:transform .8s;transform:${BIO.opened?'rotate(-32deg) translateX(-34px)':'none'}"/>
+        <path id="flapR" d="M210 110 Q300 130 310 360 Q260 390 210 380 Z" fill="#82c269" stroke="#4e8a3c" stroke-width="2"
+          style="transform-origin:210px 240px;transition:transform .8s;transform:${BIO.opened?'rotate(32deg) translateX(34px)':'none'}"/>
+        ${BIO.opened?'':'<line x1="210" y1="120" x2="210" y2="370" stroke="#ff5a72" stroke-width="3" stroke-dasharray="9 7"/>'}
+        <ellipse cx="170" cy="180" rx="8" ry="12" fill="#5e9e49" style="opacity:${BIO.opened?0:.6}"/>
+        <ellipse cx="250" cy="210" rx="9" ry="13" fill="#5e9e49" style="opacity:${BIO.opened?0:.6}"/>
+      </g>
+      ${BIO.opened?'':'<g id="scalpel" style="cursor:grab"><rect x="300" y="40" width="10" height="60" rx="3" fill="#cfd6e6"/><rect x="298" y="95" width="14" height="40" rx="3" fill="#6b7686"/><text x="276" y="160" fill="#cfd6e6" font-size="13">scalpel</text></g>'}
+    </svg></div>
+    <div class="info" id="bioinfo" style="margin-top:10px">${BIO.opened?'Tap any organ above 👆':'The frog is pinned and ready. Time to open it up — carefully, doctor. 🩺'}</div>
+    <div class="center">
+      ${BIO.opened?`<button class="btn green sm glowbtn" onclick="startBioQuiz()">🎯 Start labelling challenge</button>`:`<button class="btn sm" onclick="openFrog()">🔪 Make incision</button>`}
+      <button class="btn ghost sm" onclick="SFX.click();hub()">⬅️ Lab</button></div>`;
+  if(!BIO.opened)wireScalpel();
+}
+function organShape(o){const shapes={
+  heart:`<path d="M210 130 q-22 -26 -38 -4 q-14 22 38 50 q52 -28 38 -50 q-16 -22 -38 4z" fill="#d23b4f"/>`,
+  lungs:`<ellipse cx="178" cy="185" rx="24" ry="38" fill="#e89bb0"/><ellipse cx="242" cy="185" rx="24" ry="38" fill="#e89bb0"/>`,
+  liver:`<path d="M140 200 q70 -22 96 -2 q-6 34 -52 40 q-44 2 -44 -38z" fill="#8a4a2b"/>`,
+  stomach:`<path d="M236 200 q40 6 30 50 q-10 36 -48 22 q-26 -12 -6 -44 q12 -22 24 -28z" fill="#b85ea0"/>`,
+  intestine:`<path d="M170 260 q-14 24 16 28 q40 4 18 28 q-28 18 8 30 q40 10 20 34" fill="none" stroke="#e0a24e" stroke-width="15" stroke-linecap="round"/>`};
+  return `<g class="organ" data-id="${o.id}" style="cursor:pointer" onclick="clickOrgan('${o.id}')">${shapes[o.id]}</g>`}
+function wireScalpel(){const svg=document.getElementById('frog');const sc=document.getElementById('scalpel');if(!sc)return;
+  let dragging=false,startY=0,traveled=0;
+  const pt=(e)=>{const r=svg.getBoundingClientRect();const cy=(e.touches?e.touches[0].clientY:e.clientY);return (cy-r.top)/r.height*480};
+  const down=(e)=>{dragging=true;startY=pt(e);sc.style.cursor='grabbing';e.preventDefault()};
+  const move=(e)=>{if(!dragging)return;const y=pt(e);const dy=y-startY;startY=y;
+    if(y>110&&y<380){traveled+=Math.abs(dy);const cur=parseFloat(sc.getAttribute('data-y')||40);const ny=Math.max(40,Math.min(330,cur+dy));
+      sc.setAttribute('transform',`translate(-95,${ny-40})`);sc.setAttribute('data-y',ny);if(Math.random()<0.25)SFX.cut();if(traveled>200)openFrog()}};
+  const up=()=>{dragging=false;if(sc)sc.style.cursor='grab'};
+  sc.addEventListener('mousedown',down);window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  sc.addEventListener('touchstart',down,{passive:false});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',up);}
+function openFrog(){if(BIO.opened)return;SFX.cut();SFX.whoosh();BIO.opened=true;renderBio();setTimeout(()=>toast("🔬 Incision complete! Explore the organs."),300)}
+function clickOrgan(id){const o=ORGANS.find(x=>x.id===id);if(BIO.quiz)return quizPick(id);SFX.click();
+  document.querySelectorAll('.organ').forEach(g=>g.style.filter='');const g=document.querySelector(`.organ[data-id="${id}"]`);if(g)g.style.filter='drop-shadow(0 0 10px #39e6ff)';
+  document.getElementById('bioinfo').innerHTML=`<b>${o.em} ${o.name}</b> — ${o.fn}`}
+function startBioQuiz(){SFX.click();BIO.quiz=true;BIO.qIndex=0;BIO.score=0;BIO.order=ORGANS.map(o=>o.id).sort(()=>Math.random()-0.5);
+  document.querySelector('.btn.green')?.remove();nextBioQ()}
+function nextBioQ(){if(BIO.qIndex>=BIO.order.length)return bioResult();const id=BIO.order[BIO.qIndex];const o=ORGANS.find(x=>x.id===id);
+  document.getElementById('biostep').innerHTML=`🎯 Challenge ${BIO.qIndex+1}/${BIO.order.length} — Score: ${BIO.score}`;
+  document.getElementById('bioinfo').innerHTML=`Click the organ that <b>${o.job}</b>! 👆`}
+function quizPick(id){const want=BIO.order[BIO.qIndex];const g=document.querySelector(`.organ[data-id="${id}"]`);
+  if(id===want){SFX.ding();BIO.score++;if(g)g.style.filter='drop-shadow(0 0 12px #7cff6b)';toast("✅ Correct!")}
+  else{SFX.pop();if(g)g.style.filter='drop-shadow(0 0 12px #ff4d6d)';toast("❌ That's the "+ORGANS.find(x=>x.id===id).name+". Answer: "+ORGANS.find(x=>x.id===want).name)}
+  BIO.qIndex++;setTimeout(()=>{document.querySelectorAll('.organ').forEach(x=>x.style.filter='');nextBioQ()},950)}
+function bioResult(){const pct=Math.round(BIO.score/BIO.order.length*100);SFX.win();saveTopicScore('Organisms',BIO.score,BIO.order.length);
+  document.getElementById('biostep').innerHTML=`🏁 Final: ${BIO.score}/${BIO.order.length} (${pct}%)`;
+  document.getElementById('bioinfo').innerHTML=pct>=80?"🏆 Outstanding, Doctor! You know your anatomy.":pct>=50?"💪 Good — review the trickier organs and retry!":"📚 Re-explore the organs, then retry. You'll get it!";
+  root.querySelector('.center').innerHTML=`<button class="btn green sm" onclick="bio()">🔁 Dissect again</button><button class="btn ghost sm" onclick="SFX.click();hub()">⬅️ Lab</button>`}
+
+/* ====================================================================== */
+/*  STATION 3 — MATTER MORPHER                                            */
+/* ====================================================================== */
+let MT;
+function matter(){stopLoop();
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">🔥❄️ Matter Morpher</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <div class="stateLbl" id="stateLbl">❄️ SOLID (ice)</div>
+    <div class="small center" id="stateDesc" style="margin-bottom:8px"></div>
+    <canvas id="mt" width="600" height="320"></canvas>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px"><span>❄️</span><input type="range" id="temp" min="0" max="100" value="8" oninput="MT.setTemp(this.value)"><span>🔥</span></div>
+    <div class="center small" id="tempReadout">Temperature: 8°  •  drag to add/remove heat energy</div>
+    <div class="toolbar" style="margin-top:8px">
+      <button class="tool" onclick="MT.setTemp(8);document.getElementById('temp').value=8">❄️ Freeze</button>
+      <button class="tool" onclick="MT.setTemp(50);document.getElementById('temp').value=50">💧 Melt</button>
+      <button class="tool" onclick="MT.setTemp(92);document.getElementById('temp').value=92">💨 Boil</button></div>
+    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('mt'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const cols=8,rows=8,parts=[],spacing=40,ox=W/2-(cols-1)*spacing/2,oy=H-rows*spacing-20;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)parts.push({hx:ox+c*spacing,hy:oy+r*spacing,x:ox+c*spacing,y:oy+r*spacing,vx:0,vy:0});
+  MT={cv,ctx,parts,temp:8,setTemp(v){this.temp=+v;const lbl=document.getElementById('stateLbl'),d=document.getElementById('stateDesc'),rd=document.getElementById('tempReadout');
+    if(rd)rd.textContent=`Temperature: ${v}°  •  heat energy = particle speed`;
+    if(this.temp<33){lbl.innerHTML="❄️ SOLID (ice)";d.innerHTML="Particles <b>locked in a fixed pattern</b>, only vibrating. Fixed shape & volume."}
+    else if(this.temp<66){lbl.innerHTML="💧 LIQUID (water)";d.innerHTML="Particles <b>close but sliding</b> past each other. Fixed volume, takes the container's shape."}
+    else{lbl.innerHTML="💨 GAS (steam)";d.innerHTML="Particles have <b>lots of energy</b>, flying & bouncing off walls. Fills all the space!"}if(Math.random()<.5)SFX.click()}};
+  MT.setTemp(8);mtLoop();}
+function mtLoop(){if(!MT)return;const {ctx,cv,parts,temp}=MT,W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);const warm=temp/100;
+  ctx.fillStyle=`rgba(${20+warm*60},${30-warm*10},${60-warm*40},0.25)`;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(120,180,255,.25)';ctx.lineWidth=3;ctx.strokeRect(20,20,W-40,H-40);
+  const pcol=temp<33?'#7fd2ff':temp<66?'#4d96ff':'#ff7a5c';
+  parts.forEach(p=>{
+    if(temp<33){const amp=temp*0.08;p.vx+=(p.hx-p.x)*0.08;p.vy+=(p.hy-p.y)*0.08;p.vx*=0.6;p.vy*=0.6;p.x+=p.vx+(Math.random()-.5)*amp;p.y+=p.vy+(Math.random()-.5)*amp}
+    else if(temp<66){const e=(temp-33)/33;p.vy+=0.25;p.vx+=(Math.random()-.5)*e*2;p.vy+=(Math.random()-.5)*e*1.2;p.vx*=0.92;p.vy*=0.92;p.x+=p.vx;p.y+=p.vy;if(p.y>H-32){p.y=H-32;p.vy*=-0.3}}
+    else{const e=(temp-66)/34;if(Math.abs(p.vx)<0.5&&Math.abs(p.vy)<0.5){const a=Math.random()*6.28;p.vx=Math.cos(a)*4;p.vy=Math.sin(a)*4}p.vx+=(Math.random()-.5)*e*1.5;p.vy+=(Math.random()-.5)*e*1.5;const mx=2+e*5,sp=Math.hypot(p.vx,p.vy);if(sp>mx){p.vx*=mx/sp;p.vy*=mx/sp}p.x+=p.vx;p.y+=p.vy}
+    if(p.x<28){p.x=28;p.vx=Math.abs(p.vx)}if(p.x>W-28){p.x=W-28;p.vx=-Math.abs(p.vx)}if(p.y<28){p.y=28;p.vy=Math.abs(p.vy)}if(p.y>H-28){p.y=H-28;p.vy=-Math.abs(p.vy)*0.5}
+    ctx.beginPath();ctx.arc(p.x,p.y,9,0,6.28);const g=ctx.createRadialGradient(p.x-3,p.y-3,1,p.x,p.y,10);g.addColorStop(0,'#fff');g.addColorStop(.4,pcol);g.addColorStop(1,pcol);ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=1;ctx.stroke()});
+  raf=requestAnimationFrame(mtLoop);}
+
+/* ====================================================================== */
+/*  STATION 4 — EXAM ARENA (quiz boss battles for all 10 topics)          */
+/* ====================================================================== */
+const TOPICS=[
+  {key:"Forces",em:"⚖️",boss:"Captain Friction",bem:"🛹",taunts:["You'll never overcome my drag!","Name a force — I dare you!"],qs:[
+    {q:"What is friction?",o:["A force that speeds objects up","A force that slows a moving object as two surfaces rub","A type of energy","A turning effect"],a:1,w:"Friction slows a moving object due to two surfaces rubbing together."},
+    {q:"Drag is the force that slows an object moving through a…",o:["Solid","Fluid (liquid or gas)","Vacuum","Magnet"],a:1,w:"Drag acts when an object moves through a fluid — particles collide with it and slow it down."},
+    {q:"A moment is…",o:["The turning effect of a force","The mass of an object","A unit of energy","A type of wave"],a:0,w:"A moment = the turning effect of a force, measured in newton-metres (Nm)."},
+    {q:"How do you calculate a moment?",o:["force × distance from the pivot","force ÷ area","mass × speed","force × time"],a:0,w:"moment (Nm) = force (N) × distance from the pivot (m)."},
+    {q:"Hooke's Law: if you double the force on a spring, the extension…",o:["Halves","Doubles","Stays the same","Disappears"],a:1,w:"A spring obeying Hooke's Law is linear — double the force, double the extension (until the elastic limit)."},
+    {q:"Why do snowshoes stop you sinking into snow?",o:["They're heavy","Large area → lower pressure","They're warm","They reduce friction"],a:1,w:"pressure = force ÷ area. A bigger area spreads the force, lowering the pressure."},
+    {q:"A force of 20 N acts 3 m from a pivot. What is the moment?",o:["60 Nm","23 Nm","6.7 Nm","600 Nm"],a:0,w:"moment = force × distance = 20 × 3 = 60 Nm."},
+    {q:"A force of 200 N acts on an area of 4 m². What is the pressure?",o:["50 Pa","800 Pa","204 Pa","0.02 Pa"],a:0,w:"pressure = force ÷ area = 200 ÷ 4 = 50 Pa."},
+  ]},
+  {key:"Electromagnets",em:"🧲",boss:"Magneto Jr.",bem:"🧲",taunts:["My field is too strong for you!","Opposites attract — but you repel me!"],qs:[
+    {q:"Two NORTH poles brought together will…",o:["Attract","Repel","Do nothing","Melt"],a:1,w:"Like poles repel; opposite poles (N–S) attract."},
+    {q:"The three magnetic metals are…",o:["Iron, nickel, cobalt","Gold, silver, copper","Sodium, potassium, lithium","Carbon, oxygen, neon"],a:0,w:"Iron, nickel and cobalt are the magnetic metals."},
+    {q:"Magnetic field lines always travel…",o:["South to north","North to south","In circles only","Randomly"],a:1,w:"Field lines go OUT of the north pole and INTO the south pole."},
+    {q:"An electromagnet is made by…",o:["Rubbing two magnets","Wrapping a coil of wire around a magnetic core with current flowing","Heating iron","Freezing copper"],a:1,w:"A coil of wire around a magnetic (iron) core — it only works when current flows, so it can be turned on/off."},
+    {q:"Which does NOT make an electromagnet stronger?",o:["More turns on the coil","More current","An iron core","Cooling it down"],a:3,w:"Strength increases with more coil turns, more current, or a more magnetic (iron) core."},
+    {q:"The Earth behaves like a giant…",o:["Bar magnet","Battery","Spring","Lever"],a:0,w:"Earth acts like a giant bar magnet, which is why compasses work."},
+  ]},
+  {key:"Energy",em:"🔥",boss:"Heat Wave",bem:"🌡️",taunts:["You can't conduct your way out of this!","Feel the heat... transfer!"],qs:[
+    {q:"work done =",o:["force × distance moved","mass × speed","force ÷ area","voltage × current"],a:0,w:"work done (J) = force (N) × distance moved (m)."},
+    {q:"Conduction is the transfer of thermal energy by…",o:["Waves through space","Vibrating particles colliding","Rising hot fluid","Magnets"],a:1,w:"Conduction = vibrating particles passing energy on by colliding. Best in solids/metals."},
+    {q:"Convection happens in…",o:["Solids only","Liquids and gases","A vacuum","Metals only"],a:1,w:"Convection needs particles that can flow — liquids and gases. Hot, less-dense fluid rises (convection current)."},
+    {q:"Radiation transfers energy…",o:["Only through metal","Without needing particles (e.g. Sun through space)","Only in liquids","By conduction"],a:1,w:"Radiation (infrared) needs no particles — that's how the Sun's energy reaches us through empty space."},
+    {q:"Which surface absorbs and emits the MOST infrared radiation?",o:["Shiny silver","Dark matte black","Mirror","Clear glass"],a:1,w:"Dark, matte surfaces absorb and emit more IR; shiny surfaces reflect it."},
+    {q:"A bath at 30°C vs a cup of tea at 90°C — which has MORE thermal energy?",o:["The tea","The bath","Equal","Neither"],a:1,w:"Thermal energy depends on ALL the particles — the bath has far more particles, so more total thermal energy."},
+  ]},
+  {key:"Waves",em:"🌊",boss:"Frequency Phantom",bem:"👻",taunts:["My wavelength is beyond you!","You can't even hear me coming!"],qs:[
+    {q:"Sound waves are…",o:["Transverse waves","Longitudinal (pressure) waves","Light waves","Not waves"],a:1,w:"Sound is a longitudinal/pressure wave — particles vibrate back and forth, making compressions and rarefactions."},
+    {q:"Transverse waves vibrate…",o:["In the direction of travel","At 90° to the direction of travel","In circles","Not at all"],a:1,w:"Transverse waves vibrate at right angles (90°) to the direction the wave travels."},
+    {q:"Humans can hear frequencies of about…",o:["0–20 Hz","20–20,000 Hz","Above 20,000 Hz only","Millions of Hz"],a:1,w:"Human hearing is ~20–20,000 Hz. Ultrasound is anything above 20,000 Hz."},
+    {q:"Which lists the EM spectrum from LOWEST to HIGHEST energy?",o:["Gamma, X-ray, UV, visible, IR, micro, radio","Radio, micro, IR, visible, UV, X-ray, gamma","Visible, radio, gamma, IR","Random order"],a:1,w:"Low→high energy: radio, microwave, infrared, visible, ultraviolet, X-ray, gamma."},
+    {q:"Which EM waves are ionising (can cause mutations/cancer)?",o:["Radio, micro, IR","UV, X-rays, gamma","Visible light only","None"],a:1,w:"High-energy UV, X-rays and gamma rays are ionising — they knock electrons off atoms and can damage DNA."},
+    {q:"Gamma rays are used to…",o:["Make phone calls","Kill cancer cells","Cook food","Take photographs"],a:1,w:"Gamma rays kill cancer cells. (X-rays image bones; microwaves = phones; IR = heating.)"},
+  ]},
+  {key:"Matter",em:"⚛️",boss:"Atom Smasher",bem:"💠",taunts:["You don't know your groups from your periods!","Bond with THIS!"],qs:[
+    {q:"An element is a substance that contains…",o:["Two or more atoms bonded","Only one type of atom","Only metals","Only gases"],a:1,w:"An element contains only one type of atom and is found on the Periodic Table."},
+    {q:"A compound is…",o:["One type of atom","Two or more elements chemically bonded","A mixture you can easily separate","A single atom"],a:1,w:"A compound = two or more different elements chemically bonded together."},
+    {q:"In the Periodic Table, GROUPS are the…",o:["Rows (sideways)","Columns (downwards)","Diagonal lines","Coloured boxes"],a:1,w:"Groups = columns (down). Periods = rows (across)."},
+    {q:"Group 1 (alkali metals) + water makes…",o:["Metal hydroxide + hydrogen","Salt + oxygen","Carbon dioxide + water","Nothing"],a:0,w:"metal + water → metal hydroxide + hydrogen. The reaction gets MORE vigorous down the group."},
+    {q:"Group 0 elements (noble gases) are…",o:["Very reactive","Unreactive with low boiling points","Magnetic","Liquids"],a:1,w:"Group 0 = noble gases: unreactive, low melting/boiling points (used in neon signs)."},
+    {q:"In a displacement reaction, a more reactive halogen…",o:["Disappears","Takes the place of a less reactive halogen","Becomes a metal","Does nothing"],a:1,w:"A more reactive halogen displaces a less reactive one, e.g. chlorine displaces bromine."},
+  ]},
+  {key:"Reactions",em:"💥",boss:"Professor Boom",bem:"🧑‍🔬",taunts:["Exothermic? Endothermic? You'll never know!","Let's see you balance THIS!"],qs:[
+    {q:"Combustion is…",o:["Freezing a liquid","Burning a fuel in oxygen","Mixing two liquids","Dissolving salt"],a:1,w:"Combustion = burning a fuel in oxygen. A carbon fuel makes carbon dioxide + water."},
+    {q:"An EXOthermic reaction…",o:["Takes in energy, temperature falls","Gives out energy, temperature rises","Has no energy change","Only happens in plants"],a:1,w:"Exothermic = energy given OUT to surroundings → temperature rises (e.g. combustion)."},
+    {q:"An ENDOthermic reaction…",o:["Gives out energy, temp rises","Takes in energy, temp falls","Produces light only","Is the same as combustion"],a:1,w:"Endothermic = energy taken IN from surroundings → temperature falls (e.g. thermal decomposition)."},
+    {q:"Thermal decomposition of a metal carbonate produces…",o:["Metal oxide + carbon dioxide","Just water","Hydrogen + oxygen","A magnet"],a:0,w:"e.g. zinc carbonate → zinc oxide + carbon dioxide. Heat breaks the compound down."},
+    {q:"How do you test for carbon dioxide?",o:["It turns blue litmus red","It makes limewater go cloudy/milky","It explodes","It glows"],a:1,w:"Bubble the gas through limewater — if it turns cloudy/milky, it's carbon dioxide."},
+    {q:"Conservation of mass means…",o:["Mass is created in a reaction","Total mass of reactants = total mass of products","Mass always decreases","Mass becomes energy"],a:1,w:"Mass is conserved. If mass seems to drop, a gas has escaped — it wasn't destroyed."},
+  ]},
+  {key:"Earth",em:"🌍",boss:"Carbon Cloud",bem:"☁️",taunts:["I'll trap all your heat!","You can't recycle your way past me!"],qs:[
+    {q:"The two most common greenhouse gases are…",o:["Oxygen and nitrogen","Carbon dioxide and methane","Helium and neon","Hydrogen and chlorine"],a:1,w:"Carbon dioxide and methane are the key greenhouse gases that trap heat."},
+    {q:"Global warming is closely linked to a rise in…",o:["Oxygen levels","Carbon dioxide levels","Nitrogen levels","Water levels"],a:1,w:"Global warming (gradual heating of Earth) is closely linked to rising CO₂ in the atmosphere."},
+    {q:"In the carbon cycle, carbon is ABSORBED from the air by…",o:["Combustion","Respiration","Photosynthesis","Volcanoes"],a:2,w:"Plants absorb CO₂ during photosynthesis. It's released by combustion of fossil fuels and respiration."},
+    {q:"The air is roughly…",o:["78% nitrogen, 21% oxygen","50% oxygen, 50% CO₂","100% oxygen","78% oxygen, 21% nitrogen"],a:0,w:"Air ≈ 78% nitrogen, 21% oxygen, plus small amounts of other gases."},
+    {q:"A metal BELOW carbon in the reactivity series is extracted by…",o:["Electrolysis","Reacting with carbon (displacement)","Melting only","Magnetism"],a:1,w:"Below carbon → extract with carbon (displacement). Above carbon → electrolysis."},
+    {q:"An ore is…",o:["A pure metal","A rock with enough mineral to be worth extracting","A type of gas","A greenhouse gas"],a:1,w:"An ore is a rock containing enough of a mineral to make extracting the metal worthwhile (e.g. bauxite → aluminium)."},
+  ]},
+  {key:"Organisms",em:"🫁",boss:"The Gut Goblin",bem:"👺",taunts:["You don't know your enzymes!","Digest THIS knowledge!"],qs:[
+    {q:"Gas exchange means…",o:["Taking in CO₂, giving out oxygen","Taking in oxygen, giving out carbon dioxide","Only breathing in","Making food"],a:1,w:"Gas exchange = taking in oxygen and giving out carbon dioxide, in the respiratory system."},
+    {q:"When you breathe IN, the diaphragm…",o:["Relaxes and moves up","Contracts and flattens","Disappears","Does nothing"],a:1,w:"Breathing in: diaphragm contracts & flattens, ribs move up/out, chest volume up, pressure down → air rushes in."},
+    {q:"Enzymes are…",o:["Types of vitamin","Biological catalysts that speed up digestion","Waste products","A type of fat"],a:1,w:"Enzymes are biological catalysts (lock-and-key) — each speeds up digestion of a specific nutrient."},
+    {q:"Which enzyme breaks down proteins?",o:["Carbohydrase","Protease","Lipase","Catalase"],a:1,w:"Protease → amino acids. Carbohydrase → sugars. Lipase → fatty acids + glycerol."},
+    {q:"What does the LIVER produce to help digestion?",o:["Acid","Bile","Insulin","Saliva"],a:1,w:"The liver makes bile, which helps digest fats. The stomach adds acid."},
+    {q:"Which nutrient is the body's MAIN source of energy?",o:["Protein","Carbohydrates","Fibre","Vitamins"],a:1,w:"Carbohydrates = main energy source. Protein = growth/repair; fibre keeps food moving."},
+  ]},
+  {key:"Ecosystems",em:"🌱",boss:"The Leaf Lord",bem:"🍃",taunts:["Photosynthesise your way out of THIS!","Feel the burn — anaerobically!"],qs:[
+    {q:"Aerobic respiration is…",o:["glucose → lactic acid","glucose + oxygen → carbon dioxide + water","water + CO₂ → glucose","glucose → ethanol"],a:1,w:"Aerobic respiration: glucose + oxygen → carbon dioxide + water. Happens in the mitochondria."},
+    {q:"Anaerobic respiration in humans produces…",o:["Ethanol","Lactic acid","Oxygen","Bile"],a:1,w:"Without enough oxygen: glucose → lactic acid (causes cramps and oxygen debt)."},
+    {q:"Fermentation in yeast produces…",o:["Lactic acid","Ethanol + carbon dioxide","Just water","Oxygen"],a:1,w:"Fermentation: glucose → ethanol + carbon dioxide (used in bread and alcohol)."},
+    {q:"Photosynthesis is…",o:["glucose + oxygen → CO₂ + water","water + carbon dioxide + sunlight → glucose + oxygen","glucose → lactic acid","oxygen → glucose"],a:1,w:"Photosynthesis: water + carbon dioxide + sunlight → glucose + oxygen. Happens in chloroplasts."},
+    {q:"Which does NOT affect the rate of photosynthesis?",o:["Light intensity","CO₂ concentration","Temperature","Magnetism"],a:3,w:"Rate of photosynthesis depends on light intensity, CO₂ concentration and temperature."},
+    {q:"In the blood, oxygen is carried by…",o:["Plasma","Red blood cells (haemoglobin)","White blood cells","Platelets"],a:1,w:"Oxygen binds to haemoglobin in red blood cells. Glucose travels in the plasma."},
+  ]},
+  {key:"Genes",em:"🧬",boss:"Dr. DNA",bem:"🧬",taunts:["Your genes can't beat mine!","Survival of the fittest — not you!"],qs:[
+    {q:"Natural selection (Darwin) says…",o:["All animals survive equally","The best-adapted survive and pass on their genes","Animals choose their genes","Genes never change"],a:1,w:"Natural selection: organisms best adapted to their environment survive and pass on their genes."},
+    {q:"DNA is shaped like a…",o:["Single straight line","Double helix","Triangle","Cube"],a:1,w:"DNA is a double helix. A gene is a section of DNA; a chromosome is a long strand of DNA."},
+    {q:"How many chromosomes are in a human sex cell (sperm/egg)?",o:["46","23","2","100"],a:1,w:"Sperm and egg each carry 23. They join at fertilisation to make 46."},
+    {q:"A DOMINANT allele…",o:["Needs two copies to show","Shows even with just one copy (capital letter)","Is never inherited","Only appears in plants"],a:1,w:"A dominant allele (capital letter) shows even if paired with a recessive one. Recessive needs two copies."},
+    {q:"A species becomes EXTINCT when…",o:["It evolves","All of the species die out","It migrates","It reproduces"],a:1,w:"Extinction = all of a species die out. It reduces biodiversity."},
+    {q:"Genetic modification is…",o:["Natural selection","Altering an organism's genes","A type of respiration","Cloning only"],a:1,w:"Genetic modification = scientists altering the genes of an organism (e.g. crops, bacteria making medicine)."},
+  ]},
+  {key:"Electricity",em:"⚡",boss:"Lord Voltage",bem:"⚡",taunts:["You can't complete THIS circuit!","Series or parallel — you'll short out!"],qs:[
+    {q:"What does an AMMETER measure, and how is it connected?",o:["Voltage, in parallel","Current (amps, A), in series","Resistance, in series","Power, in parallel"],a:1,w:"An ammeter measures current (amps, A) and is always connected in series."},
+    {q:"What does a VOLTMETER measure, and how is it connected?",o:["Current, in series","Potential difference (voltage, V), in parallel","Mass, in series","Charge, in series"],a:1,w:"A voltmeter measures potential difference (voltage, V) and is connected in parallel across a component."},
+    {q:"In a SERIES circuit, if one bulb breaks…",o:["The other bulbs stay on","ALL the bulbs go out","The bulbs get brighter","Nothing changes"],a:1,w:"Series is one single loop — break one bulb and the whole circuit breaks, so all bulbs go out."},
+    {q:"Two bulbs in SERIES compared with one bulb are…",o:["Brighter","Dimmer — they share the voltage","Exactly the same","Off"],a:1,w:"In series the cell's voltage is shared between the bulbs, so each is dimmer."},
+    {q:"The current in a SERIES circuit is…",o:["Bigger near the cell","The same everywhere","Zero","Different in each bulb"],a:1,w:"In a series circuit the current is the same at every point."},
+    {q:"In a PARALLEL circuit, if one bulb breaks…",o:["Both bulbs go out","The other bulb stays lit","The cell breaks","Current stops everywhere"],a:1,w:"Parallel bulbs are on separate branches, so the others stay lit — and each still gets the full voltage."},
+  ]},
+];
+function loadScores(){try{return JSON.parse(localStorage.getItem('madlab_scores')||'{}')}catch(e){return{}}}
+function saveScores(s){try{localStorage.setItem('madlab_scores',JSON.stringify(s))}catch(e){}}
+function saveTopicScore(key,correct,total){const s=loadScores();const pct=Math.round(correct/total*100);
+  if(s[key]==null||pct>=s[key])s[key]=pct;saveScores(s)}
+
+function arena(){stopLoop();const s=loadScores();
+  let grid='';TOPICS.forEach((t,i)=>{const sc=s[t.key];
+    grid+=`<div class="topic" onclick="SFX.click();startBattle(${i})">${sc!=null?`<span class="score">${sc}%</span>`:''}<div class="em">${t.em}</div><b>${t.key}</b></div>`});
+  const done=Object.keys(s).length;
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">🧠 Exam Arena</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <h2 class="center">Pick a Boss to Battle</h2>
+    <div class="sub">Beat all 10 to unlock your full Gap Report. (${done}/10 attempted)</div>
+    <div class="topicgrid">${grid}</div>
+    ${done>0?`<button class="btn gold" onclick="SFX.click();gapReport()">📊 See Gap Report</button>`:''}
+    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+}
+let BT;
+function startBattle(ti){const t=TOPICS[ti];const qs=[...t.qs].sort(()=>Math.random()-0.5);
+  BT={t,qs,i:0,score:0,streak:0,best:0,correct:0,bossMax:qs.length,bossHP:qs.length,hp:5,answered:false};drawBattle()}
+function drawBattle(){if(BT.i>=BT.qs.length)return battleWin();if(BT.hp<=0)return battleFaint();BT.answered=false;
+  const t=BT.t,q=BT.qs[BT.i],taunt=t.taunts[BT.i%t.taunts.length];
+  root.innerHTML=`
+    <div class="topbar"><span class="tag">${t.em} ${t.key}</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <div class="fighter"><div class="face">${t.bem}</div><div class="bars"><div class="nm"><b>${t.boss}</b><span>${BT.bossHP}/${BT.bossMax} HP</span></div>
+      <div class="hpbar hp-enemy"><i style="width:${BT.bossHP/BT.bossMax*100}%"></i></div></div></div>
+    <div class="bubble">"${taunt}"</div>
+    <div class="fighter"><div class="face">🧑‍🎓</div><div class="bars"><div class="nm"><b>You</b><span>${'❤️'.repeat(BT.hp)}${'🖤'.repeat(5-BT.hp)}</span></div>
+      <div class="hpbar hp-self"><i style="width:${BT.hp/5*100}%"></i></div></div></div>
+    <div class="hud"><div class="stat"><b>${BT.score}</b><span>Score</span></div>
+      <div class="stat streak ${BT.streak>=2?'fire':''}"><b>${BT.streak}${BT.streak>=2?'🔥':''}</b><span>Combo</span></div>
+      <div class="stat"><b>${BT.i+1}/${BT.qs.length}</b><span>Hit</span></div></div>
+    <div class="q">${q.q}</div><div class="opts" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="btn" id="next" style="display:none" onclick="SFX.click();btNext()">NEXT ➡️</button>`;
+  const opts=document.getElementById('opts');
+  q.o.map((t2,k)=>({t2,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.t2;b.onclick=()=>btAnswer(b,o.k===q.a,q);opts.appendChild(b)});
+}
+function btAnswer(btn,correct,q){if(BT.answered)return;BT.answered=true;
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim')});
+  const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';
+  if(correct){BT.correct++;BT.streak++;BT.best=Math.max(BT.best,BT.streak);const crit=BT.streak>=3;BT.bossHP=Math.max(0,BT.bossHP-1);
+    BT.score+=100+(BT.streak-1)*25;if(crit){SFX.win();toast("💥 CRITICAL! Combo x"+BT.streak)}else{SFX.ding();toast("✅ +"+(100+(BT.streak-1)*25))}}
+  else{BT.streak=0;BT.hp--;btn.classList.remove('dim');btn.classList.add('wrong');SFX.pop();toast("💢 Boss hits back! Read the answer 👇")}
+  document.querySelector('.hp-enemy>i').style.width=Math.max(0,BT.bossHP/BT.bossMax*100)+'%';
+  document.querySelector('.hp-self>i').style.width=BT.hp/5*100+'%';
+  const n=document.getElementById('next');n.style.display='block';const last=BT.i>=BT.qs.length-1;n.textContent=BT.hp<=0?'💀 Continue':last?'🏆 FINISH!':'NEXT ➡️';}
+function btNext(){if(BT.hp<=0)return battleFaint();BT.i++;drawBattle()}
+function battleFaint(){SFX.pop();root.innerHTML=`<h1>😵 Fainted!</h1>
+  <div class="center" style="font-size:60px">🤕💫</div>
+  <p class="center small" style="margin:14px 0">The ${BT.t.boss} got 5 hits in — just a few gaps to patch. Revise & retry, you've got this! 💪</p>
+  <button class="btn" onclick="SFX.click();startBattle(${TOPICS.indexOf(BT.t)})">🔁 Retry battle</button>
+  <button class="btn ghost" onclick="SFX.click();arena()">⬅️ Arena</button>`}
+function battleWin(){SFX.win();saveTopicScore(BT.t.key,BT.correct,BT.qs.length);const pct=Math.round(BT.correct/BT.qs.length*100);
+  root.innerHTML=`<h1>🏆 ${BT.t.boss} DEFEATED!</h1>
+  <div class="center" style="font-size:60px">${BT.t.bem}💥</div>
+  <div class="hud" style="margin-top:14px"><div class="stat"><b>${BT.score}</b><span>Score</span></div>
+    <div class="stat"><b>${pct}%</b><span>Accuracy</span></div><div class="stat"><b>${BT.best}🔥</b><span>Best Combo</span></div></div>
+  <p class="center small">${pct>=90?"🌟 Flawless — that topic is locked in!":pct>=70?"💪 Strong! One more run to perfect it.":"📚 Beaten — revise the misses and go again!"}</p>
+  <button class="btn green" onclick="SFX.click();arena()">➡️ Pick next boss</button>
+  <button class="btn ghost" onclick="SFX.click();startBattle(${TOPICS.indexOf(BT.t)})">🔁 Replay</button>`}
+function gapReport(){const s=loadScores();const ranked=TOPICS.map(t=>({k:t.key,em:t.em,p:s[t.key]})).filter(x=>x.p!=null).sort((a,b)=>a.p-b.p);
+  let rows='';ranked.forEach(r=>{const col=r.p>=80?'var(--neon2)':r.p>=50?'var(--acid)':'var(--danger)';
+    rows+=`<div class="report-row"><div class="name">${r.em} ${r.k}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`});
+  const avg=ranked.length?Math.round(ranked.reduce((a,r)=>a+r.p,0)/ranked.length):0;
+  const weak=ranked.filter(r=>r.p<70).map(r=>r.k);
+  let v,vm;if(avg>=85){v="🏆 Science legend. You're exam-ready!";vm="🧠✨"}else if(avg>=65){v="💪 Strong — patch the red bars and you're golden.";vm="📈🔥"}else{v="📚 Good start — focus revision on the red bars below.";vm="🛠️📖"}
+  root.innerHTML=`<div class="topbar"><span class="tag">📊 Gap Report</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <h1>${vm} GAP REPORT</h1><div class="sub">${ranked.length}/10 topics attempted • average ${avg}%</div>
+    <p class="center" style="font-size:17px;margin-bottom:10px">${v}</p>${rows}
+    ${weak.length?`<div class="info" style="margin-top:14px"><b>🎯 Revise these first:</b> ${weak.join(', ')}. Re-read those knowledge organisers, then re-battle the bosses!</div>`:`<div class="info" style="margin-top:14px">🎉 Every attempted topic is ≥70%! Battle any remaining bosses for the full picture.</div>`}
+    <button class="btn" onclick="SFX.click();arena()">⬅️ Back to Arena</button>
+    <button class="btn ghost" onclick="SFX.click();hub()">🏠 Lab</button>`}
+
+/* ===================== STATION 5 — CIRCUIT LAB ===================== */
+let CL;
+function circuits(){stopLoop();CL={closed:true,mode:'series',broken:false,phase:0};drawCircuitsUI();}
+function drawCircuitsUI(){
+  root.innerHTML=`
+   <div class="topbar"><span class="tag">⚡ Circuit Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="cl" width="560" height="300"></canvas>
+   <div class="toolbar" style="margin-top:10px">
+     <button class="tool" id="swbtn" onclick="CL.closed=!CL.closed;SFX.click();flashInfo()">🔌 ${CL.closed?'Switch: CLOSED':'Switch: OPEN'}</button>
+     <button class="tool" id="modebtn" onclick="CL.mode=CL.mode==='series'?'parallel':'series';SFX.click();flashInfo()">🔀 ${CL.mode.toUpperCase()}</button>
+     <button class="tool" id="brkbtn" onclick="CL.broken=!CL.broken;SFX.pop();flashInfo()">💥 ${CL.broken?'Fix bulb 1':'Break bulb 1'}</button>
+   </div>
+   <div class="info" id="clinfo"></div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('cl');CL.cv=cv;CL.ctx=cv.getContext('2d');flashInfo();clLoop();
+}
+function flashInfo(){
+  const sb=document.getElementById('swbtn');if(sb)sb.innerHTML=`🔌 ${CL.closed?'Switch: CLOSED':'Switch: OPEN'}`;
+  const mb=document.getElementById('modebtn');if(mb)mb.innerHTML=`🔀 ${CL.mode.toUpperCase()}`;
+  const bb=document.getElementById('brkbtn');if(bb)bb.innerHTML=`💥 ${CL.broken?'Fix bulb 1':'Break bulb 1'}`;
+  const e=document.getElementById('clinfo');if(!e)return;let t;
+  if(!CL.closed)t="The switch is <b>open</b> → the circuit is broken, <b>no current flows</b> and the bulbs are off. Current needs a complete loop. ⭕";
+  else if(CL.mode==='series')t=CL.broken?"<b>Series + broken bulb:</b> there's only ONE loop, so breaking one bulb breaks the whole circuit — <b>both bulbs go out</b>. ❌":"<b>Series circuit:</b> one single loop. The cell's voltage is <b>shared</b>, so two bulbs are <b>dimmer</b>. The current is the <b>same</b> everywhere. An <b>ammeter</b> (current, A) goes in series.";
+  else t=CL.broken?"<b>Parallel + broken bulb:</b> bulb 1's branch is broken, but bulb 2 has its own branch → <b>bulb 2 stays lit</b>! ✅":"<b>Parallel circuit:</b> each bulb is on its own branch and gets the <b>full voltage</b>, so they're <b>bright</b>. A <b>voltmeter</b> (voltage, V) goes in parallel across a component.";
+  e.innerHTML=t;
+}
+function clLoop(){
+  if(!CL)return;const {ctx,cv}=CL,W=cv.width,H=cv.height,L=80,R=480,T=80,Bm=220;
+  ctx.clearRect(0,0,W,H);
+  const flowing=CL.closed && !(CL.mode==='series'&&CL.broken);
+  CL.phase=(CL.phase+(flowing?0.012:0))%1;
+  let segs,bulbs;
+  if(CL.mode==='series'){
+    segs=[{a:[L,Bm],b:[L,T]},{a:[L,T],b:[R,T]},{a:[R,T],b:[R,Bm]},{a:[R,Bm],b:[L,Bm],sw:1}];
+    bulbs=[{x:200,y:T,on:!CL.broken,br:0.5},{x:360,y:T,on:!CL.broken,br:0.5}];
+  } else {
+    segs=[{a:[L,Bm],b:[L,T]},{a:[L,T],b:[R,T]},{a:[R,T],b:[R,Bm]},{a:[R,Bm],b:[L,Bm],sw:1},
+          {a:[200,T],b:[200,Bm],dead:CL.broken},{a:[360,T],b:[360,Bm]}];
+    bulbs=[{x:200,y:150,on:!CL.broken,br:1},{x:360,y:150,on:true,br:1}];
+  }
+  segs.forEach(s=>{ if(s.dead)return;
+    ctx.strokeStyle=flowing?'#39e6ff':'#3a5070';ctx.lineWidth=4;
+    if(s.sw){ctx.beginPath();ctx.moveTo(s.a[0],s.a[1]);ctx.lineTo(300,Bm);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(260,Bm);ctx.lineTo(s.b[0],s.b[1]);ctx.stroke();
+      ctx.strokeStyle='#cfd6e6';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(300,Bm);if(CL.closed)ctx.lineTo(260,Bm);else ctx.lineTo(272,Bm-26);ctx.stroke();
+      ctx.fillStyle='#cfd6e6';ctx.beginPath();ctx.arc(300,Bm,4,0,6.28);ctx.fill();ctx.beginPath();ctx.arc(260,Bm,4,0,6.28);ctx.fill();
+    } else {ctx.beginPath();ctx.moveTo(s.a[0],s.a[1]);ctx.lineTo(s.b[0],s.b[1]);ctx.stroke();}
+  });
+  if(CL.mode==='parallel'&&CL.broken){ctx.strokeStyle='#5a3030';ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(200,T+30);ctx.lineTo(200,Bm-30);ctx.stroke();ctx.setLineDash([])}
+  if(flowing){ctx.fillStyle='#ffe14d';segs.forEach(s=>{if(s.sw||s.dead)return;const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],len=Math.hypot(dx,dy),n=Math.max(2,Math.round(len/45));
+    for(let k=0;k<n;k++){const f=((CL.phase+k/n)%1);ctx.beginPath();ctx.arc(s.a[0]+dx*f,s.a[1]+dy*f,3,0,6.28);ctx.fill()}});}
+  ctx.strokeStyle='#cfd6e6';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(L-12,140);ctx.lineTo(L+12,140);ctx.stroke();ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(L-7,156);ctx.lineTo(L+7,156);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='12px Trebuchet MS';ctx.fillText('cell',L-36,150);ctx.fillText('switch',250,Bm+24);
+  bulbs.forEach((b,bi)=>{const lit=flowing&&b.on;
+    if(lit){const g=ctx.createRadialGradient(b.x,b.y,2,b.x,b.y,26);g.addColorStop(0,'rgba(255,234,120,.9)');g.addColorStop(1,'rgba(255,234,120,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,26,0,6.28);ctx.fill();}
+    ctx.strokeStyle=lit?'#ffd23f':'#6b7686';ctx.lineWidth=3;ctx.fillStyle=lit?'#fff7cf':'#1a2740';ctx.beginPath();ctx.arc(b.x,b.y,11,0,6.28);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(b.x-7,b.y-7);ctx.lineTo(b.x+7,b.y+7);ctx.moveTo(b.x+7,b.y-7);ctx.lineTo(b.x-7,b.y+7);ctx.stroke();
+    ctx.fillStyle='#8fb3d9';ctx.fillText('bulb '+(bi+1),b.x-18,b.y+30);
+  });
+  raf=requestAnimationFrame(clLoop);
+}
+
+/* ===================== STATION 6 — FORCE LAB ===================== */
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+let FL;
+function forcelab(){stopLoop();FL={mode:'menu'};drawFL();}
+function drawFL(){stopLoop();
+  root.innerHTML=`<div class="topbar"><span class="tag">🧮 Force Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+    <h2 class="center">Force Lab</h2><div class="sub">Master the calculations you'll need in the exam</div>
+    <div class="stations"><div class="station" onclick="SFX.click();flSeesawInit()"><div class="em">⚖️</div><b>Balance the Seesaw</b><span>Play with moments (force × distance) and find equilibrium.</span></div>
+    <div class="station" onclick="SFX.click();flCalcInit()"><div class="em">🧮</div><b>Calculation Practice</b><span>Moments, pressure, work, weight & speed — with worked solutions.</span></div></div>
+    <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;}
+function flSeesawInit(){stopLoop();FL.mode='seesaw';FL.lF=400;FL.lD=2;FL.rF=400;FL.rD=2;FL.angle=0;FL._wasBal=false;
+  root.innerHTML=`<div class="topbar"><span class="tag">⚖️ Moments</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <canvas id="ss" width="560" height="240"></canvas>
+   <div class="info" id="ssinfo"></div>
+   <div style="margin-top:8px"><div class="small">Right-side FORCE: <b id="rfl">400</b> N</div><input type="range" min="100" max="800" step="100" value="400" oninput="FL.rF=+this.value;document.getElementById('rfl').textContent=this.value"></div>
+   <div><div class="small">Right-side DISTANCE from pivot: <b id="rdl">2</b> m</div><input type="range" min="1" max="5" step="1" value="2" oninput="FL.rD=+this.value;document.getElementById('rdl').textContent=this.value"></div>
+   <div class="small center">(Left side is fixed: 400 N at 2 m → 800 Nm. Match it!)</div>
+   <button class="btn ghost" onclick="SFX.click();drawFL()">⬅️ Force Lab</button>`;
+  const cv=document.getElementById('ss');FL.cv=cv;FL.ctx=cv.getContext('2d');flSeesawLoop();}
+function flSeesawLoop(){
+  if(!FL||FL.mode!=='seesaw')return;const {ctx,cv}=FL,W=cv.width;
+  const lm=FL.lF*FL.lD, rm=FL.rF*FL.rD, diff=rm-lm;
+  const target=Math.max(-0.3,Math.min(0.3,diff/4000));FL.angle+=(target-FL.angle)*0.1;
+  ctx.clearRect(0,0,W,cv.height);const px=W/2,py=150;
+  ctx.fillStyle='#6b7686';ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px-26,py+50);ctx.lineTo(px+26,py+50);ctx.closePath();ctx.fill();
+  ctx.save();ctx.translate(px,py);ctx.rotate(FL.angle);
+  ctx.fillStyle='#caa15a';ctx.fillRect(-220,-8,440,16);
+  const drawW=(side,F,D)=>{const x=side*D*40;ctx.fillStyle=side<0?'#4d96ff':'#ff7a5c';const h=28+F/20;ctx.fillRect(x-16,8,32,h);ctx.fillStyle='#fff';ctx.font='bold 11px Trebuchet MS';ctx.fillText(F+'N',x-11,26);ctx.fillText(D+'m',x-10,8+h-6)};
+  drawW(-1,FL.lF,FL.lD);drawW(1,FL.rF,FL.rD);ctx.restore();
+  const e=document.getElementById('ssinfo');if(e){const bal=Math.abs(diff)<1;
+    e.innerHTML=`Anticlockwise = ${FL.lF} × ${FL.lD} = <b>${lm} Nm</b> &nbsp;|&nbsp; Clockwise = ${FL.rF} × ${FL.rD} = <b>${rm} Nm</b><br>`+
+    (bal?"✅ <b>BALANCED — equilibrium!</b> The clockwise and anticlockwise moments are equal & opposite.":(diff>0?"➡️ Right tips down — its moment is bigger. (moment = force × distance)":"⬅️ Left tips down — its moment is bigger."));
+    if(bal&&!FL._wasBal){SFX.ding();toast("⚖️ Equilibrium!")}FL._wasBal=bal;}
+  raf=requestAnimationFrame(flSeesawLoop);}
+const FORMULAS=[
+ {n:'Moment',eq:'moment = force × distance',u:'Nm',gen(){const f=rnd(2,20),d=rnd(2,9);return{q:`A force of ${f} N acts ${d} m from a pivot. Calculate the moment.`,ans:f*d,work:`moment = force × distance = ${f} × ${d} = ${f*d} Nm`}}},
+ {n:'Pressure',eq:'pressure = force ÷ area',u:'Pa',gen(){const a=rnd(2,8),p=rnd(2,12),f=a*p;return{q:`A force of ${f} N acts on an area of ${a} m². Calculate the pressure.`,ans:p,work:`pressure = force ÷ area = ${f} ÷ ${a} = ${p} Pa`}}},
+ {n:'Work done',eq:'work done = force × distance',u:'J',gen(){const f=rnd(5,40),d=rnd(2,10);return{q:`A ${f} N force moves an object ${d} m in the direction of the force. Calculate the work done.`,ans:f*d,work:`work = force × distance = ${f} × ${d} = ${f*d} J`}}},
+ {n:'Weight',eq:'weight = mass × gravity (g = 10 N/kg)',u:'N',gen(){const m=rnd(2,20);return{q:`Calculate the weight of a ${m} kg mass on Earth (g = 10 N/kg).`,ans:m*10,work:`weight = mass × g = ${m} × 10 = ${m*10} N`}}},
+ {n:'Speed',eq:'speed = distance ÷ time',u:'m/s',gen(){const t=rnd(2,8),s=rnd(2,12),d=s*t;return{q:`An object travels ${d} m in ${t} s. Calculate its speed.`,ans:s,work:`speed = distance ÷ time = ${d} ÷ ${t} = ${s} m/s`}}},
+];
+function flCalcInit(){stopLoop();FL.mode='calc';FL.i=0;FL.marks=0;FL.total=8;FL._answered=false;flCalcQ();}
+function flCalcQ(){
+  if(FL.i>=FL.total)return flCalcResult();
+  const F=FORMULAS[rnd(0,FORMULAS.length-1)];FL.cur={F,item:F.gen()};FL._answered=false;
+  root.innerHTML=`<div class="topbar"><span class="tag">🧮 Calc ${FL.i+1}/${FL.total}</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <div class="hud"><div class="stat"><b>${FL.marks}</b><span>Marks</span></div><div class="stat"><b>${FL.i+1}/${FL.total}</b><span>Question</span></div></div>
+   <div class="info"><b>${F.n}:</b> ${F.eq}</div>
+   <div class="q" style="margin-top:10px">${FL.cur.item.q}</div>
+   <input id="flin" inputmode="decimal" placeholder="Type your answer (just the number)" style="width:100%;padding:13px;border-radius:12px;border:2px solid var(--line);background:#0c1424;color:var(--ink);font-size:16px;font-family:inherit">
+   <div style="font-size:12px;color:#8fb3d9;margin-top:4px">unit: ${F.u}</div>
+   <button class="btn" id="flsub" onclick="flCheck()">✅ Check answer</button>
+   <div class="explain" id="flex"></div>
+   <button class="btn ghost" onclick="SFX.click();drawFL()">⬅️ Force Lab</button>`;
+  const inp=document.getElementById('flin');inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')flCheck()});}
+function flCheck(){
+  if(FL._answered)return;const inp=document.getElementById('flin');const val=parseFloat(inp.value);const {item,F}=FL.cur;
+  const ok=!isNaN(val)&&Math.abs(val-item.ans)<0.01;FL._answered=true;const ex=document.getElementById('flex');
+  if(ok){FL.marks++;SFX.ding();ex.innerHTML=`✅ <b>Correct!</b> ${item.work}`}else{SFX.pop();ex.innerHTML=`❌ <b>Answer: ${item.ans} ${F.u}</b><br>${item.work}`}
+  ex.style.display='block';const sub=document.getElementById('flsub');sub.textContent=(FL.i>=FL.total-1)?'🏁 Finish':'Next ➡️';sub.onclick=()=>{FL.i++;flCalcQ()};}
+function flCalcResult(){const pct=Math.round(FL.marks/FL.total*100);SFX.win();
+  root.innerHTML=`<h1>🧮 ${FL.marks}/${FL.total}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div>
+   <p class="center small">${pct>=80?'Calculation master!':pct>=50?'Good — keep practising the trickier formulas.':'Practice makes perfect — go again!'}</p>
+   <button class="btn" onclick="SFX.click();flCalcInit()">🔁 Practise again</button>
+   <button class="btn ghost" onclick="SFX.click();drawFL()">⬅️ Force Lab</button>`;}
+
+/* ===================== STATION 7 — WRITTEN EXAM ===================== */
+const WRITTEN={
+ Forces:[
+  {m:1,q:"State the equation for calculating a moment.",s:["moment = force × distance from the pivot"]},
+  {m:2,q:"A seesaw is perfectly balanced. Explain what this tells you about the moments acting on it.",s:["The clockwise moment equals the anticlockwise moment","They are equal and opposite, so it is in equilibrium (no resultant turning effect)"]},
+  {m:3,q:"Explain why it is easier to pull a sledge over ice than over concrete.",s:["Friction acts between the two surfaces and opposes the motion","Ice is smoother than concrete, so it causes less friction","Less friction means a smaller force is needed to move the sledge"]},
+ ],
+ Electricity:[
+  {m:1,q:"Name the component used to measure current, and state its unit.",s:["Ammeter — current is measured in amps (A)"]},
+  {m:2,q:"Explain why two identical bulbs in series are dimmer than a single bulb.",s:["In series the cell's voltage (potential difference) is shared between the two bulbs","Each bulb gets less voltage, so less energy is transferred to it → dimmer"]},
+  {m:3,q:"Give three reasons household lighting is wired in parallel rather than series.",s:["Each light receives the full mains voltage (so they are bright)","If one bulb breaks, the others stay on (separate branches)","Each light can be switched on and off independently"]},
+ ],
+ Energy:[
+  {m:1,q:"State the equation for work done.",s:["work done = force × distance moved"]},
+  {m:2,q:"Explain why metals are good thermal conductors.",s:["Their particles are close together and vibrate, passing energy on when they collide","They also contain free (delocalised) electrons that move and transfer energy quickly"]},
+  {m:3,q:"Describe how a convection current forms when water is heated in a pan.",s:["Water near the heat warms, its particles spread out so it becomes less dense","The less-dense warm water rises","Cooler, denser water sinks to take its place, creating a circulating convection current"]},
+ ],
+ Waves:[
+  {m:1,q:"State the difference between a transverse and a longitudinal wave.",s:["Transverse: vibrations are at 90° to the direction of travel; longitudinal: vibrations are along the direction of travel"]},
+  {m:2,q:"Explain why gamma rays, X-rays and ultraviolet can be dangerous to cells.",s:["They are high-energy ionising waves that can knock electrons off atoms (ionisation)","This can damage or mutate the DNA in cells, which can lead to cancer"]},
+  {m:3,q:"Describe how sound travels through air.",s:["The source vibrates, making nearby air particles vibrate back and forth","This creates regions of high pressure (compression) and low pressure (rarefaction)","Energy is transferred through the air as a longitudinal wave (the particles don't travel with it)"]},
+ ],
+ Matter:[
+  {m:1,q:"State what is meant by a compound.",s:["Two or more different elements chemically bonded together"]},
+  {m:2,q:"Name the products when a Group 1 metal reacts with water, and describe the trend down the group.",s:["It forms a metal hydroxide + hydrogen gas","The reaction gets more vigorous further down the group"]},
+  {m:2,q:"Describe two properties of the Group 0 noble gases.",s:["They are unreactive","They have low melting/boiling points (gases at room temperature)"]},
+ ],
+ Reactions:[
+  {m:1,q:"State what is meant by combustion.",s:["The burning of a fuel in oxygen"]},
+  {m:2,q:"Describe how you would test a gas to show that it is carbon dioxide.",s:["Bubble the gas through limewater","If it is carbon dioxide, the limewater turns cloudy/milky"]},
+  {m:3,q:"In a reaction it looks like mass has been lost. Explain, using conservation of mass, what has actually happened.",s:["Mass is conserved — it cannot be created or destroyed in a reaction","The total mass of products equals the total mass of reactants","The 'lost' mass is a gas that was produced and escaped"]},
+ ],
+ Earth:[
+  {m:1,q:"Name two greenhouse gases.",s:["Carbon dioxide and methane"]},
+  {m:2,q:"Explain how greenhouse gases keep the Earth warm.",s:["Some radiation that would be reflected back into space is absorbed by greenhouse gases","This traps/re-radiates heat, keeping the Earth warmer than it would be without them"]},
+  {m:3,q:"Describe how carbon moves through the carbon cycle.",s:["Carbon is released into the air by combustion of fossil fuels and by respiration","It is absorbed from the air by plants during photosynthesis","It is passed along food chains / returned to the air by decay"]},
+ ],
+ Organisms:[
+  {m:1,q:"State what is meant by gas exchange.",s:["Taking in oxygen and giving out carbon dioxide"]},
+  {m:3,q:"Describe what happens in your body when you breathe in.",s:["The intercostal muscles contract, pulling the ribs up and out","The diaphragm contracts and flattens, so chest volume increases","Pressure in the chest decreases, so air rushes into the lungs"]},
+  {m:2,q:"Explain what enzymes do in digestion and why each one only works on one nutrient.",s:["Enzymes are biological catalysts that speed up the digestion of nutrients","Each has a specific shape (lock and key), so it only fits/works on one type of nutrient"]},
+ ],
+ Ecosystems:[
+  {m:1,q:"Write the word equation for aerobic respiration.",s:["glucose + oxygen → carbon dioxide + water"]},
+  {m:2,q:"Compare aerobic and anaerobic respiration, and name the product of anaerobic respiration in humans.",s:["Aerobic respiration releases more energy than anaerobic respiration","Anaerobic respiration in humans produces lactic acid"]},
+  {m:3,q:"Describe three ways a leaf is adapted for photosynthesis.",s:["Thin/flat so light passes through and gases diffuse easily","Lots of chlorophyll (in chloroplasts) to absorb light","Large surface area to absorb as much light as possible"]},
+ ],
+ Genes:[
+  {m:2,q:"Define a gene and a chromosome.",s:["A gene is a section of DNA that codes for a particular characteristic","A chromosome is a long strand of DNA carrying many genes (humans have 46)"]},
+  {m:3,q:"Explain how natural selection could lead to all giraffes having long necks.",s:["Giraffes show variation — some have longer necks than others (caused by genes)","Longer-necked giraffes reach more food, so they survive and reproduce while shorter-necked ones die out","The genes for long necks are passed on, so over many generations long necks become common"]},
+  {m:2,q:"Explain how two brown-eyed parents can have a blue-eyed child.",s:["The blue-eye allele is recessive and the brown-eye allele is dominant","Both parents can carry a hidden recessive allele; if the child inherits two recessive alleles it has blue eyes"]},
+ ],
+ Electromagnets:[
+  {m:1,q:"Name the three magnetic metals.",s:["Iron, nickel and cobalt"]},
+  {m:2,q:"Give two ways to increase the strength of an electromagnet.",s:["Increase the number of turns on the coil","Increase the current flowing through the coil (or use a more magnetic iron core)"]},
+  {m:2,q:"State one advantage of an electromagnet over a permanent magnet, and give one use.",s:["It can be turned on and off (it is only magnetic while current flows)","A use such as: electric bell, circuit breaker, loudspeaker or scrapyard crane"]},
+ ],
+};
+let WR;
+function written(){stopLoop();
+  let grid='';Object.keys(WRITTEN).forEach(k=>{const em=(TOPICS.find(t=>t.key===k)||{em:'📝'}).em;
+    grid+=`<div class="topic" onclick="SFX.click();wrStart('${k}')"><div class="em">${em}</div><b>${k}</b></div>`});
+  root.innerHTML=`<div class="topbar"><span class="tag">📝 Written Exam</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <h2 class="center">Written Questions</h2><div class="sub">1, 2 & 3-mark exam-style questions. Type your answer, reveal the mark scheme, then mark yourself honestly.</div>
+   <div class="topicgrid">${grid}</div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;}
+function wrStart(k){WR={k,list:WRITTEN[k],i:0,marks:0,max:WRITTEN[k].reduce((a,q)=>a+q.m,0)};wrQ();}
+function wrQ(){
+  if(WR.i>=WR.list.length)return wrResult();const q=WR.list[WR.i];
+  root.innerHTML=`<div class="topbar"><span class="tag">📝 ${WR.k} ${WR.i+1}/${WR.list.length}</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <div class="hud"><div class="stat"><b>${WR.marks}</b><span>Marks so far</span></div><div class="stat"><b>${q.m}</b><span>This Q</span></div></div>
+   <div class="q">[${q.m} mark${q.m>1?'s':''}] ${q.q}</div>
+   <textarea id="wrans" rows="4" placeholder="Write your answer here (optional — great for practice)..." style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#0c1424;color:var(--ink);font-size:15px;font-family:inherit"></textarea>
+   <button class="btn" id="wrrev" onclick="wrReveal()">👀 Reveal mark scheme</button>
+   <div class="explain" id="wrms"></div><div id="wrmark"></div>
+   <button class="btn ghost" onclick="SFX.click();written()">⬅️ Topics</button>`;}
+function wrReveal(){const q=WR.list[WR.i];const ms=document.getElementById('wrms');
+  ms.innerHTML="<b>Mark scheme (1 mark per point):</b><ul style='margin:6px 0 0 18px'>"+q.s.map(p=>`<li style='margin:4px 0'>${p}</li>`).join('')+"</ul>";
+  ms.style.display='block';document.getElementById('wrrev').style.display='none';SFX.click();
+  let btns='';for(let m=0;m<=q.m;m++)btns+=`<button class="btn sm ${m===q.m?'green':'ghost'}" onclick="wrScore(${m})">${m}</button>`;
+  document.getElementById('wrmark').innerHTML=`<div class="small" style="margin-top:10px">How many marks did you give yourself?</div><div>${btns}</div>`;}
+function wrScore(m){WR.marks+=m;SFX.ding();WR.i++;wrQ();}
+function wrResult(){const pct=Math.round(WR.marks/WR.max*100);SFX.win();
+  root.innerHTML=`<h1>📝 ${WR.marks}/${WR.max} marks</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div>
+   <div class="sub">${WR.k} • ${pct}%</div>
+   <p class="center small">${pct>=80?'Exam-ready on this topic!':pct>=50?'Solid — tighten up the points you missed.':'Re-read the knowledge organiser and try again!'}</p>
+   <button class="btn" onclick="SFX.click();wrStart('${WR.k}')">🔁 Retry topic</button>
+   <button class="btn ghost" onclick="SFX.click();written()">⬅️ Topics</button>`;}
+
+/* ===================== STATION 8 — PRO LAB (realistic) ===================== */
+const PCHEM={},PLIST=[];
+function ad(id,n,f,cat,c,ex){PCHEM[id]=Object.assign({id,n,f,cat,c},ex||{});PLIST.push(id)}
+const RANK={K:1,Na:2,Li:3,Ca:4,Mn:4.5,Cr:4.7,Mg:5,Al:6,Zn:7,Fe:8,Ni:8.5,Sn:9,W:9.5,Pb:10,H:11,Cu:12,Hg:12.5,Ag:13,Au:14,Pt:15};
+const HRANK={F:1,Cl:2,Br:3,I:4,At:5};
+/* --- Acids --- */
+ad('hcl','Hydrochloric acid','HCl','acid','#e9f0c8',{acid:1,strong:1});
+ad('h2so4','Sulfuric acid','H₂SO₄','acid','#e9f0c8',{acid:1,strong:1});
+ad('hno3','Nitric acid','HNO₃','acid','#e9f0c8',{acid:1,strong:1});
+ad('h3po4','Phosphoric acid','H₃PO₄','acid','#e9f0c8',{acid:1});
+ad('ethanoic','Ethanoic (acetic) acid','CH₃COOH','acid','#eef0d0',{acid:1});
+ad('citric','Citric acid','C₆H₈O₇','acid','#eef0d0',{acid:1});
+ad('carbonic','Carbonic acid','H₂CO₃','acid','#eef0d8',{acid:1});
+ad('hf','Hydrofluoric acid','HF','acid','#e9f0c8',{acid:1});
+ad('methanoic','Methanoic (formic) acid','HCOOH','acid','#eef0d0',{acid:1});
+ad('lactic','Lactic acid','C₃H₆O₃','acid','#eef0d0',{acid:1});
+ad('tartaric','Tartaric acid','C₄H₆O₆','acid','#eef0d0',{acid:1});
+ad('oxalic','Oxalic acid','H₂C₂O₄','acid','#eef0d0',{acid:1});
+ad('boric','Boric acid','H₃BO₃','acid','#eef0d8',{acid:1});
+ad('hbr','Hydrobromic acid','HBr','acid','#e9f0c8',{acid:1,strong:1});
+ad('hi','Hydroiodic acid','HI','acid','#e9f0c8',{acid:1,strong:1});
+/* --- Alkalis / bases --- */
+ad('naoh','Sodium hydroxide','NaOH','alkali','#e6e0f0',{base:1,sol:1,strong:1});
+ad('koh','Potassium hydroxide','KOH','alkali','#e6e0f0',{base:1,sol:1,strong:1});
+ad('caoh2','Calcium hydroxide','Ca(OH)₂','alkali','#eef7ff',{base:1,sol:1});
+ad('nh3','Ammonia solution','NH₃','alkali','#e6e0f0',{base:1,sol:1});
+ad('mgoh2','Magnesium hydroxide','Mg(OH)₂','alkali','#f0f0f5',{base:1});
+ad('lioh','Lithium hydroxide','LiOH','alkali','#e6e0f0',{base:1,sol:1,strong:1});
+ad('baoh2','Barium hydroxide','Ba(OH)₂','alkali','#e6e0f0',{base:1,sol:1,strong:1});
+ad('aloh3','Aluminium hydroxide','Al(OH)₃','alkali','#f0f0f5',{base:1});
+ad('cuoh2','Copper hydroxide','Cu(OH)₂','alkali','#2a7fff',{base:1});
+ad('feoh3','Iron(III) hydroxide','Fe(OH)₃','alkali','#8a3b1e',{base:1});
+/* --- Metals --- */
+ad('K','Potassium','K','metal','#e9e9e9',{metal:'K'});
+ad('Na','Sodium','Na','metal','#e9e9e9',{metal:'Na'});
+ad('Li','Lithium','Li','metal','#e6e6ea',{metal:'Li'});
+ad('Ca','Calcium','Ca','metal','#d8dde6',{metal:'Ca'});
+ad('Mg','Magnesium','Mg','metal','#d8dde6',{metal:'Mg'});
+ad('Al','Aluminium','Al','metal','#c2cad6',{metal:'Al'});
+ad('Zn','Zinc','Zn','metal','#cdd6e6',{metal:'Zn'});
+ad('Fe','Iron','Fe','metal','#9aa3b0',{metal:'Fe'});
+ad('Ni','Nickel','Ni','metal','#b6c0c2',{metal:'Ni'});
+ad('Sn','Tin','Sn','metal','#c2cad6',{metal:'Sn'});
+ad('Pb','Lead','Pb','metal','#8f96a3',{metal:'Pb'});
+ad('Cu','Copper','Cu','metal','#c2622e',{metal:'Cu'});
+ad('Hg','Mercury','Hg','metal','#b8bcc4',{metal:'Hg'});
+ad('Ag','Silver','Ag','metal','#cdd2da',{metal:'Ag'});
+ad('Au','Gold','Au','metal','#e6b422',{metal:'Au'});
+ad('Pt','Platinum','Pt','metal','#cdd2da',{metal:'Pt'});
+ad('Mn','Manganese','Mn','metal','#9aa0a8',{metal:'Mn'});
+ad('W','Tungsten','W','metal','#7f8893',{metal:'W'});
+/* --- Carbonates --- */
+ad('caco3','Calcium carbonate','CaCO₃','carbonate','#f0f0f0',{carb:1});
+ad('na2co3','Sodium carbonate','Na₂CO₃','carbonate','#f0f0f0',{carb:1,sol:1,base:1});
+ad('nahco3','Sodium hydrogencarbonate','NaHCO₃','carbonate','#ffffff',{carb:1,sol:1});
+ad('cuco3','Copper carbonate','CuCO₃','carbonate','#3fa86b',{carb:1});
+ad('mgco3','Magnesium carbonate','MgCO₃','carbonate','#f0f0f0',{carb:1});
+ad('znco3','Zinc carbonate','ZnCO₃','carbonate','#eef0ea',{carb:1});
+ad('k2co3','Potassium carbonate','K₂CO₃','carbonate','#f0f0f0',{carb:1,sol:1,base:1});
+ad('pbco3','Lead carbonate','PbCO₃','carbonate','#eef0ea',{carb:1});
+/* --- Oxides --- */
+ad('cuo','Copper(II) oxide','CuO','oxide','#171717',{base:1,metalIon:'Cu'});
+ad('fe2o3','Iron(III) oxide','Fe₂O₃','oxide','#8a3b1e',{base:1,metalIon:'Fe'});
+ad('mgo','Magnesium oxide','MgO','oxide','#f0f0f0',{base:1,metalIon:'Mg'});
+ad('zno','Zinc oxide','ZnO','oxide','#f0f0f0',{base:1,metalIon:'Zn'});
+ad('cao','Calcium oxide','CaO','oxide','#f5f5f5',{base:1,metalIon:'Ca'});
+ad('al2o3','Aluminium oxide','Al₂O₃','oxide','#f0f0f0',{base:1,metalIon:'Al'});
+ad('pbo','Lead(II) oxide','PbO','oxide','#e0c14d',{base:1,metalIon:'Pb'});
+ad('mno2','Manganese dioxide','MnO₂','oxide','#1c1c1c',{catalyst:1});
+/* --- Salts & solutions --- */
+ad('cuso4','Copper(II) sulfate','CuSO₄','salt','#1f7bff',{sol:1,metalIon:'Cu',anion:'sulfate'});
+ad('feso4','Iron(II) sulfate','FeSO₄','salt','#7fcaa0',{sol:1,metalIon:'Fe',anion:'sulfate'});
+ad('znso4','Zinc sulfate','ZnSO₄','salt','#dfe9f0',{sol:1,metalIon:'Zn',anion:'sulfate'});
+ad('mgso4','Magnesium sulfate','MgSO₄','salt','#dfe9f0',{sol:1,metalIon:'Mg',anion:'sulfate'});
+ad('nacl','Sodium chloride','NaCl','salt','#eef2f5',{sol:1,metalIon:'Na',anion:'chloride'});
+ad('kcl','Potassium chloride','KCl','salt','#eef2f5',{sol:1,metalIon:'K',anion:'chloride'});
+ad('na2so4','Sodium sulfate','Na₂SO₄','salt','#eef2f5',{sol:1,metalIon:'Na',anion:'sulfate'});
+ad('agno3','Silver nitrate','AgNO₃','salt','#e8eef2',{sol:1,metalIon:'Ag',anion:'nitrate'});
+ad('pbno32','Lead nitrate','Pb(NO₃)₂','salt','#eef2f5',{sol:1,metalIon:'Pb',anion:'nitrate'});
+ad('cucl2','Copper(II) chloride','CuCl₂','salt','#3aa0a0',{sol:1,metalIon:'Cu',anion:'chloride'});
+ad('fecl3','Iron(III) chloride','FeCl₃','salt','#caa15a',{sol:1,metalIon:'Fe',anion:'chloride'});
+ad('ki','Potassium iodide','KI','salt','#eef2f5',{sol:1,metalIon:'K',anion:'iodide'});
+ad('bacl2','Barium chloride','BaCl₂','salt','#eef2f5',{sol:1,metalIon:'Ba',anion:'chloride'});
+ad('kno3','Potassium nitrate','KNO₃','salt','#eef2f5',{sol:1,metalIon:'K',anion:'nitrate'});
+ad('nh4cl','Ammonium chloride','NH₄Cl','salt','#eef2f5',{sol:1,anion:'chloride'});
+ad('nano3','Sodium nitrate','NaNO₃','salt','#eef2f5',{sol:1,metalIon:'Na',anion:'nitrate'});
+ad('cacl2','Calcium chloride','CaCl₂','salt','#eef2f5',{sol:1,metalIon:'Ca',anion:'chloride'});
+ad('kmno4','Potassium permanganate','KMnO₄','salt','#7a2bbf',{sol:1});
+ad('cuno32','Copper(II) nitrate','Cu(NO₃)₂','salt','#2a7fff',{sol:1,metalIon:'Cu',anion:'nitrate'});
+ad('nabr','Sodium bromide','NaBr','salt','#eef2f5',{sol:1,metalIon:'Na',anion:'bromide'});
+ad('kbr','Potassium bromide','KBr','salt','#eef2f5',{sol:1,metalIon:'K',anion:'bromide'});
+ad('nh4no3','Ammonium nitrate','NH₄NO₃','salt','#eef2f5',{sol:1,anion:'nitrate'});
+/* --- Indicators --- */
+ad('universal','Universal indicator','—','indicator','#8fe06b',{ind:'universal'});
+ad('litmus','Litmus solution','—','indicator','#7a86c8',{ind:'litmus'});
+ad('phenol','Phenolphthalein','—','indicator','#efe9f0',{ind:'phenol'});
+ad('methyl','Methyl orange','—','indicator','#ffae3c',{ind:'methyl'});
+ad('bromo','Bromothymol blue','—','indicator','#4db6ac',{ind:'bromo'});
+ad('cabbage','Red cabbage juice','—','indicator','#9b59b6',{ind:'cabbage'});
+/* --- Halogens --- */
+ad('F2','Fluorine','F₂','halogen','#e8f7a0',{hal:'F'});
+ad('Cl2','Chlorine','Cl₂','halogen','#d8f06b',{hal:'Cl'});
+ad('Br2','Bromine','Br₂','halogen','#c0531e',{hal:'Br'});
+ad('I2','Iodine','I₂','halogen','#5b2a83',{hal:'I'});
+ad('At2','Astatine','At','halogen','#444444',{hal:'At'});
+/* --- Gases --- */
+ad('o2','Oxygen','O₂','gas','#dfe9ff',{});
+ad('h2','Hydrogen','H₂','gas','#dfe9ff',{});
+ad('co2','Carbon dioxide','CO₂','gas','#dfe9ff',{});
+ad('n2','Nitrogen','N₂','gas','#dfe9ff',{});
+ad('so2','Sulfur dioxide','SO₂','gas','#eef0d0',{});
+ad('ch4','Methane','CH₄','gas','#dfe9ff',{fuel:1});
+ad('hcl_g','Hydrogen chloride','HCl(g)','gas','#eef0d0',{});
+ad('nh3_g','Ammonia gas','NH₃(g)','gas','#e6e0f0',{base:1});
+/* --- Other --- */
+ad('water','Water','H₂O','other','#bfe3ff',{water:1});
+ad('h2o2','Hydrogen peroxide','H₂O₂','other','#dff0ff',{});
+ad('ethanol','Ethanol','C₂H₅OH','other','#eaf4ff',{fuel:1});
+ad('sulfur','Sulfur','S','other','#e6d33a',{fuel:1});
+ad('carbon','Carbon','C','other','#1c1c1c',{fuel:1});
+ad('yeast','Yeast (catalyst)','—','other','#caa15a',{catalyst:1});
+ad('glucose','Glucose','C₆H₁₂O₆','other','#f0eede',{sol:1});
+ad('thio','Sodium thiosulfate','Na₂S₂O₃','other','#eef2f5',{sol:1});
+ad('starch','Starch solution','—','other','#f2f2e6',{sol:1});
+ad('limewater','Limewater','Ca(OH)₂(aq)','other','#eef7ff',{base:1,sol:1,lime:1});
+/* --- Chromium chemistry & extras --- */
+ad('h2so4c','Concentrated sulfuric acid','H₂SO₄ (conc)','acid','#f0e6c0',{acid:1,strong:1,conc:1});
+ad('k2cr2o7','Potassium dichromate','K₂Cr₂O₇','salt','#e8862b',{sol:1,dichromate:1});
+ad('na2cr2o7','Sodium dichromate','Na₂Cr₂O₇','salt','#e8862b',{sol:1,dichromate:1});
+ad('k2cro4','Potassium chromate','K₂CrO₄','salt','#f2d21f',{sol:1});
+ad('Cr','Chromium','Cr','metal','#b6bcc4',{metal:'Cr'});
+ad('P','Phosphorus','P','other','#e6d33a',{fuel:1});
+ad('iodine_s','Iodine crystals','I₂','other','#5b2a83',{});
+ad('nh4oh','Ammonium hydroxide','NH₄OH','alkali','#e6e0f0',{base:1,sol:1});
+/* --- Oxidisers & combustion fuels (for the pyromaniacs 🔥) --- */
+ad('kclo3','Potassium chlorate','KClO₃','salt','#eef2f5',{sol:1,oxidiser:1});
+ad('naclo3','Sodium chlorate','NaClO₃','salt','#eef2f5',{sol:1,oxidiser:1});
+ad('glycerol','Glycerol (glycerine)','C₃H₈O₃','other','#eef0e0',{fuel:1});
+ad('sugar','Sugar (sucrose)','C₁₂H₂₂O₁₁','other','#f0eede',{fuel:1,sol:1});
+ad('charcoal','Charcoal','C','other','#1c1c1c',{fuel:1});
+
+const PRECIP={ // sorted-id pair -> {col, name}
+ 'agno3|nacl':{c:'#f4f4f4',t:'a white precipitate of silver chloride'},
+ 'agno3|kcl':{c:'#f4f4f4',t:'a white precipitate of silver chloride'},
+ 'agno3|ki':{c:'#f2e14d',t:'a yellow precipitate of silver iodide'},
+ 'agno3|nabr':{c:'#f0ecd0',t:'a cream precipitate of silver bromide'},
+ 'agno3|kbr':{c:'#f0ecd0',t:'a cream precipitate of silver bromide'},
+ 'ki|pbno32':{c:'#ffd21f',t:'a bright yellow precipitate of lead iodide ("golden rain")'},
+ 'bacl2|na2so4':{c:'#f4f4f4',t:'a white precipitate of barium sulfate'},
+ 'bacl2|cuso4':{c:'#f4f4f4',t:'a white precipitate of barium sulfate'},
+ 'cuso4|naoh':{c:'#2a7fff',t:'a blue precipitate of copper hydroxide'},
+ 'cuno32|naoh':{c:'#2a7fff',t:'a blue precipitate of copper hydroxide'},
+ 'fecl3|naoh':{c:'#8a3b1e',t:'an orange-brown precipitate of iron(III) hydroxide'},
+ 'cuso4|koh':{c:'#2a7fff',t:'a blue precipitate of copper hydroxide'},
+};
+
+let PRO;
+function prolab(){stopLoop();
+  PRO={vessel:'beaker',contents:[],level:0,targetLevel:0,color:'#0a2036',targetColor:'#0a2036',
+    bubbles:[],parts:[],precip:[],foam:0,targetFoam:0,heat:0,targetHeat:0,heating:false,
+    gas:null,shakeT:0,flameT:0,cloudy:0,distillate:null,distilling:false,_dmsg:false,log:[],filter:'all',search:'',t:0};
+  drawProUI();
+}
+function proShelf(){
+  const cats=[['all','All'],['acid','Acids'],['alkali','Alkalis'],['metal','Metals'],['carbonate','Carbonates'],['oxide','Oxides'],['salt','Salts'],['indicator','Indicators'],['halogen','Halogens'],['gas','Gases'],['other','Other']];
+  let tabs=cats.map(c=>`<button class="tool" style="padding:5px 9px;font-size:12px;${PRO.filter===c[0]?'border-color:var(--acid);color:var(--acid)':''}" onclick="PRO.filter='${c[0]}';drawProUI()">${c[1]}</button>`).join('');
+  const q=PRO.search.toLowerCase();
+  let items=PLIST.filter(id=>{const c=PCHEM[id];return (PRO.filter==='all'||c.cat===PRO.filter)&&(!q||c.n.toLowerCase().includes(q)||(c.f||'').toLowerCase().includes(q))});
+  let list=items.map(id=>{const c=PCHEM[id];return `<button class="reagent" style="padding:7px 8px" onclick="proAdd('${id}')"><span class="rem" style="font-size:18px">${catEmoji(c.cat)}</span><span><span class="rn">${c.n}</span><br><span class="rf">${c.f}</span></span></button>`}).join('');
+  return `<div class="toolbar" style="justify-content:flex-start;gap:5px">${tabs}</div>
+   <input id="prosearch" value="${PRO.search}" placeholder="🔍 search ${PLIST.length} chemicals…" oninput="PRO.search=this.value;refreshShelf()" style="width:100%;padding:9px;border-radius:10px;border:2px solid var(--line);background:#0c1424;color:var(--ink);font-family:inherit;margin-bottom:8px">
+   <div id="shelfitems" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:340px;overflow:auto">${list}</div>`;
+}
+function catEmoji(cat){return {acid:'🧪',alkali:'🧴',metal:'🔩',carbonate:'🪨',oxide:'⚫',salt:'🧂',indicator:'🌈',halogen:'☣️',gas:'💨',other:'🧫'}[cat]||'🧫'}
+function refreshShelf(){const el=document.getElementById('shelfitems');if(!el)return;const q=PRO.search.toLowerCase();
+  let items=PLIST.filter(id=>{const c=PCHEM[id];return (PRO.filter==='all'||c.cat===PRO.filter)&&(!q||c.n.toLowerCase().includes(q)||(c.f||'').toLowerCase().includes(q))});
+  el.innerHTML=items.map(id=>{const c=PCHEM[id];return `<button class="reagent" style="padding:7px 8px" onclick="proAdd('${id}')"><span class="rem" style="font-size:18px">${catEmoji(c.cat)}</span><span><span class="rn">${c.n}</span><br><span class="rf">${c.f}</span></span></button>`}).join('');}
+function drawProUI(){
+  root.innerHTML=`
+   <div class="topbar"><span class="tag">🧫 Pro Lab</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+   <div class="lab">
+     <div>
+       <div class="toolbar" style="margin-bottom:6px">
+         ${['testtube','beaker','flask','distill'].map(v=>`<button class="tool" style="font-size:13px;${PRO.vessel===v?'border-color:var(--acid);color:var(--acid)':''}" onclick="PRO.vessel='${v}';drawProUI()">${v==='testtube'?'🧪 Test tube':v==='beaker'?'🥃 Beaker':v==='flask'?'⚗️ Flask':'🔥 Distillation'}</button>`).join('')}
+       </div>
+       <canvas id="pro" width="440" height="400"></canvas>
+       <div class="btnrow">
+         <button class="btn gold sm" style="margin:0;flex:1" onmousedown="proHeat(true)" onmouseup="proHeat(false)" onmouseleave="proHeat(false)" ontouchstart="proHeat(true)" ontouchend="proHeat(false)">🔥 Hold to heat</button>
+         <button class="btn red sm" style="margin:0;flex:1" onclick="proEmpty()">🧹 Empty</button>
+       </div>
+       <div class="toolbar" style="margin-top:8px">
+         <button class="tool" style="font-size:12px" onclick="proTest('lime')">🥛 Limewater</button>
+         <button class="tool" style="font-size:12px" onclick="proTest('lit')">🔥 Lit splint</button>
+         <button class="tool" style="font-size:12px" onclick="proTest('glow')">✨ Glowing splint</button>
+       </div>
+       <div class="info" id="prolog" style="margin-top:8px;min-height:90px"></div>
+     </div>
+     <div>${proShelf()}</div>
+   </div>
+   <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
+  const cv=document.getElementById('pro');PRO.cv=cv;PRO.ctx=cv.getContext('2d');renderLog();proLoop();
+}
+function renderLog(){const e=document.getElementById('prolog');if(!e)return;
+  if(!PRO.log.length){e.innerHTML="Pick a vessel, then click chemicals to add them. Mix acids with metals, carbonates or alkalis, add an indicator, or 🔥 heat things up. Then test any gas! 🧪";return}
+  e.innerHTML=PRO.log.slice(-5).map(l=>'• '+l).join('<br>');}
+function proLog(s){PRO.log.push(s);renderLog()}
+
+function proAcidity(){const cs=PRO.contents.map(id=>PCHEM[id]);
+  const acid=cs.some(c=>c.acid),base=cs.some(c=>c.base&&c.sol);
+  if(acid&&base)return'neutral';if(acid)return'acid';if(base)return'alkali';return'neutral';}
+function indColor(ind,ac,strongA,strongB){
+  if(ind==='universal')return ac==='acid'?(strongA?'#ff4136':'#ff9a3c'):ac==='alkali'?(strongB?'#7a2bbf':'#3d6bff'):'#5fd16b';
+  if(ind==='litmus')return ac==='acid'?'#e8554d':ac==='alkali'?'#3d6bff':'#9b6bd1';
+  if(ind==='phenol')return ac==='alkali'?'#ff5ea8':'#efe9f0';
+  if(ind==='methyl')return ac==='acid'?'#ff4136':ac==='alkali'?'#ffbf3c':'#ff8a3c';
+  if(ind==='bromo')return ac==='acid'?'#ffe14d':ac==='alkali'?'#3a7bff':'#5fd16b';
+  if(ind==='cabbage')return ac==='acid'?'#e8554d':ac==='alkali'?'#4dba8b':'#9b59b6';
+  return'#8fe06b';
+}
+function proAdd(id){
+  if(!PRO)return;const c=PCHEM[id];SFX.whoosh();
+  // pour visuals
+  if(c.cat==='gas'){proLog(`Added ${c.n} gas.`);PRO.lastGas=id;}
+  else {PRO.targetLevel=Math.min(0.66,PRO.targetLevel+(c.sol||c.cat==='acid'||c.cat==='alkali'||c.cat==='indicator'||c.water||c.cat==='other'?0.16:0.06));
+    if(c.c&&c.c!=='#0a2036'&&!c.cat==='metal') PRO.targetColor=blend(PRO.targetColor,c.c,0.4);}
+  for(let i=0;i<8;i++)PRO.bubbles.push(mkPB());
+  PRO.contents.push(id);PRO._dmsg=false;
+  proReact(id);
+  refreshShelf();
+}
+function proReact(lastId){
+  const cs=PRO.contents.map(i=>PCHEM[i]);const last=PCHEM[lastId];
+  const acids=cs.filter(c=>c.acid),bases=cs.filter(c=>c.base),metals=cs.filter(c=>c.metal),
+    carbs=cs.filter(c=>c.carb),inds=cs.filter(c=>c.ind),halos=cs.filter(c=>c.hal),
+    water=cs.some(c=>c.water||c.sol||c.cat==='acid'||c.cat==='alkali');
+  // 0) indicator recolour
+  if(inds.length){const ac=proAcidity();const strongA=acids.some(a=>a.strong),strongB=bases.some(b=>b.strong&&b.sol);
+    PRO.targetColor=indColor(inds[inds.length-1].ind,ac,strongA,strongB);
+    if(last.ind)proLog(`Indicator added — the solution shows it is <b>${ac}</b>.`);}
+  // 0b) hydrogen chloride + ammonia -> white smoke (NH4Cl)
+  if(PRO.contents.includes('hcl_g')&&(PRO.contents.includes('nh3_g')||PRO.contents.includes('nh3')||PRO.contents.includes('nh4oh'))){
+    PRO.targetColor='#e8eef2';PRO.cloudy=1;for(let i=0;i<22;i++)PRO.bubbles.push(mkPB());SFX.fizz();
+    proLog('☁️ <b>White smoke!</b> Hydrogen chloride gas + ammonia → solid <b>ammonium chloride</b> (NH₃ + HCl → NH₄Cl). A classic demo!');return;}
+  // 1) named precipitate / displacement specials
+  for(let i=0;i<PRO.contents.length;i++){const key=[lastId,PRO.contents[i]].sort().join('|');
+    if(PRO.contents[i]!==lastId&&PRECIP[key]){const p=PRECIP[key];PRO.targetColor=p.c;PRO.precip=[];for(let k=0;k<40;k++)PRO.precip.push(mkPrecip(p.c));SFX.pop();
+      proLog(`✨ A precipitate forms: <b>${p.t}</b>.`);return;}}
+  // 2) alkali metal + water/acid -> BOOM
+  if(last.metal&&RANK[last.metal]<=4&&water){PRO.shakeT=20;SFX.bang();proExplode();PRO.targetColor='#ff9a3c';
+    proLog(`💥 <b>${last.n} reacts violently!</b> So much heat that the hydrogen produced ignites. (${last.n.split(' ')[0]} + water → hydroxide + hydrogen + H₂)`);PRO.gas='h2';return;}
+  // 3) acid + metal
+  if(acids.length&&metals.length){const m=metals[metals.length-1];const rk=RANK[m.metal];
+    if(rk<11){PRO.gasFizz=true;PRO.gas='h2';SFX.fizz();for(let i=0;i<18;i++)PRO.bubbles.push(mkPB(1));
+      proLog(`Fizzing! The ${m.n.toLowerCase()} reacts with the acid → a salt + <b>hydrogen gas (H₂)</b>. (Try a lit splint!)`);return;}
+    else {proLog(`The ${m.n.toLowerCase()} is too unreactive to react with the acid — no reaction.`);return;}}
+  // 4) acid + carbonate
+  if(acids.length&&carbs.length){PRO.gasFizz=true;PRO.gas='co2';SFX.fizz();for(let i=0;i<20;i++)PRO.bubbles.push(mkPB(1));
+    proLog(`Fizzing! Acid + carbonate → a salt + water + <b>carbon dioxide (CO₂)</b>. (Try the limewater test!)`);return;}
+  // 5) acid + base/oxide/hydroxide (neutralisation)
+  if(acids.length&&bases.length){PRO.targetHeat=1;
+    if(last.base&&last.metalIon){const col={Cu:'#2a7fff',Fe:'#caa15a',Zn:'#dfe9f0',Mg:'#dfe9f0'}[last.metalIon];if(col)PRO.targetColor=blend(PRO.targetColor,col,0.5);}
+    proLog(`Neutralisation — acid + base → a salt + water. It's <b>exothermic</b> (warms up). 🌡️`);return;}
+  // 6) H2O2 + catalyst
+  if(cs.some(c=>c.id==='h2o2')&&cs.some(c=>c.catalyst)){PRO.targetFoam=1.5;PRO.gas='o2';PRO.gasFizz=true;SFX.fizz();
+    proLog(`Foaming! The catalyst breaks peroxide down fast → water + <b>oxygen (O₂)</b>. (Try a glowing splint!)`);return;}
+  // 6b) KMnO4 + glycerol -> spontaneous combustion
+  if(cs.some(c=>c.id==='kmno4')&&cs.some(c=>c.id==='glycerol')){PRO.shakeT=16;SFX.bang();proExplode();PRO.targetColor='#a02bbf';
+    proLog('🔥💜 <b>Spontaneous combustion!</b> Potassium permanganate (a strong oxidiser) ignites glycerol all by itself — purple flames, no flame needed!');return;}
+  // 7) halogen displacement
+  if(halos.length){const salt=cs.find(c=>c.anion&&['chloride','bromide','iodide'].includes(c.anion));
+    if(salt){const hh=halos[halos.length-1].hal;const saltH={chloride:'Cl',bromide:'Br',iodide:'I'}[salt.anion];
+      if(HRANK[hh]<HRANK[saltH]){PRO.targetColor=hh==='Cl'?'#caa15a':'#c0531e';proLog(`Displacement! The more reactive ${halos[halos.length-1].n.toLowerCase()} pushes out the ${salt.anion.replace('ide','ine')} → colour change.`);return;}
+      else {proLog(`No displacement — ${halos[halos.length-1].n.toLowerCase()} is less reactive than the halogen already in the salt.`);return;}}}
+  // 8) dissolving fallback
+  if(last.sol&&water){if(last.c&&last.c!=='#0a2036')PRO.targetColor=blend(PRO.targetColor,last.c,0.45);proLog(`${last.n} dissolves to form a ${describeColour(last.c)} solution.`);return;}
+  if(last.metal&&water){proLog(`${last.n} sits in the liquid — ${RANK[last.metal]<=4?'(but watch out, it\'s very reactive!)':'no obvious reaction with water.'}`);return;}
+  proLog(`Added ${last.n}.`);
+}
+function describeColour(c){if(!c)return'colourless';const [r,g,b]=hx(c);if(b>r+40&&b>120)return'blue';if(g>r+30&&g>120)return'green';if(r>180&&g>140&&b<120)return'yellow';if(r>150&&g<110&&b<110)return'red/orange';if(r>120&&b>120&&g<110)return'purple';if(r>200&&g>200&&b>200)return'pale/colourless';return'coloured';}
+function proHeat(on){if(!PRO)return;PRO.heating=on;PRO.targetHeat=on?1:0;
+  if(!on){PRO.distilling=false;PRO._dmsg=false;return}
+  PRO.flameT=999;SFX.flame();
+  const cs=PRO.contents.map(i=>PCHEM[i]);const has=id=>PRO.contents.includes(id);
+  const hasBromide=cs.some(c=>c.anion==='bromide');
+  const hasChloride=cs.some(c=>c.anion==='chloride');
+  const sulfuric=has('h2so4')||has('h2so4c');
+  const dichromate=cs.some(c=>c.dichromate);
+  const oxidiser=cs.some(c=>c.hal==='Cl')||has('mno2')||has('h2so4c');
+  let prod=null;
+  if(hasChloride&&dichromate&&sulfuric)prod={c:'#7a0f0f',name:'chromyl chloride (CrO₂Cl₂)',msg:'🔴 A deep <b>red liquid</b> distils over — <b>chromyl chloride, CrO₂Cl₂</b>! Made from a chloride + dichromate + conc. sulfuric acid on heating. This is the classic chromyl chloride test for chloride ions.'};
+  else if(hasBromide&&oxidiser)prod={c:'#7a1f0e',name:'bromine (Br₂)',msg:'🟤 A <b>red-brown liquid</b> distils over — <b>bromine, Br₂</b>! The bromide ions have been oxidised. (Real bromine is toxic & corrosive — fume cupboard only!)'};
+  else if(has('ethanol'))prod={c:'#dfeeff',name:'ethanol',msg:'💧 Ethanol boils at 78°C and distils over first — that\'s how distillation separates a liquid mixture by boiling point.'};
+  else if(cs.some(c=>c.water||c.sol))prod={c:'#cfe6ff',name:'distilled water',msg:'💧 The water boils, evaporates and condenses in the condenser → pure <b>distilled water</b> collects in the receiver.'};
+  if(PRO.vessel==='distill'){
+    if(prod){if(!PRO.distillate||PRO.distillate.name!==prod.name)PRO.distillate={c:prod.c,name:prod.name,amount:0};
+      PRO.distilling=true;if(!PRO._dmsg){PRO._dmsg=1;SFX.fizz();proLog(prod.msg)}}
+    else if(!PRO._dmsg){PRO._dmsg=1;proLog('🔥 Heating the flask… add ingredients that make a volatile liquid: a <b>bromide + chlorine/conc. acid</b> for bromine, or a <b>chloride + potassium dichromate + conc. sulfuric acid</b> for chromyl chloride.')}
+    return;
+  }
+  if(prod&&(prod.name[0]==='c'||prod.name[0]==='b')){PRO.targetColor=prod.c;if(!PRO._dmsg){PRO._dmsg=1;SFX.fizz();proLog(prod.msg+' Switch to the <b>🔥 Distillation</b> rig to collect it!')}return}
+  // thermite & oxidiser+fuel combustion 🔥
+  const oxIds=['kclo3','naclo3','kno3','nano3','nh4no3','kmno4','h2o2','o2','hno3'];
+  const ox=cs.some(c=>c.oxidiser)||oxIds.some(has);const fuelC=cs.some(c=>c.fuel);
+  if(has('fe2o3')&&has('Al')&&!PRO._burned){PRO._burned=true;PRO.shakeT=26;SFX.bang();proExplode();proExplode();PRO.targetColor='#ff8a2a';
+    proLog('🌋🔥 <b>THERMITE!</b> Aluminium reduces iron(III) oxide → molten iron + aluminium oxide, with a dazzling white-hot flame (~2500°C)! 2Al + Fe₂O₃ → 2Fe + Al₂O₃');return;}
+  if(ox&&fuelC&&!PRO._burned){PRO._burned=true;PRO.shakeT=20;SFX.bang();proExplode();PRO.targetColor='#ffb347';
+    let msg='💥🔥 <b>Explosive combustion!</b> The oxidiser supplies extra oxygen, so the fuel burns incredibly fast.';
+    if(has('kno3')&&has('sulfur')&&(has('carbon')||has('charcoal')))msg='💥 <b>Gunpowder!</b> Potassium nitrate (oxidiser) + sulfur + charcoal deflagrate in a flash and a bang!';
+    else if(has('kclo3')&&has('sugar'))msg='💥 <b>Screaming sugar!</b> Potassium chlorate violently oxidises the sugar — WHOOSH! 🔥';
+    proLog(msg);return;}
+  if(cs.some(c=>c.carb)&&!PRO._heated){PRO._heated=true;PRO.gas='co2';PRO.gasFizz=true;PRO.targetColor=blend(PRO.targetColor,'#222',0.25);
+    proLog('🔥 Thermal decomposition — heating the carbonate breaks it into a metal oxide + <b>carbon dioxide (CO₂)</b>.');}
+  else if(cs.some(c=>c.fuel)&&!PRO._burned){PRO._burned=true;PRO.shakeT=6;
+    const f=cs.find(c=>c.fuel);let msg=`🔥 Combustion — ${f.n.toLowerCase()} burns in oxygen, releasing energy.`;
+    if(f.id==='sulfur')msg+=' Blue flame → sulfur dioxide (SO₂).';
+    if(f.id==='Mg')msg+=' Bright white light → magnesium oxide.';
+    if(f.id==='ethanol'||f.id==='ch4'||f.id==='carbon')msg+=' → carbon dioxide + water.';
+    proExplode(true);proLog(msg);}
+}
+function proTest(kind){if(!PRO)return;
+  if(kind==='lime'){if(PRO.gas==='co2'){PRO.cloudy=1;PRO.targetColor='#dfe9f0';SFX.ding();proLog(`🥛 Limewater test: it turns <b>cloudy/milky</b> → the gas is <b>carbon dioxide</b>! ✅`);}else proLog(`🥛 Limewater stays clear — no carbon dioxide detected.`);}
+  if(kind==='lit'){if(PRO.gas==='h2'){SFX.pop();PRO.shakeT=8;proLog(`🔥 Lit splint: a <b>squeaky POP</b>! → the gas is <b>hydrogen</b>! ✅`);}else if(PRO.gas==='o2'){proLog(`🔥 The splint burns more brightly — that's oxygen, not hydrogen.`);}else proLog(`🔥 Nothing happens — no flammable gas present.`);}
+  if(kind==='glow'){if(PRO.gas==='o2'){SFX.ding();proLog(`✨ Glowing splint <b>relights</b>! → the gas is <b>oxygen</b>! ✅`);}else proLog(`✨ The glowing splint goes out — no oxygen to relight it.`);}
+}
+function proEmpty(){if(!PRO)return;SFX.whoosh();Object.assign(PRO,{contents:[],targetLevel:0,targetColor:'#0a2036',targetFoam:0,foam:0,targetHeat:0,heat:0,gasFizz:false,gas:null,bubbles:[],parts:[],precip:[],cloudy:0,distillate:null,distilling:false,_dmsg:false,_heated:false,_burned:false,heating:false,flameT:0});
+  PRO.log=[];proLog('Vessel rinsed and empty. 🧼 Ready for the next experiment!');}
+function mkPB(sp){return {x:160+Math.random()*120,y:330,r:2+Math.random()*5,vy:-(0.6+Math.random()*1.4)*(sp?2:1),wob:Math.random()*6.28}}
+function mkPrecip(c){return {x:150+Math.random()*140,y:120+Math.random()*180,vy:0.3+Math.random()*0.6,c,r:2+Math.random()*3}}
+function proExplode(small){const n=small?30:60;for(let i=0;i<n;i++){const a=Math.random()*6.28,s=2+Math.random()*(small?4:6);
+  PRO.parts.push({x:220,y:200,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,c:['#ffd089','#ff7a3c','#ffe14d','#ff4d4d'][Math.floor(Math.random()*4)],r:3+Math.random()*4})}}
+function proLoop(){
+  if(!PRO)return;const {ctx,cv}=PRO,W=cv.width,H=cv.height;PRO.t++;
+  PRO.level+=(PRO.targetLevel-PRO.level)*0.08;PRO.foam+=(PRO.targetFoam-PRO.foam)*0.06;PRO.heat+=(PRO.targetHeat-PRO.heat)*0.05;
+  PRO.color=blend(PRO.color,PRO.targetColor,0.06);
+  let sx=0;if(PRO.shakeT>0){sx=(Math.random()-.5)*PRO.shakeT;PRO.shakeT*=0.9;if(PRO.shakeT<0.5)PRO.shakeT=0}
+  ctx.clearRect(0,0,W,H);
+  if(PRO.vessel==='distill'){drawDistill(ctx,W,H,sx);raf=requestAnimationFrame(proLoop);return}
+  ctx.save();ctx.translate(sx,0);
+  // clamp stand
+  ctx.fillStyle='#2a3850';ctx.fillRect(40,360,120,12);ctx.fillRect(58,40,10,330);
+  // vessel geometry
+  let vx=220,top,bot=330,halfTop,halfBot;
+  if(PRO.vessel==='testtube'){top=90;halfTop=22;halfBot=22;ctx.fillStyle='#46566f';ctx.fillRect(63,150,90,10)}
+  else if(PRO.vessel==='beaker'){top=110;halfTop=80;halfBot=80}
+  else {top=110;halfTop=22;halfBot=86}
+  // bunsen + tripod (not for testtube clamp, but show burner anyway)
+  if(PRO.vessel!=='testtube'){
+    ctx.strokeStyle='#5b6b85';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(150,bot+8);ctx.lineTo(125,bot+70);ctx.moveTo(290,bot+8);ctx.lineTo(315,bot+70);ctx.moveTo(140,bot+8);ctx.lineTo(300,bot+8);ctx.stroke();
+    // bunsen
+    ctx.fillStyle='#3a4760';ctx.fillRect(210,bot+50,20,40);ctx.fillRect(195,bot+86,50,8);
+    if(PRO.heating){for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(220,bot+30,14-i*4,34-i*9,0,0,6.28);ctx.fill()}ctx.globalAlpha=1}
+  }
+  // heat glow
+  if(PRO.heat>0.02){const g=ctx.createRadialGradient(vx,bot,5,vx,bot,120);g.addColorStop(0,`rgba(255,120,40,${.35*PRO.heat})`);g.addColorStop(1,'rgba(255,120,40,0)');ctx.fillStyle=g;ctx.fillRect(0,200,W,H-200)}
+  const liqTop=bot-(bot-top-16)*PRO.level;
+  const wAt=(y)=>{const f=(bot-y)/(bot-top);return halfBot+(halfTop-halfBot)*(1-f)};
+  // liquid
+  if(PRO.level>0.01){ctx.fillStyle=PRO.color;ctx.beginPath();const wt=wAt(liqTop);
+    ctx.moveTo(vx-wt,liqTop);for(let x=-wt;x<=wt;x+=6){const yy=liqTop+Math.sin((x*0.06)+PRO.t*0.08)*2.5;ctx.lineTo(vx+x,yy)}
+    ctx.lineTo(vx+halfBot,bot-4);ctx.lineTo(vx-halfBot,bot-4);ctx.closePath();ctx.fill();
+    if(PRO.cloudy>0){ctx.fillStyle='rgba(255,255,255,'+(0.55*PRO.cloudy)+')';ctx.fillRect(vx-halfBot,liqTop,halfBot*2,bot-4-liqTop)}}
+  // precipitate settling
+  PRO.precip.forEach(p=>{if(p.y<bot-6)p.y+=p.vy;ctx.fillStyle=p.c;ctx.globalAlpha=.85;ctx.beginPath();ctx.arc(p.x,Math.min(p.y,bot-6),p.r,0,6.28);ctx.fill();ctx.globalAlpha=1});
+  // bubbles
+  if(PRO.gasFizz&&PRO.t%3===0&&PRO.level>0.05)PRO.bubbles.push(mkPB());
+  ctx.fillStyle='rgba(255,255,255,.5)';PRO.bubbles=PRO.bubbles.filter(b=>{b.y+=b.vy;b.wob+=0.2;b.x+=Math.sin(b.wob)*0.5;if(b.y<liqTop+2||b.y<top)return false;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,6.28);ctx.fill();return true});
+  // foam
+  if(PRO.foam>0.02){const fc=blend(PRO.color,'#fff',0.5);const cnt=Math.floor(50*PRO.foam);for(let i=0;i<cnt;i++){const fx=vx-halfTop+Math.random()*halfTop*2;const fy=liqTop-Math.random()*(70*PRO.foam)-(PRO.foam>1?Math.random()*100*(PRO.foam-1):0);ctx.fillStyle=fc;ctx.globalAlpha=.85;ctx.beginPath();ctx.arc(fx,fy,4+Math.random()*6,0,6.28);ctx.fill()}ctx.globalAlpha=1}
+  // explosion particles
+  PRO.parts=PRO.parts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.16;p.life-=0.02;if(p.life<=0)return false;ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);ctx.fill();ctx.globalAlpha=1;return true});
+  // glass outline
+  ctx.strokeStyle='rgba(160,210,255,.5)';ctx.lineWidth=4;ctx.beginPath();
+  ctx.moveTo(vx-halfTop,top);ctx.lineTo(vx-halfBot,bot);ctx.lineTo(vx+halfBot,bot);ctx.lineTo(vx+halfTop,top);
+  if(PRO.vessel==='testtube'){ctx.arc(vx,bot,halfBot,0,Math.PI,false);}
+  ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='12px Trebuchet MS';ctx.fillText(PRO.contents.length+' chemical'+(PRO.contents.length===1?'':'s')+' in '+PRO.vessel,vx-70,30);
+  ctx.restore();raf=requestAnimationFrame(proLoop);
+}
+
+function drawDistill(ctx,W,H,sx){
+  ctx.save();ctx.translate(sx,0);
+  // progress distillation
+  if(PRO.distilling&&PRO.distillate){PRO.distillate.amount=Math.min(0.7,PRO.distillate.amount+0.0045);PRO.targetLevel=Math.max(0.12,PRO.level-0.0015)}
+  // ---- flask (left, round-bottom) over bunsen ----
+  const fx=120,fy=200,fr=58;
+  // stand
+  ctx.fillStyle='#2a3850';ctx.fillRect(20,360,80,10);ctx.fillRect(34,150,8,210);
+  // bunsen + flame
+  ctx.fillStyle='#3a4760';ctx.fillRect(fx-10,fy+fr+30,20,34);ctx.fillRect(fx-26,fy+fr+62,52,8);
+  if(PRO.heating){for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(fx,fy+fr+14,13-i*4,30-i*8,0,0,6.28);ctx.fill()}ctx.globalAlpha=1}
+  // flask liquid
+  const lvl=PRO.level;
+  if(lvl>0.01){ctx.save();ctx.beginPath();ctx.arc(fx,fy,fr-4,0,6.28);ctx.clip();
+    ctx.fillStyle=PRO.color;const top=fy+fr-(fr*1.4)*lvl;ctx.fillRect(fx-fr,top,fr*2,fr*2);
+    if(PRO.distilling){ctx.fillStyle='rgba(255,255,255,.5)';for(let k=0;k<6;k++){const bx=fx-20+Math.random()*40,by=top+10+Math.random()*30;ctx.beginPath();ctx.arc(bx,by,2+Math.random()*3,0,6.28);ctx.fill()}}
+    ctx.restore();}
+  // flask glass + neck
+  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();ctx.arc(fx,fy,fr,Math.PI*0.72,Math.PI*0.28,false);
+  ctx.moveTo(fx-18,fy-fr+12);ctx.lineTo(fx-18,fy-fr-34);ctx.moveTo(fx+18,fy-fr+12);ctx.lineTo(fx+18,fy-fr-34);ctx.stroke();
+  // ---- condenser (sloping tube to the right) ----
+  const x1=fx+18,y1=fy-fr-30,x2=320,y2=150;
+  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x1,y1+14);ctx.lineTo(x2,y2+14);ctx.stroke();
+  // water jacket hint
+  ctx.strokeStyle='rgba(90,180,255,.35)';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(x1+30,y1+22);ctx.lineTo(x2-20,y2+22);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText('condenser',150,128);
+  // droplets running down to receiver when distilling
+  if(PRO.distilling&&PRO.distillate){ctx.fillStyle=PRO.distillate.c;for(let k=0;k<5;k++){const t=((PRO.t*0.02+k*0.2)%1);const dx=x2+(0)+ (t)*40;const dy=y2+14+t*70;ctx.beginPath();ctx.arc(360,y2+14+t*78,3,0,6.28);ctx.fill()}}
+  // ---- receiver (conical flask, right) ----
+  const rx=360,rtop=230,rbot=350;
+  if(PRO.distillate&&PRO.distillate.amount>0.01){const amt=PRO.distillate.amount;
+    ctx.fillStyle=PRO.distillate.c;const liqTop=rbot-(rbot-rtop-10)*amt;
+    ctx.beginPath();ctx.moveTo(rx-14- (rbot-liqTop)*0.0,liqTop);
+    // simple trapezoid fill
+    const wTop=14+(liqTop-rtop)*0.0, wBot=46;
+    ctx.moveTo(rx-(14+(rbot-liqTop)*0.27),liqTop);ctx.lineTo(rx+(14+(rbot-liqTop)*0.27),liqTop);ctx.lineTo(rx+wBot,rbot-3);ctx.lineTo(rx-wBot,rbot-3);ctx.closePath();ctx.fill();}
+  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();
+  ctx.moveTo(rx-14,rtop);ctx.lineTo(rx-46,rbot);ctx.lineTo(rx+46,rbot);ctx.lineTo(rx+14,rtop);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.fillText('receiving flask',rx-44,rtop-8);
+  // labels
+  ctx.fillStyle='#cfe0f5';ctx.font='12px Trebuchet MS';
+  ctx.fillText(PRO.contents.length+' chemical'+(PRO.contents.length===1?'':'s')+' in flask',20,28);
+  if(PRO.distillate&&PRO.distillate.amount>0.02){ctx.fillStyle=PRO.distillate.c==='#dfeeff'||PRO.distillate.c==='#cfe6ff'?'#bcd':'#ff9a9a';ctx.font='bold 13px Trebuchet MS';ctx.fillText('collected: '+PRO.distillate.name,205,210);}
+  ctx.restore();
+}
+
+/* boot */
+hub();
+</script>
+</body>
+</html>

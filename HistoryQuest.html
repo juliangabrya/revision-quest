@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ HISTORYQUEST: Year 8 Boss Battles 🏰</title>
+<style>
+  :root{
+    --bg:#0d0a1c; --card:#1b1530; --accent:#ffd23f; --accent2:#ff4d6d;
+    --good:#3ddc84; --bad:#ff4d6d; --blue:#4d96ff; --purple:#9b5de5; --ink:#f5f3ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%, #2a1d4e 0%, var(--bg) 55%);
+    color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:16px;overflow-x:hidden;
+  }
+  .wrap{width:100%;max-width:760px}
+  .panel{
+    background:linear-gradient(180deg,#221a3d,#1b1530);
+    border:3px solid #3a2d63;border-radius:22px;padding:24px;
+    box-shadow:0 24px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  h1{font-size:30px;line-height:1.1;text-align:center;margin-bottom:6px;
+    text-shadow:0 3px 0 #000, 0 0 24px rgba(255,210,63,.35)}
+  h2{font-size:23px;margin-bottom:10px;color:var(--accent)}
+  .sub{text-align:center;color:#b7aee0;margin-bottom:16px;font-size:15px}
+  .btn{
+    margin-top:14px;width:100%;padding:15px;border:none;border-radius:14px;cursor:pointer;
+    font-size:18px;font-weight:bold;font-family:inherit;
+    background:linear-gradient(180deg,var(--accent),#f0b800);color:#2a1d00;
+    box-shadow:0 6px 0 #b98a00, 0 10px 18px rgba(0,0,0,.4);transition:transform .06s;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b98a00}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:#241c42;color:var(--ink);box-shadow:0 6px 0 #15102a}
+  .btn.danger{background:linear-gradient(180deg,var(--accent2),#d62f4d);color:#fff;box-shadow:0 6px 0 #8c1226}
+  .btn.row{margin-top:0}
+  .btnrow{display:flex;gap:12px;margin-top:14px}
+
+  /* MAP */
+  .map{display:grid;gap:14px;margin-top:8px}
+  .node{
+    display:flex;align-items:center;gap:16px;padding:16px;border-radius:18px;
+    border:3px solid #3a2d63;background:#241c42;cursor:pointer;transition:transform .1s, border-color .15s;
+    position:relative;overflow:hidden;
+  }
+  .node:hover:not(.locked){transform:translateX(6px);border-color:var(--accent)}
+  .node .ico{font-size:42px;width:56px;text-align:center;flex:none}
+  .node .meta{flex:1}
+  .node .meta b{font-size:19px;display:block}
+  .node .meta span{font-size:13px;color:#b7aee0}
+  .node .status{font-size:24px;flex:none}
+  .node.locked{opacity:.5;cursor:not-allowed;filter:grayscale(.6)}
+  .node.done{border-color:var(--good)}
+  .node.done::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(61,220,132,.12),transparent)}
+
+  /* LESSON */
+  .slide{min-height:120px}
+  .meme{
+    margin:16px 0;border-radius:16px;overflow:hidden;border:3px solid #000;
+    background:#000;box-shadow:0 14px 30px rgba(0,0,0,.5)
+  }
+  .meme .img{padding:26px 18px;text-align:center;font-size:60px;
+    background:linear-gradient(135deg,#3a2d63,#1b1530)}
+  .meme .cap{font-family:Impact,'Arial Black',sans-serif;text-transform:uppercase;
+    color:#fff;-webkit-text-stroke:1.6px #000;letter-spacing:.02em;
+    font-size:21px;line-height:1.15;padding:10px 14px;background:#000;text-align:center}
+  .lessonbody{font-size:16px;line-height:1.55;color:#e7e2fb}
+  .lessonbody b{color:var(--accent)}
+  .lessonbody .hook{display:block;margin-top:12px;padding:11px 14px;background:#150f29;
+    border-left:5px solid var(--blue);border-radius:10px;color:#cfe3ff;font-size:15px}
+  .lessonbody ul{margin:8px 0 4px 20px}
+  .lessonbody li{margin:6px 0}
+  .dots{display:flex;gap:7px;justify-content:center;margin:14px 0 2px}
+  .dots i{width:9px;height:9px;border-radius:50%;background:#3a2d63;transition:background .2s}
+  .dots i.on{background:var(--accent)}
+
+  /* BATTLE */
+  .arena{margin-top:6px}
+  .fighter{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .fighter .face{font-size:46px;flex:none;width:60px;text-align:center}
+  .fighter .bars{flex:1}
+  .fighter .nm{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .hpbar{height:18px;background:#150f29;border-radius:10px;overflow:hidden;border:2px solid #36285e}
+  .hpbar > i{display:block;height:100%;transition:width .5s}
+  .hp-enemy > i{background:linear-gradient(90deg,#d62f4d,#ff7d99)}
+  .hp-self > i{background:linear-gradient(90deg,#2cb96a,#5dffa0)}
+  .bubble{background:#150f29;border:2px solid #36285e;border-radius:14px;padding:11px 14px;
+    font-size:14px;color:#dcd6f5;margin:10px 0;min-height:42px;font-style:italic}
+  .cat{display:inline-block;font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;
+    background:var(--purple);color:#fff;margin-bottom:10px;letter-spacing:.04em}
+  .q{font-size:20px;font-weight:bold;line-height:1.35;margin-bottom:14px}
+  .opts{display:grid;gap:10px}
+  .opt{text-align:left;padding:13px 15px;border-radius:13px;border:2px solid #3a2d63;
+    background:#241c42;color:var(--ink);font-size:16px;cursor:pointer;transition:transform .08s, background .15s;font-family:inherit}
+  .opt:hover{background:#2e2454;transform:translateY(-2px)}
+  .opt.correct{background:var(--good);color:#04210f;border-color:#2cb96a;font-weight:bold}
+  .opt.wrong{background:var(--bad);color:#2a000a;border-color:#d62f4d;font-weight:bold}
+  .opt.dim{opacity:.4}
+  .opt:disabled{cursor:default}
+  .explain{margin-top:14px;background:#150f29;border-left:5px solid var(--accent);
+    border-radius:10px;padding:13px 15px;font-size:15px;line-height:1.5;color:#dcd6f5;display:none}
+  .explain b{color:var(--accent)}
+
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);
+    background:#000;border:2px solid var(--accent);color:var(--accent);
+    padding:10px 20px;border-radius:999px;font-weight:bold;font-size:16px;opacity:0;
+    transition:opacity .25s, top .25s;pointer-events:none;z-index:50;text-align:center}
+  .toast.show{opacity:1;top:28px}
+  .hud{display:flex;gap:10px;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
+  .stat{flex:1;min-width:80px;background:#150f29;border:2px solid #36285e;border-radius:14px;padding:8px;text-align:center}
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:10px;color:#9d93c9;text-transform:uppercase;letter-spacing:.06em}
+  .streak.fire b{color:var(--accent);text-shadow:0 0 12px var(--accent)}
+  .center{text-align:center}
+  .pulse{animation:pulse .45s}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+  .shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+  .float{position:fixed;font-family:Impact,sans-serif;font-size:40px;color:var(--accent);
+    -webkit-text-stroke:2px #000;pointer-events:none;z-index:60;opacity:0}
+  .report-row{display:flex;align-items:center;gap:12px;margin:9px 0}
+  .report-row .name{width:140px;font-weight:bold;font-size:14px}
+  .report-row .track{flex:1;height:15px;background:#150f29;border-radius:8px;overflow:hidden;border:2px solid #36285e}
+  .report-row .track > i{display:block;height:100%}
+  .report-row .pct{width:46px;text-align:right;font-weight:bold;font-size:14px}
+  .muteBtn{position:fixed;top:14px;right:16px;background:#241c42;border:2px solid #3a2d63;
+    color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;z-index:40}
+</style>
+</head>
+<body>
+<button class="muteBtn" id="muteBtn" onclick="toggleMute()">🔊</button>
+<div class="toast" id="toast"></div>
+<div class="wrap"><div class="panel" id="panel"></div></div>
+
+<script>
+/* ======================================================================
+   HISTORYQUEST — content built from Julian's Year 8 knowledge organisers
+   Flow: MAP -> pick stage -> LESSON (study) -> BOSS BATTLE (quiz) -> win
+   ====================================================================== */
+
+const STAGES = [
+  /* ---------------- KEY TERMS ---------------- */
+  {
+    id:"terms", name:"Training Grounds", emoji:"🎯",
+    desc:"Key terms & definitions",
+    boss:{name:"Tutorial Goblin", emoji:"👹",
+      taunts:["Bet you don't even know what 'provenance' means!","Definitions? You'll forget 'em!","Easy points... if you studied!"]},
+    lessons:[
+      {emoji:"🕵️", title:"Provenance & Sources", body:
+        "A <b>historical source</b> = evidence from history: records or objects <b>created by people at the time</b>.<br><br>"+
+        "<b>Provenance</b> = the <b>background/origin</b> of a source — <b>WHO</b> made it, <b>WHEN</b>, and <b>WHY</b>. You use provenance to decide if a source is reliable.",
+        meme:["🕵️","WHO? WHEN? WHY?","THAT'S THE PROVENANCE"],
+        hook:"Hook: PROVENANCE = the source's 'ID card'. 🪪"},
+      {emoji:"🌍", title:"Decolonisation & Economy", body:
+        "<b>Decolonisation</b> = countries are <b>given back their independence</b> after being colonised (e.g. India 1947, Ghana 1957).<br><br>"+
+        "<b>Economy</b> = the <b>buying and selling of goods</b> in a country.",
+        meme:["🌍✊","COLONISER LEFT THE CHAT","INDEPENDENCE: UNLOCKED"],
+        hook:"Hook: DE-colonisation = UN-doing colonisation."},
+      {emoji:"✨", title:"Golden Age & Industrial Revolution", body:
+        "<b>Golden Age</b> = a time of <b>cultural progress, peace, prosperity and happiness</b> (like Elizabethan England).<br><br>"+
+        "<b>Industrial Revolution</b> = a <b>sudden or complete change in industry</b> — turning raw materials into goods in factories.",
+        meme:["🏭✨","VIBES: IMMACULATE","FACTORIES: GO BRRR"],
+        hook:"Hook: Golden = good times ✨. Industrial Rev = factories boom 🏭."},
+    ],
+    questions:[
+      {cat:"Key Terms", q:"PROVENANCE means…",
+       opts:["The background/origin of a source (who, when, why)","A medieval tax","A king's right to rule","The end of an empire"],a:0,
+       meme:["🪪","SOURCE ID CARD","WHO • WHEN • WHY"],
+       why:"<b>Provenance</b> = the background info of a source: who made it, when, and why."},
+      {cat:"Key Terms", q:"A HISTORICAL SOURCE is…",
+       opts:["A modern textbook only","Records/objects created by people at the time","A historian's blog","A law"],a:1,
+       meme:["📜🏺","STRAIGHT FROM THE PAST","WE LOVE RECEIPTS"],
+       why:"A <b>source</b> = evidence of history; records/objects created by people <i>at the time</i>."},
+      {cat:"Key Terms", q:"DECOLONISATION means…",
+       opts:["Building a new empire","Countries getting independence back after colonisation","Forcing religion","A change in industry"],a:1,
+       meme:["🌍✊","BYE COLONISER","INDEPENDENCE GET"],
+       why:"<b>Decolonisation</b> = giving colonised countries their independence back."},
+      {cat:"Key Terms", q:"ECONOMY means…",
+       opts:["A type of crusade","The buying and selling of goods in a country","A republic","A king's army"],a:1,
+       meme:["💰🛒","BUY. SELL. REPEAT.","THAT'S THE ECONOMY"],
+       why:"<b>Economy</b> = the buying and selling of goods in a country."},
+      {cat:"Key Terms", q:"A GOLDEN AGE is a time of…",
+       opts:["War, plague & famine","Cultural progress, peace, prosperity & happiness","Decolonisation","Religious persecution"],a:1,
+       meme:["✨👑","EVERYTHING'S VIBING","CULTURE•PEACE•PROSPERITY"],
+       why:"<b>Golden Age</b> = cultural progress, peace, prosperity and happiness."},
+      {cat:"Key Terms", q:"The INDUSTRIAL REVOLUTION is…",
+       opts:["A war between countries","A sudden or complete change in industry","Killing a monarch","Giving land to natives"],a:1,
+       meme:["🏭💨","RAW MATERIALS → GOODS","FACTORIES ACTIVATED"],
+       why:"<b>Industrial Revolution</b> = a sudden/complete change in industry (factories!)."},
+    ]
+  },
+
+  /* ---------------- MEDIEVAL CHURCH ---------------- */
+  {
+    id:"church", name:"The Medieval Castle", emoji:"🏰",
+    desc:"The Church, Crusades & Magna Carta",
+    boss:{name:"King John the Cursed", emoji:"👑😈",
+      taunts:["I am the KING. I answer to no one!","The barons can't make ME sign anything!","The Pope wouldn't DARE excommunicate me..."]},
+    lessons:[
+      {emoji:"⛪", title:"The Church = Ultimate Power", body:
+        "In medieval times the <b>Church was the most powerful force in everyone's life</b> — even more than the king in some ways.<br><br>"+
+        "Why? Everyone believed in God, and the Church controlled <b>Heaven and Hell</b>. The Pope could ban you from Heaven — terrifying for everyone, kings included.",
+        meme:["⛪☁️","CHURCH CONTROLS HEAVEN","EVEN KINGS ARE SCARED"],
+        hook:"Hold this idea — it explains EVERYTHING below. 🔑"},
+      {emoji:"⚔️", title:"The Crusades", body:
+        "The <b>Crusades</b> = religious wars to capture the <b>Holy Land (Jerusalem)</b> from Muslim control.<br><br>"+
+        "Why did the Pope launch them? Remember <b>S-U-H</b>:<ul>"+
+        "<li><b>S</b>alvation — sins forgiven for crusaders (Heaven fast-pass 🎟️)</li>"+
+        "<li><b>U</b>nite — united quarrelling Christians vs a common enemy</li>"+
+        "<li><b>H</b>oly Land — take back Jerusalem</li></ul>",
+        meme:["⚔️✝️","'GO FIGHT, GET FORGIVEN'","— THE POPE"],
+        hook:"Hook: S-U-H = Salvation, Unite, Holy Land."},
+      {emoji:"📜", title:"Magna Carta (1215)", body:
+        "<b>Magna Carta, 1215.</b> The greedy, unpopular <b>King John</b> was <b>forced to sign it by his angry barons</b> at Runnymede.<br><br>"+
+        "What it did: <b>limited the king's power</b> and said <b>even the KING must obey the law</b> — no unfair taxes, no locking people up for no reason.",
+        meme:["📜⚖️","NOBODY'S ABOVE THE LAW","NOT EVEN YOU, JOHN"],
+        hook:"Rhyme: 'Magna Carta, twelve-fifteen, the worst king England's ever seen.' 👑"},
+      {emoji:"😈", title:"Church Weapons & The Kings", body:
+        "Two scary Church weapons:<ul>"+
+        "<li><b>Interdict</b> — the Pope <b>closes ALL churches</b> in your country (no weddings/funerals — panic!)</li>"+
+        "<li><b>Excommunication</b> — <b>you</b> are kicked out of the Church → straight to Hell</li></ul>"+
+        "Kings scoreboard: <b>William</b> 😇 (built churches), <b>William Rufus</b> 😈 (stole Church money), <b>Richard the Lionheart</b> 😇 (Crusader hero), <b>King John</b> 😈 (excommunicated by Pope Innocent III).",
+        meme:["⛪❌","POPE BLOCKED KING JOHN IRL","EXCOMMUNICATED = GAME OVER"],
+        hook:"Hook: Richard the Crusader = hero. John the loser = enemy."},
+    ],
+    questions:[
+      {cat:"Medieval Church", q:"What were the CRUSADES?",
+       opts:["Trade deals with France","Religious wars to capture the Holy Land (Jerusalem)","Taxes on the Church","A type of cathedral"],a:1,
+       meme:["⚔️✝️","ROAD TRIP TO JERUSALEM","MAKE IT HOLY WAR"],
+       why:"<b>Crusades</b> = religious wars to retake the Holy Land (Jerusalem)."},
+      {cat:"Medieval Church", q:"Why did the POPE launch the Crusades? (S-U-H)",
+       opts:["To start the Industrial Revolution","To reclaim the Holy Land, unite Christians & promise salvation","To abolish slavery","To sign Magna Carta"],a:1,
+       meme:["⛪🙏","'FIGHT & GET FORGIVEN'","SALVATION SPEEDRUN"],
+       why:"<b>S</b>alvation (sins forgiven), <b>U</b>nite Christians, take back the <b>H</b>oly Land."},
+      {cat:"Medieval Church", q:"MAGNA CARTA — which king & what year?",
+       opts:["William the Conqueror, 1066","King John, 1215","Charles I, 1642","Richard I, 1189"],a:1,
+       meme:["✍️😤","KING JOHN: SIGN HERE","BARONS: 'NOW.'"],
+       why:"<b>King John, 1215</b> — forced to sign by his barons at Runnymede."},
+      {cat:"Medieval Church", q:"What did MAGNA CARTA do?",
+       opts:["Made the king a god","Limited the king's power — even the king obeys the law","Abolished Parliament","Started the Crusades"],a:1,
+       meme:["📜⚖️","NOBODY ABOVE THE LAW","NOT EVEN JOHN"],
+       why:"It <b>limited royal power</b> — even the king must follow the law."},
+      {cat:"Medieval Church", q:"Why did King JOHN have a TERRIBLE relationship with the Church?",
+       opts:["He loved the Pope too much","He quarrelled with the Pope & was excommunicated","He went on Crusade","He built cathedrals"],a:1,
+       meme:["⛪❌","POPE BLOCKED HIM","EXCOMMUNICATED"],
+       why:"John argued with <b>Pope Innocent III</b>; England got an <b>Interdict</b> and John was <b>excommunicated</b>."},
+      {cat:"Medieval Church", q:"Which king was the CRUSADER hero loved by the Church?",
+       opts:["King John","Richard the Lionheart","William Rufus","Charles I"],a:1,
+       meme:["🦁⚔️","WARRIOR KING ENERGY","CHURCH: 'WE STAN'"],
+       why:"<b>Richard the Lionheart</b> led the Third Crusade — Church loved him."},
+      {cat:"Medieval Church", q:"What is EXCOMMUNICATION?",
+       opts:["Being made king","Being kicked OUT of the Church (→ Hell)","A type of tax","A crusade"],a:1,
+       meme:["🚪🔥","KICKED OUT OF THE CHURCH","STRAIGHT TO... YIKES"],
+       why:"<b>Excommunication</b> = being kicked out of the Church — terrifying back then."},
+    ]
+  },
+
+  /* ---------------- ENGLISH CIVIL WAR ---------------- */
+  {
+    id:"civilwar", name:"The Civil War Battlefield", emoji:"⚔️",
+    desc:"Charles I vs Parliament (1642–1649)",
+    boss:{name:"Charles I, Divine-Right Diva", emoji:"👑🎻",
+      taunts:["God chose ME to rule. You can't question that!","Ship Money for everyone! Pay up!","Parliament? I'll just close it again."]},
+    lessons:[
+      {emoji:"📖", title:"Key Words First", body:
+        "<ul>"+
+        "<li><b>Divine Right of Kings</b> — God chose the king, so he answers to <b>no one</b></li>"+
+        "<li><b>Regicide</b> — the deliberate <b>killing of a monarch</b></li>"+
+        "<li><b>Republic</b> — a government with <b>no king/queen</b></li>"+
+        "<li><b>Roundheads</b> = Parliament's side • <b>Cavaliers</b> = the King's (Royalist) side</li></ul>",
+        meme:["👑✨","'GOD PICKED ME'","— CHARLES I, probably"],
+        hook:"Charles I 100% believed in Divine Right — that's the root of all his fights."},
+      {emoji:"🐢", title:"LONG-term causes (built up for years)", body:
+        "Memory hook: <b>R-M-P</b> = Religion, Money, Power.<ul>"+
+        "<li><b>Religion</b> — Charles married Catholic princess <b>Henrietta Maria</b>; <b>Archbishop Laud</b> made churches Catholic & forced a Prayer Book on Scots; Puritans had their <b>ears cut off</b> 😣</li>"+
+        "<li><b>Money</b> — <b>Ship Money</b> tax (meant for coastal towns) forced on EVERYONE</li>"+
+        "<li><b>Power</b> — in <b>1629 Charles closed Parliament</b> & ruled alone for 11 yrs ('Personal Rule'); used the <b>Star Chamber</b> to punish critics</li></ul>",
+        meme:["💰⚓","SHIP MONEY FOR LANDLOCKED TOWNS","MAKE IT MAKE SENSE"],
+        hook:"Hook: R-M-P = Religion, Money, Power."},
+      {emoji:"⚡", title:"SHORT-term causes (the final sparks)", body:
+        "<ul>"+
+        "<li><b>Jan 1642</b> — Charles bursts into the Commons with <b>400 soldiers to arrest 5 MPs</b> (they'd escaped!) 🚪💥</li>"+
+        "<li><b>June 1642</b> — Parliament's <b>19 Propositions</b> (demands): Parliament controls the army & Church. Charles refused.</li>"+
+        "<li><b>22 Aug 1642</b> — Charles <b>raises his standard (flag) at Nottingham</b> = WAR BEGINS 🚩</li></ul>",
+        meme:["🚪💥","BARGED IN WITH 400 SOLDIERS","THE 5 MPs: *gone*"],
+        hook:"Order: 5 MPs → 19 Propositions → raise the flag = war."},
+      {emoji:"🪖", title:"The War & The Aftermath", body:
+        "Royalists won early, then <b>Battle of Marston Moor (1644)</b> flipped it. <b>Oliver Cromwell</b> built the pro <b>New Model Army</b> and crushed the Royalists.<br><br>"+
+        "Aftermath: <b>Charles I executed 1649</b> (regicide!) → England a <b>republic</b>. <b>1653</b> Cromwell = <b>Lord Protector</b>. He even <b>banned Christmas (1647)</b>! In <b>1660</b> Charles II returns = the <b>Restoration</b>. (200,000 died — 3% of the population.)",
+        meme:["👑⚰️","TRIAL → GUILTY → CHOP","1649: REGICIDE"],
+        hook:"Timeline: 1629 close Parliament → 1642 war → 1649 execution → 1653 Lord Protector → 1660 Restoration."},
+    ],
+    questions:[
+      {cat:"Civil War", q:"DIVINE RIGHT OF KINGS means…",
+       opts:["Kings must obey Parliament","God chose the king, so he answers to no one","Kings can be voted out","The king must be Catholic"],a:1,
+       meme:["👑✨","'GOD PICKED ME'","— CHARLES I"],
+       why:"<b>Divine Right</b> = God chose the king, so he answers to no one. Charles lived by this."},
+      {cat:"Civil War", q:"REGICIDE is…",
+       opts:["The killing of a monarch","A type of tax","A religious ceremony","A republic"],a:0,
+       meme:["👑🔪","SPEAK OF THE EXECUTION","CHARLES I, 1649"],
+       why:"<b>Regicide</b> = deliberately killing a monarch (Charles I in 1649)."},
+      {cat:"Civil War", q:"A REPUBLIC is…",
+       opts:["A country ruled by a king","A government with NO king or queen","A type of crusade","A church"],a:1,
+       meme:["🚫👑","KING WHO?","ENGLAND 1649–1660"],
+       why:"<b>Republic</b> = a government with no king or queen."},
+      {cat:"Civil War", q:"LONG-TERM cause (Religion): what angered Protestants?",
+       opts:["Charles married a Catholic & Laud made churches Catholic","He banned all churches","He became Pope","He freed all slaves"],a:0,
+       meme:["⛪😱","MARRIED A CATHOLIC PRINCESS","PURITANS: 😠"],
+       why:"Catholic wife <b>Henrietta Maria</b> + <b>Archbishop Laud</b> Catholicising churches angered Protestants/Puritans."},
+      {cat:"Civil War", q:"LONG-TERM cause (Money): which tax did Charles force on everyone?",
+       opts:["Income tax","Ship Money (meant only for coastal towns)","Sugar tax","Window tax"],a:1,
+       meme:["💰⚓","SHIP MONEY EVERYWHERE","MAKE IT MAKE SENSE"],
+       why:"<b>Ship Money</b> — meant for coastal towns, forced on everyone. People were furious."},
+      {cat:"Civil War", q:"LONG-TERM cause (Power): what did Charles do in 1629?",
+       opts:["Went on Crusade","Closed Parliament & ruled alone ('Personal Rule')","Joined the slave trade","Signed Magna Carta"],a:1,
+       meme:["🚪👋","PARLIAMENT? CANCELLED","'PERSONAL RULE' (yikes)"],
+       why:"In <b>1629 he closed Parliament</b> and ruled alone for 11 years."},
+      {cat:"Civil War", q:"SHORT-TERM spark (Jan 1642): Charles…",
+       opts:["Burst into the Commons with 400 soldiers to arrest 5 MPs","Married the Pope","Banned tea","Freed all slaves"],a:0,
+       meme:["🚪💥","400 SOLDIERS, 5 MPs","THE MPs: *already gone*"],
+       why:"<b>Jan 1642</b> — stormed the Commons to arrest 5 MPs; they'd escaped. Huge scandal."},
+      {cat:"Civil War", q:"What officially STARTED the war (22 Aug 1642)?",
+       opts:["Charles raised his standard (flag) at Nottingham","Magna Carta was signed","The Spanish Armada","The Zong Case"],a:0,
+       meme:["🚩⚔️","FLAG GOES UP","IT'S GIVING CIVIL WAR"],
+       why:"<b>22 Aug 1642</b> — Charles raised his standard at Nottingham = war begins."},
+      {cat:"Civil War", q:"Who built the NEW MODEL ARMY that beat the Royalists?",
+       opts:["King Charles I","Oliver Cromwell","William Wilberforce","Thomas Clarkson"],a:1,
+       meme:["🪖💪","CROMWELL'S PRO ARMY","ROYALISTS: GG"],
+       why:"<b>Oliver Cromwell</b> built the New Model Army. Turning point: <b>Marston Moor 1644</b>."},
+      {cat:"Civil War", q:"How did the monarchy come back in 1660?",
+       opts:["Charles II made King — the 'Restoration'","Cromwell crowned himself","Magna Carta re-signed","Parliament abolished forever"],a:0,
+       meme:["👑🔄","KING: RESPAWNED","WELCOME BACK CHARLES II"],
+       why:"<b>1660</b> — Charles II made King: the <b>Restoration</b>."},
+    ]
+  },
+
+  /* ---------------- ABOLITION ---------------- */
+  {
+    id:"abolition", name:"The Fight to Abolish Slavery", emoji:"📜",
+    desc:"How the slave trade was ended (1807)",
+    boss:{name:"The Slave Trade", emoji:"⛓️",
+      taunts:["I make Britain rich — no one will stop me!","Parliament will never vote against profit!","One MP can't change anything..."]},
+    note:"This topic is serious history. The 'boss' you defeat is the slave trade itself — by learning how brave abolitionists ended it.",
+    lessons:[
+      {emoji:"🌊", title:"What was the Transatlantic Slave Trade?", body:
+        "The brutal <b>triangular trade</b> (started by Elizabethan explorer <b>John Hawkins</b>):<ul>"+
+        "<li>Goods (weapons, textiles) shipped to <b>West Africa</b></li>"+
+        "<li>Enslaved Africans forced across the Atlantic — the <b>Middle Passage</b> — to the Americas</li>"+
+        "<li><b>Cash crops</b> (sugar, cotton, tobacco) shipped back to Britain</li></ul>"+
+        "Britain grew rich from it — but it caused immense human suffering.",
+        meme:["🗺️⛓️","THE TRIANGULAR TRADE","BRITAIN GOT RICH OFF CRUELTY"],
+        hook:"3 corners: Goods → Africa, Enslaved people → Americas, Crops → Britain."},
+      {emoji:"🕊️", title:"Why the tide turned: Religion & Ideas", body:
+        "Forces that built the movement:<ul>"+
+        "<li><b>Quakers</b> — believed in equality & 'the light of God in every person'</li>"+
+        "<li><b>Evangelical Christians</b> — believed in social action</li>"+
+        "<li>The new <b>middle class</b> — valued knowledge, freedom & happiness</li></ul>",
+        meme:["🕊️✝️","QUAKERS SAID 'EQUALITY'","AHEAD OF THEIR TIME"],
+        hook:"Hook: Quakers + Evangelicals + middle class = the moral engine."},
+      {emoji:"🦸", title:"The Abolition Heroes", body:
+        "<ul>"+
+        "<li><b>Thomas Clarkson</b> — gathered evidence, founded the <b>Abolitionist Society (1787)</b>; inspired by the <b>Zong Case (1781)</b> (133 enslaved people thrown overboard for insurance 💔)</li>"+
+        "<li><b>William Wilberforce</b> — the <b>MP</b> who fought in Parliament (first speech 1789) until victory</li>"+
+        "<li><b>Olaudah Equiano</b> — ex-slave; wrote an autobiography & founded <b>'Sons of Africa'</b></li>"+
+        "<li><b>Mary Prince</b> & <b>Ottobah Cugoano</b> — Black abolitionists who shared their stories</li></ul>",
+        meme:["🦸📖","THE ABOLITION AVENGERS","CLARKSON • WILBERFORCE • EQUIANO"],
+        hook:"Team: Clarkson = evidence, Wilberforce = Parliament, Equiano = lived experience."},
+      {emoji:"✊", title:"People Power & Revolts", body:
+        "<ul>"+
+        "<li><b>Women</b> — <b>Elizabeth Heyrick</b> & others ran <b>sugar boycotts</b>; 300,000+ joined; 80% of Birmingham homes visited 🚫🍬</li>"+
+        "<li><b>Working class</b> + printers/artists made the emblem <b>'Am I Not a Man and a Brother?'</b></li>"+
+        "<li><b>Slave revolts</b> — <b>Toussaint L'Ouverture</b> led the 1791 revolt → free <b>Republic of Haiti (1804)</b>; <b>Jamaica 1831</b> uprising (200+ plantations)</li></ul>"+
+        "Result: the <b>Abolition Act passed in 1807</b>. Ships were then fined £100 per enslaved person aboard.",
+        meme:["✊🍬","'NO SLAVE-SUGAR IN MY TEA'","300,000 JOINED THE BOYCOTT"],
+        hook:"Hook: Boycotts + revolts + heroes = the 1807 Act."},
+    ],
+    questions:[
+      {cat:"Abolition", q:"In what year did the ABOLITION ACT pass?",
+       opts:["1066","1215","1807","1914"],a:2,
+       meme:["📜🎉","1807: THE TRADE ENDS","ABOLITIONISTS WIN"],
+       why:"The <b>Abolition Act passed in 1807</b>. Ships were then fined £100 per enslaved person."},
+      {cat:"Abolition", q:"Which MP led the parliamentary fight against the slave trade?",
+       opts:["Oliver Cromwell","William Wilberforce","King John","Archbishop Laud"],a:1,
+       meme:["🏛️🗣️","WILBERFORCE WON'T QUIT","YEARS OF SPEECHES"],
+       why:"<b>William Wilberforce</b>, an MP, fought from his 1789 speech until the 1807 Act."},
+      {cat:"Abolition", q:"Who founded the Abolitionist Society (1787) & gathered evidence?",
+       opts:["Thomas Clarkson","Mary Prince","Cromwell","Cecil Rhodes"],a:0,
+       meme:["🔍📝","CLARKSON: EVIDENCE GUY","UNITED THE MOVEMENT"],
+       why:"<b>Thomas Clarkson</b> founded the Society (1787) & persuaded Wilberforce to join."},
+      {cat:"Abolition", q:"What was the ZONG CASE (1781)?",
+       opts:["A painting","133 enslaved people thrown overboard for an insurance claim","A Jamaica revolt","A sugar boycott"],a:1,
+       meme:["⚓💔","THROWN OVERBOARD FOR MONEY","IT SHOCKED THE NATION"],
+       why:"<b>Zong Case (1781)</b> — 133 enslaved people thrown overboard for insurance. It inspired Clarkson."},
+      {cat:"Abolition", q:"Olaudah Equiano was a Black abolitionist who…",
+       opts:["Was a king","Wrote an autobiography & founded 'Sons of Africa'","Invented the Spinning Jenny","Led the New Model Army"],a:1,
+       meme:["📖✊🏿","EX-SLAVE. AUTHOR. ACTIVIST.","'SONS OF AFRICA'"],
+       why:"<b>Equiano</b> wrote a powerful autobiography & founded <b>'Sons of Africa'</b>."},
+      {cat:"Abolition", q:"Which religious group ('light of God in everyone') were early abolitionists?",
+       opts:["Quakers","Vikings","Janissaries","Royalists"],a:0,
+       meme:["🕊️✝️","QUAKERS = EQUALITY","AHEAD OF THEIR TIME"],
+       why:"<b>Quakers</b> believed in equality & the 'light of God in every person'."},
+      {cat:"Abolition", q:"How did WOMEN powerfully help the movement?",
+       opts:["Led armies","Sugar boycotts & door-to-door campaigns (e.g. Elizabeth Heyrick)","Signed Magna Carta","Ran the East India Company"],a:1,
+       meme:["🚫🍬","NO SLAVE-SUGAR","300,000 BOYCOTTED"],
+       why:"Women like <b>Elizabeth Heyrick</b> ran sugar boycotts; 300,000+ joined."},
+      {cat:"Abolition", q:"The 1791 revolt led by Toussaint L'Ouverture created which free republic?",
+       opts:["Jamaica","Haiti","Virginia","Ghana"],a:1,
+       meme:["🔥🇭🇹","TOUSSAINT: 'FREEDOM'","REPUBLIC OF HAITI 1804"],
+       why:"<b>Toussaint L'Ouverture</b>'s revolt (1791) led to the free <b>Republic of Haiti (1804)</b>."},
+      {cat:"Abolition", q:"The famous abolitionist emblem said…",
+       opts:["'God Save the King'","'Am I Not a Man and a Brother?'","'No taxation without representation'","'Divine Right of Kings'"],a:1,
+       meme:["🔗🙏🏿","'AM I NOT A MAN","AND A BROTHER?'"],
+       why:"The emblem <b>'Am I Not a Man and a Brother?'</b> spread the abolitionist message."},
+    ]
+  },
+
+  /* ---------------- OTTOMAN EMPIRE ---------------- */
+  {
+    id:"ottomans", name:"The Ottoman Empire", emoji:"🕌",
+    desc:"How one empire ruled for 622 years",
+    boss:{name:"Sultan Mehmed's Shadow", emoji:"🕌",
+      taunts:["My empire will outlast you — 622 years!","You'll never take Constantinople!","Bow before the Sultan!"]},
+    lessons:[
+      {emoji:"⚔️", title:"Why it lasted 622 years", body:
+        "The Ottoman Empire survived for over <b>600 years</b> thanks to five strengths:<br><br>"+
+        "• A powerful, skilled <b>military</b> (the Janissaries)<br>• <b>Total control</b> of the Sultan<br>"+
+        "• <b>Geography</b> — Constantinople controlled East–West trade<br>• A <b>diverse</b> empire (people could keep their religion)<br>• A <b>strong economy</b>",
+        meme:["🕌👑","ONE EMPIRE","622 YEARS STRONG"],
+        hook:"5 reasons: army, Sultan, geography, diversity, economy."},
+      {emoji:"🏰", title:"1453: The Fall of Constantinople", body:
+        "In <b>1453</b>, Sultan <b>Mehmed II ('the Conqueror')</b> captured <b>Constantinople</b> from the <b>Byzantine Empire</b> and renamed it <b>Istanbul</b>.<br><br>"+
+        "The city was priceless because it <b>linked Europe with Asia</b> — a vital trade route (and the old route for the Crusades).",
+        meme:["🏰💥","MEHMED II TAKES THE CITY","CONSTANTINOPLE → ISTANBUL"],
+        hook:"1453 • Mehmed II • Byzantine → Ottoman."},
+      {emoji:"🪖", title:"Janissaries & the all-powerful Sultan", body:
+        "The <b>Janissaries</b> were Christian boys taken from the Balkans, converted to Islam and trained as <b>elite soldiers</b> — technically slaves, but some rose to enormous power.<br><br>"+
+        "The <b>Sultan</b> had <b>total authority</b> (political, military, religious) and was seen as 'answerable only to God'. <b>Viziers</b> ran daily affairs from Topkapi Palace.",
+        meme:["🪖","BOY SOLDIERS → ELITE ARMY","THE JANISSARIES"],
+        hook:"Janissaries = elite slave-soldiers; Sultan = total power."},
+      {emoji:"🌍", title:"A diverse empire", body:
+        "Non-Muslims (Christians & Jews) lived in communities called <b>millets</b> and could keep their religion as long as they obeyed Ottoman law.<br><br>"+
+        "The <b>'Sultanate of Women'</b> (1534–1683) saw royal women like <b>Hurrem Sultan</b> wield real power. <b>Suleiman 'the Magnificent'</b> ruled a vast empire across <b>three continents</b>.",
+        meme:["🕌🌍","MANY FAITHS, ONE EMPIRE","THE MILLET SYSTEM"],
+        hook:"millets = religious communities; Suleiman the Magnificent."},
+    ],
+    questions:[
+      {cat:"Ottomans", q:"Who conquered Constantinople in 1453?",
+       opts:["Mehmed II ('the Conqueror')","Suleiman the Magnificent","Osman I","Richard the Lionheart"],a:0,
+       meme:["🏰💥","1453","MEHMED THE CONQUEROR"],why:"<b>Sultan Mehmed II</b> took Constantinople from the Byzantine Empire in 1453."},
+      {cat:"Ottomans", q:"Constantinople was renamed…",
+       opts:["Istanbul","Ankara","Athens","Cairo"],a:0,
+       meme:["🕌","NEW NAME WHO DIS","ISTANBUL"],why:"Constantinople became <b>Istanbul</b>."},
+      {cat:"Ottomans", q:"The Janissaries were…",
+       opts:["Christian boys from the Balkans, converted to Islam & trained as elite soldiers","Arab spice merchants","Byzantine priests","Italian sailors"],a:0,
+       meme:["🪖","ELITE SLAVE-SOLDIERS","THE JANISSARIES"],why:"<b>Janissaries</b> were Christian boys taken from the Balkans, converted to Islam and trained as elite soldiers."},
+      {cat:"Ottomans", q:"How much power did the Sultan have?",
+       opts:["Total authority — answerable only to God","Power shared with a parliament","No real power","Only religious power"],a:0,
+       meme:["👑","ANSWERS TO NO ONE","(except God)"],why:"The <b>Sultan</b> had total political, military and religious authority."},
+      {cat:"Ottomans", q:"Non-Muslim communities allowed to keep their religion were called…",
+       opts:["Millets","Beyliks","Janissaries","Viziers"],a:0,
+       meme:["🌍","KEEP YOUR FAITH","THE MILLETS"],why:"<b>Millets</b> were religious communities allowed to keep their own faith under Ottoman law."},
+      {cat:"Ottomans", q:"The 'Sultanate of Women' began with…",
+       opts:["Hurrem Sultan","Cleopatra","Queen Victoria","Elizabeth I"],a:0,
+       meme:["👸","ROYAL WOMEN IN POWER","HURREM SULTAN"],why:"<b>Hurrem Sultan</b> began the era of powerful royal women known as the 'Sultanate of Women'."},
+      {cat:"Ottomans", q:"Which Sultan, 'the Magnificent', ruled a vast empire across three continents?",
+       opts:["Suleiman","Osman I","Orhan","Mehmed II"],a:0,
+       meme:["🗺️","3 CONTINENTS","SULEIMAN THE MAGNIFICENT"],why:"<b>Suleiman 'the Magnificent'</b> ruled the empire at its largest."},
+      {cat:"Ottomans", q:"Why was Constantinople so important?",
+       opts:["It linked Europe with Asia — a key trade route","It had huge gold mines","It was located in Africa","It was the Pope's home city"],a:0,
+       meme:["🌉","EAST MEETS WEST","KEY TRADE ROUTE"],why:"Constantinople connected Europe and Asia — a vital trade route."},
+    ]
+  },
+
+  /* ---------------- BRITISH EMPIRE ---------------- */
+  {
+    id:"empire", name:"The British Empire", emoji:"🎩",
+    desc:"Why Britain built it — and why it fell",
+    boss:{name:"The Empire Builder", emoji:"🎩",
+      taunts:["The sun never sets on MY empire!","You can't decolonise me!","Name a colony — go on, I'll wait!"]},
+    lessons:[
+      {emoji:"🌍", title:"Why build an empire?", body:
+        "Britain built its empire for five kinds of reason — hook: <b>P-E-S-M-R</b>:<br><br>"+
+        "• <b>Political</b> — beat rivals & be a 'great power'<br>• <b>Economic</b> — raw materials to fuel the Industrial Revolution + a market for British goods<br>"+
+        "• <b>Social</b> — 'civilise' natives (the 'white man's burden')<br>• <b>Military</b> — more territory & power<br>• <b>Religious</b> — spread Christianity",
+        meme:["🌍👑","THE SUN NEVER SETS","WHY: P-E-S-M-R"],
+        hook:"Why: Political, Economic, Social, Military, Religious."},
+      {emoji:"🇮🇳", title:"India: from Company to Crown", body:
+        "The <b>East India Company (EIC)</b> traded spices & tea. At the <b>1757 Battle of Plassey</b> the EIC took control of <b>Bengal</b>.<br><br>"+
+        "In <b>1857</b> the <b>Indian Mutiny</b> broke out — Indian soldiers (<b>sepoys</b>) rebelled against the EIC. Britain then took direct control: the <b>British Raj</b>, ruled under <b>Queen Victoria</b>.",
+        meme:["🇮🇳","COMPANY → CROWN","1857 MUTINY → THE RAJ"],
+        hook:"1757 Plassey → 1857 Mutiny → British Raj."},
+      {emoji:"🌍", title:"The Scramble for Africa", body:
+        "From the <b>1870s</b>, European powers raced to carve up Africa. By <b>1914 around 90%</b> of the continent was colonised.<br><br>"+
+        "Men like <b>Cecil Rhodes</b> grew rich from diamonds. <b>Ghana</b> was the first to gain independence (<b>1957</b>, under Kwame Nkrumah), inspiring others.",
+        meme:["🌍🏁","CARVING UP A CONTINENT","BY 1914: 90% COLONISED"],
+        hook:"Scramble for Africa, 1870s; ~90% by 1914."},
+      {emoji:"📉", title:"Why the Empire fell", body:
+        "Three big reasons:<br><br>"+
+        "• <b>External pressure</b> — after WWII the 1941 <b>Atlantic Charter</b> & the <b>Cold War</b> (the USA opposed empire)<br>"+
+        "• <b>Nationalism</b> — leaders like <b>Gandhi</b>; millions of Indian & African soldiers fought in WWII expecting freedom<br>"+
+        "• <b>Economic problems</b> — Britain was <b>bankrupt</b> after WWII (fighting nationalism would cost ~£800m a year)<br><br>India's independence in <b>1947</b> sparked a wave of decolonisation.",
+        meme:["📉🕊️","BROKE & UNDER PRESSURE","DECOLONISATION BEGINS"],
+        hook:"Fell due to: WWII/Cold War, nationalism, bankruptcy."},
+    ],
+    questions:[
+      {cat:"British Empire", q:"The 'white man's burden' was the belief that…",
+       opts:["It was a duty to 'civilise' other nations","Britain should leave colonies alone","White people should farm the land","Nothing in particular"],a:0,
+       meme:["🌍","'WE MUST CIVILISE'","THE WHITE MAN'S BURDEN"],why:"It was the belief that Britain had a duty to 'civilise' nations it saw as inferior."},
+      {cat:"British Empire", q:"What does EIC stand for?",
+       opts:["East India Company","English Imperial Court","European Industry Council","Empire Investment Co."],a:0,
+       meme:["🏯","SPICES & TEA","EAST INDIA COMPANY"],why:"The <b>East India Company</b> traded with India for spices, tea and dyes."},
+      {cat:"British Empire", q:"The 1857 Indian Mutiny was…",
+       opts:["Indian sepoys rebelling against the East India Company","A British invasion of France","A London tax revolt","A slave revolt in Jamaica"],a:0,
+       meme:["🇮🇳⚔️","SEPOYS REBEL","1857 → THE BRITISH RAJ"],why:"Indian soldiers (sepoys) rebelled against the EIC — it led to the <b>British Raj</b> (direct rule)."},
+      {cat:"British Empire", q:"After the 1757 Battle of Plassey, the EIC took control of…",
+       opts:["Bengal","London","Egypt","Australia"],a:0,
+       meme:["🗺️","1757 PLASSEY","EIC TAKES BENGAL"],why:"The EIC gained control of <b>Bengal</b> after the Battle of Plassey (1757)."},
+      {cat:"British Empire", q:"The 'Scramble for Africa' was…",
+       opts:["European powers competing to colonise Africa","Africans leaving Africa","A gold rush in Britain","A war between India and China"],a:0,
+       meme:["🌍🏁","RACE FOR A CONTINENT","90% COLONISED BY 1914"],why:"European nations competed to colonise Africa; by 1914 about 90% was colonised."},
+      {cat:"British Empire", q:"India gained independence (and partition) in…",
+       opts:["1947","1857","1066","2010"],a:0,
+       meme:["🇮🇳🕊️","FREEDOM AT LAST","1947"],why:"India became independent in <b>1947</b>, which sparked further decolonisation."},
+      {cat:"British Empire", q:"One reason the British Empire fell was…",
+       opts:["Britain was bankrupt after WWII & faced rising nationalism","It suddenly ran out of soldiers","The Pope banned empires","A meteor strike"],a:0,
+       meme:["📉","TOO EXPENSIVE TO KEEP","BANKRUPT + NATIONALISM"],why:"Post-WWII Britain was bankrupt and faced rising nationalism and US/Cold-War pressure."},
+      {cat:"British Empire", q:"Decolonisation means…",
+       opts:["Countries are given their independence back","Building more colonies","Spreading Christianity","A type of trade tax"],a:0,
+       meme:["🌍✊","COLONISER OUT","INDEPENDENCE RETURNED"],why:"<b>Decolonisation</b> = colonised countries getting their independence back."},
+    ]
+  },
+
+  /* ---------------- INDUSTRIAL REVOLUTION ---------------- */
+  {
+    id:"industrial", name:"The Industrial Revolution", emoji:"🏭",
+    desc:"Factories, child labour & reform",
+    boss:{name:"The Factory Baron", emoji:"🏭",
+      taunts:["Back to the mill with you!","Profit over people, always!","You'll never reform MY factories!"]},
+    lessons:[
+      {emoji:"🏭", title:"What it was & why it happened", body:
+        "The <b>Industrial Revolution</b> = a <b>sudden or complete change in industry</b> — raw materials turned into goods in <b>factories</b>.<br><br>"+
+        "Causes:<br>• The <b>Agricultural Revolution</b> (more food → bigger population → workers move to cities)<br>• New <b>inventions</b> (more efficient, more profit)<br>"+
+        "• <b>Empire & slavery</b> (cheap cotton)<br>• <b>Iron, coal & cotton</b>",
+        meme:["🏭💨","FARMS → FACTORIES","RAW MATERIALS GO BRRR"],
+        hook:"Causes: agriculture, inventions, empire/slavery, iron/coal/cotton."},
+      {emoji:"🧒", title:"Child labour (NOT 'freeing')", body:
+        "The <b>average</b> child worker was about <b>10</b> (some as young as 5).<br><br>"+
+        "Children worked in <b>coal mines</b>, as <b>chimney sweeps</b> and in <b>textile mills</b> — dangerous jobs causing injuries and lifelong illness. Very poor children were sold as 'parish apprentices' and often never saw their families again.",
+        meme:["🧒⛏️","KIDS DOWN THE MINES","AVERAGE AGE: 10"],
+        hook:"Child labour: avg age ~10; mines, sweeps, mills."},
+      {emoji:"🏚️", title:"City life & disease", body:
+        "Around <b>75%</b> of people were now <b>working class</b>. Cheap, crammed housing was <b>damp, dark and dirty</b>.<br><br>"+
+        "Unsanitary slums spread diseases like <b>typhus and cholera</b>, with very high death rates. The <b>1834 New Poor Law</b> replaced help-at-home with harsh <b>workhouses</b>.",
+        meme:["🏚️🦠","SLUMS & SICKNESS","TYPHUS • CHOLERA"],
+        hook:"Overcrowding → typhus & cholera; 1834 workhouses."},
+      {emoji:"⚙️", title:"Inventions & reforms", body:
+        "Inventions like the <b>Spinning Jenny</b> and Arkwright's machines made textiles cheaper; <b>Stephenson</b> built the first railways; <b>Bell</b> invented the telephone.<br><br>"+
+        "Reforms slowly helped: <b>1833 Factory Act</b> (under-9s banned from textile mills), <b>1844</b> (under-8s banned), <b>1870 Forster's Education Act</b> (compulsory education).",
+        meme:["⚙️🚂","MACHINES CHANGE EVERYTHING","REFORMS: 1833 → 1844 → 1870"],
+        hook:"Spinning Jenny; reforms 1833, 1844, 1870."},
+    ],
+    questions:[
+      {cat:"Industrial Revolution", q:"The Industrial Revolution was…",
+       opts:["A sudden or complete change in industry","A religious war","A famine","A royal wedding"],a:0,
+       meme:["🏭","FACTORIES BOOM","CHANGE IN INDUSTRY"],why:"It was a <b>sudden/complete change in industry</b> — making goods in factories."},
+      {cat:"Industrial Revolution", q:"A key cause was the Agricultural Revolution, which…",
+       opts:["Produced more food, so the population grew & people moved to cities for work","Reduced farming","Banned factories","Started the Crusades"],a:0,
+       meme:["🌾","MORE FOOD → MORE PEOPLE","OFF TO THE CITIES"],why:"More food → a growing population → workers moving to cities for factory work."},
+      {cat:"Industrial Revolution", q:"The average age of child workers was about…",
+       opts:["10 years old (some as young as 5)","18","25","30"],a:0,
+       meme:["🧒","FAR TOO YOUNG","AVERAGE AGE: 10"],why:"The average child worker was around <b>10</b>; some were as young as 5."},
+      {cat:"Industrial Revolution", q:"The 1833 Factory Act…",
+       opts:["Stopped children under 9 working in textile mills","Banned all factories","Freed enslaved people","Closed all schools"],a:0,
+       meme:["📜","FIRST PROTECTIONS","1833 FACTORY ACT"],why:"The <b>1833 Factory Act</b> banned under-9s from working in textile mills."},
+      {cat:"Industrial Revolution", q:"Diseases that spread in the overcrowded cities included…",
+       opts:["Typhus and cholera","Only measles","No diseases at all","Only scurvy"],a:0,
+       meme:["🦠","DIRTY, CROWDED SLUMS","TYPHUS & CHOLERA"],why:"Unsanitary, overcrowded cities spread <b>typhus and cholera</b>."},
+      {cat:"Industrial Revolution", q:"The 1834 New Poor Law introduced…",
+       opts:["Harsh workhouses","Free money for all","Free schools","The NHS"],a:0,
+       meme:["🏚️","SUPPORT, BUT BRUTAL","THE WORKHOUSE"],why:"The <b>1834 New Poor Law</b> moved support into harsh <b>workhouses</b>."},
+      {cat:"Industrial Revolution", q:"The Spinning Jenny was an invention that…",
+       opts:["Made spinning thread/textiles far more efficient","Powered trains","Made steel","Sent messages instantly"],a:0,
+       meme:["⚙️🧵","TEXTILES GO BRRR","THE SPINNING JENNY"],why:"The <b>Spinning Jenny</b> made textile production far more efficient (cheaper clothes)."},
+      {cat:"Industrial Revolution", q:"The 1870 Forster's Education Act…",
+       opts:["Began compulsory education for children","Banned reading","Built more factories","Ended the empire"],a:0,
+       meme:["🏫","SCHOOL FOR ALL","1870 EDUCATION ACT"],why:"<b>Forster's Education Act (1870)</b> began compulsory education."},
+    ]
+  },
+];
+
+/* ====================== ENGINE ====================== */
+const panel=document.getElementById('panel');
+const toast=document.getElementById('toast');
+let muted=false;
+
+// progress persistence
+function loadDone(){try{return JSON.parse(localStorage.getItem('hq_done')||'[]')}catch(e){return[]}}
+function saveDone(arr){try{localStorage.setItem('hq_done',JSON.stringify(arr))}catch(e){}}
+function loadStats(){try{return JSON.parse(localStorage.getItem('hq_stats')||'{}')}catch(e){return{}}}
+function saveStats(s){try{localStorage.setItem('hq_stats',JSON.stringify(s))}catch(e){}}
+
+let done=loadDone();
+
+// sound (WebAudio beeps, no files needed)
+let actx;
+function beep(freq,dur,type){
+  if(muted)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type||'square';o.frequency.value=freq;
+    o.connect(g);g.connect(actx.destination);
+    g.gain.setValueAtTime(.12,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+    o.start();o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sfx={
+  good:()=>{beep(660,.08);setTimeout(()=>beep(880,.12),80)},
+  crit:()=>{beep(660,.07);setTimeout(()=>beep(990,.07),70);setTimeout(()=>beep(1320,.16),140)},
+  bad:()=>{beep(180,.18,'sawtooth')},
+  win:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16),i*120))},
+  click:()=>beep(420,.04),
+};
+function toggleMute(){muted=!muted;document.getElementById('muteBtn').textContent=muted?'🔇':'🔊'}
+
+function showToast(t,ms){toast.innerHTML=t;toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),ms||1200)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function floatText(txt,color){
+  const el=document.createElement('div');el.className='float';el.textContent=txt;
+  if(color)el.style.color=color;
+  el.style.left=(40+Math.random()*30)+'%';el.style.top='42%';
+  document.body.appendChild(el);
+  el.animate([{opacity:1,transform:'translateY(0) scale(1)'},{opacity:0,transform:'translateY(-90px) scale(1.4)'}],{duration:900,easing:'ease-out'});
+  setTimeout(()=>el.remove(),900);
+}
+
+/* ---------- TITLE ---------- */
+function title(){
+  const allDone=STAGES.every(s=>done.includes(s.id));
+  panel.innerHTML=`
+    <h1>⚔️ HISTORYQUEST ⚔️</h1>
+    <div class="sub">Year 8 Summer Exam • Learn ➜ Battle ➜ Win</div>
+    <div class="meme"><div class="img">🏰📜⚔️🎓</div>
+      <div class="cap">STUDY? BORING.<br>BOSS BATTLES? LET'S GO.</div></div>
+    <p style="margin:14px 0;text-align:center;color:#cfc7f0;line-height:1.55">
+      Pick a region, <b>study the lesson</b> to power up, then <b>battle the boss</b> with a quiz.
+      Build <b style="color:var(--accent)">combos</b> for critical hits! 🔥<br>
+      Beat all bosses to unlock the <b style="color:var(--accent2)">Gap Report</b>.
+    </p>
+    <button class="btn" onclick="sfx.click();map()">🗺️ OPEN THE MAP</button>
+    ${ (done.length||allDone) ? `<button class="btn ghost" onclick="resetAll()">🗑️ Reset progress</button>`:'' }
+  `;
+}
+function resetAll(){done=[];saveDone(done);saveStats({});showToast('Progress reset! 🔄');title()}
+
+/* ---------- MAP ---------- */
+function map(){
+  let nodes='';
+  STAGES.forEach((s,i)=>{
+    const isDone=done.includes(s.id);
+    const unlocked = i===0 || done.includes(STAGES[i-1].id);
+    const cls = isDone?'done': (unlocked?'':'locked');
+    const status = isDone?'✅' : (unlocked?'▶️':'🔒');
+    nodes+=`<div class="node ${cls}" ${unlocked?`onclick="sfx.click();stageIntro(${i})"`:''}>
+      <div class="ico">${s.emoji}</div>
+      <div class="meta"><b>${s.name}</b><span>${s.desc}</span></div>
+      <div class="status">${status}</div>
+    </div>`;
+  });
+  const allDone=STAGES.every(s=>done.includes(s.id));
+  panel.innerHTML=`
+    <h1>🗺️ The Map</h1>
+    <div class="sub">${done.length}/${STAGES.length} bosses defeated</div>
+    <div class="map">${nodes}</div>
+    <button class="btn danger" onclick="sfx.click();finalExam()">🎓 TAKE THE FINAL EXAM (all topics)</button>
+    ${ allDone ? `<button class="btn" onclick="sfx.click();report()">🏆 SEE YOUR GAP REPORT</button>`:'' }
+    <button class="btn ghost" onclick="sfx.click();title()">🏠 Home</button>
+  `;
+}
+
+/* ---------- STAGE INTRO ---------- */
+function stageIntro(i){
+  const s=STAGES[i];
+  panel.innerHTML=`
+    <span class="cat">${s.emoji} ${s.name}</span>
+    <h2>Stage: ${s.desc}</h2>
+    <div class="meme"><div class="img">${s.emoji}${s.boss.emoji}</div>
+      <div class="cap">BOSS: ${s.boss.name}</div></div>
+    ${ s.note ? `<p style="color:#b7aee0;font-size:14px;line-height:1.5;margin-bottom:6px">ℹ️ ${s.note}</p>`:''}
+    <p style="text-align:center;color:#cfc7f0;line-height:1.5;margin:6px 0">
+      First <b style="color:var(--accent)">study the lesson</b> (${s.lessons.length} cards) to power up.
+      Then face <b>${s.boss.name}</b>!</p>
+    <button class="btn" onclick="sfx.click();lesson(${i},0)">📚 START LESSON</button>
+    <button class="btn ghost" onclick="sfx.click();battle(${i})">⚡ Skip to battle (already know it?)</button>
+    <button class="btn ghost" onclick="sfx.click();map()">⬅️ Back to map</button>
+  `;
+}
+
+/* ---------- LESSON ---------- */
+function lesson(si,li){
+  const s=STAGES[si];const L=s.lessons[li];
+  const dots=s.lessons.map((_,k)=>`<i class="${k===li?'on':''}"></i>`).join('');
+  const last=li===s.lessons.length-1;
+  panel.innerHTML=`
+    <span class="cat">${s.emoji} ${s.name} • Lesson ${li+1}/${s.lessons.length}</span>
+    <h2>${L.emoji} ${L.title}</h2>
+    <div class="slide"><div class="lessonbody">${L.body}${L.hook?`<span class="hook">🧠 ${L.hook}</span>`:''}</div></div>
+    <div class="meme"><div class="img">${L.meme[0]}</div><div class="cap">${L.meme[1]}<br>${L.meme[2]}</div></div>
+    <div class="dots">${dots}</div>
+    <div class="btnrow">
+      ${li>0?`<button class="btn ghost row" style="flex:1" onclick="sfx.click();lesson(${si},${li-1})">⬅️ Back</button>`:''}
+      <button class="btn row" style="flex:2" onclick="sfx.click();${last?`battle(${si})`:`lesson(${si},${li+1})`}">
+        ${last?'⚔️ FIGHT THE BOSS!':'Next ➡️'}</button>
+    </div>
+  `;
+}
+
+/* ---------- BATTLE ---------- */
+let B; // battle state
+function battle(si){
+  const s=STAGES[si];
+  const qs=shuffle([...s.questions]);
+  B={si,s,qs,i:0,score:0,streak:0,best:0,
+     bossMax:qs.length, bossHP:qs.length,   // 1 hp per question
+     playerHP:5, answered:false,
+     stat:{cat:s.questions[0].cat, correct:0, total:0}};
+  drawBattle();
+}
+function drawBattle(){
+  if(B.bossHP<=0){return winStage()}
+  if(B.playerHP<=0){return faint()}
+  B.answered=false;
+  const s=B.s;const q=B.qs[B.i];
+  const taunt=s.boss.taunts[B.i%s.boss.taunts.length];
+  const bossPct=Math.max(0,(B.bossHP/B.bossMax)*100);
+  const selfPct=(B.playerHP/5)*100;
+  panel.innerHTML=`
+    <div class="arena">
+      <div class="fighter">
+        <div class="face" id="bossface">${s.boss.emoji}</div>
+        <div class="bars"><div class="nm"><b>${s.boss.name}</b><span>${B.bossHP}/${B.bossMax} HP</span></div>
+          <div class="hpbar hp-enemy"><i style="width:${bossPct}%"></i></div></div>
+      </div>
+      <div class="bubble" id="bubble">"${taunt}"</div>
+      <div class="fighter">
+        <div class="face" id="selfface">🧑‍🎓</div>
+        <div class="bars"><div class="nm"><b>You</b><span>${'❤️'.repeat(B.playerHP)}${'🖤'.repeat(5-B.playerHP)}</span></div>
+          <div class="hpbar hp-self"><i style="width:${selfPct}%"></i></div></div>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="stat"><b>${B.score}</b><span>Score</span></div>
+      <div class="stat streak ${B.streak>=2?'fire':''}"><b>${B.streak}${B.streak>=2?'🔥':''}</b><span>Combo</span></div>
+      <div class="stat"><b>${B.i+1}/${B.qs.length}</b><span>Hit</span></div>
+    </div>
+    <span class="cat">${q.cat}</span>
+    <div class="q">${q.q}</div>
+    <div class="opts" id="opts"></div>
+    <div class="meme" id="meme" style="display:none"><div class="img" id="memeimg"></div><div class="cap" id="memecap"></div></div>
+    <div class="explain" id="explain"></div>
+    <button class="btn" id="next" style="display:none" onclick="sfx.click();nextHit()">NEXT HIT ➡️</button>
+  `;
+  const optsEl=document.getElementById('opts');
+  shuffle(q.opts.map((t,k)=>({t,k}))).forEach(o=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=o.t;
+    b.onclick=()=>answer(b,o.k===q.a,q);
+    optsEl.appendChild(b);
+  });
+}
+function answer(btn,correct,q){
+  if(B.answered)return;B.answered=true;
+  B.stat.total++;
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;
+    if(b.textContent===q.opts[q.a])b.classList.add('correct');else b.classList.add('dim');});
+  const meme=document.getElementById('meme');
+  document.getElementById('memeimg').textContent=q.meme[0];
+  document.getElementById('memecap').innerHTML=q.meme[1]+"<br>"+q.meme[2];
+  const explain=document.getElementById('explain');
+  explain.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>The answer:</b> ")+q.why;
+  explain.style.display='block';
+
+  if(correct){
+    B.stat.correct++;B.streak++;B.best=Math.max(B.best,B.streak);
+    const crit=B.streak>=3;
+    const dmg=crit?2:1;
+    B.bossHP=Math.max(0,B.bossHP-dmg);
+    B.score+=100+ (B.streak-1)*25;
+    meme.style.display='block';meme.classList.add('pulse');
+    const bf=document.getElementById('bossface');bf.classList.add('shake');
+    if(crit){sfx.crit();floatText("CRIT! x"+B.streak,'#ffd23f');showToast("💥 CRITICAL HIT! Combo x"+B.streak)}
+    else{sfx.good();floatText("HIT!",'#3ddc84');showToast("✅ Nice! +"+(100+(B.streak-1)*25))}
+  }else{
+    B.streak=0;B.playerHP--;
+    btn.classList.remove('dim');btn.classList.add('wrong');
+    meme.style.display='block';
+    const sf=document.getElementById('selfface');sf.textContent='🤕';
+    panel.classList.add('shake');setTimeout(()=>panel.classList.remove('shake'),420);
+    sfx.bad();floatText("-1 ❤️",'#ff4d6d');showToast("💢 The boss strikes back! Read the answer 👇");
+  }
+  // update bars live
+  document.querySelector('.hp-enemy > i').style.width=Math.max(0,(B.bossHP/B.bossMax)*100)+'%';
+  document.querySelector('.hp-self > i').style.width=(B.playerHP/5)*100+'%';
+  document.getElementById('next').style.display='block';
+  document.getElementById('next').textContent = (B.bossHP<=0)?'🏆 FINISH HIM!' : (B.playerHP<=0)?'💀 Continue':'NEXT HIT ➡️';
+}
+function nextHit(){
+  if(B.bossHP<=0)return winStage();
+  if(B.playerHP<=0)return faint();
+  B.i++;
+  if(B.i>=B.qs.length){
+    // ran out of questions but boss alive (shouldn't happen, hp==numQ) -> loop unanswered
+    if(B.bossHP>0){B.qs=shuffle([...B.s.questions]);B.i=0;}
+  }
+  drawBattle();
+}
+function faint(){
+  sfx.bad();
+  const s=B.s;
+  panel.innerHTML=`
+    <h1>😵 You fainted!</h1>
+    <div class="meme"><div class="img">🤕💫</div><div class="cap">DOWN BUT NOT OUT<br>REVIEW & RETRY</div></div>
+    <p style="text-align:center;color:#cfc7f0;line-height:1.5;margin:14px 0">
+      The boss got 5 hits in. No worries — that just means a couple of gaps.
+      Re-read the lesson and try again. You've got this! 💪</p>
+    <button class="btn" onclick="sfx.click();lesson(${B.si},0)">📚 Re-study lesson</button>
+    <button class="btn ghost" onclick="sfx.click();battle(${B.si})">🔁 Retry battle</button>
+    <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>
+  `;
+}
+function winStage(){
+  sfx.win();
+  const s=B.s;
+  if(!done.includes(s.id)){done.push(s.id);saveDone(done)}
+  // save best stats per category
+  const allStats=loadStats();
+  const prev=allStats[B.stat.cat]||{correct:0,total:0};
+  // keep the better accuracy run
+  const newAcc=B.stat.total?B.stat.correct/B.stat.total:0;
+  const oldAcc=prev.total?prev.correct/prev.total:-1;
+  if(newAcc>=oldAcc)allStats[B.stat.cat]={correct:B.stat.correct,total:B.stat.total};
+  saveStats(allStats);
+
+  const acc=Math.round((B.stat.correct/B.stat.total)*100);
+  const nextI=B.si+1;
+  const hasNext=nextI<STAGES.length;
+  panel.innerHTML=`
+    <h1>🏆 BOSS DEFEATED!</h1>
+    <div class="meme"><div class="img">${s.boss.emoji}💥</div><div class="cap">${s.boss.name}<br>HAS BEEN SCHOOLED 🎓</div></div>
+    <div class="hud">
+      <div class="stat"><b>${B.score}</b><span>Score</span></div>
+      <div class="stat"><b>${acc}%</b><span>Accuracy</span></div>
+      <div class="stat"><b>${B.best}🔥</b><span>Best Combo</span></div>
+    </div>
+    <p style="text-align:center;color:#cfc7f0;line-height:1.5;margin:8px 0">
+      ${acc>=90?"🌟 Flawless! That topic is LOCKED IN.":acc>=70?"💪 Solid! Maybe one more run to perfect it.":"📚 Beaten — but re-study to make it stick!"}
+    </p>
+    ${hasNext?`<button class="btn" onclick="sfx.click();stageIntro(${nextI})">➡️ Next: ${STAGES[nextI].name}</button>`
+      :`<button class="btn danger" onclick="sfx.click();report()">🏆 SEE YOUR GAP REPORT</button>`}
+    <button class="btn ghost" onclick="sfx.click();battle(${B.si})">🔁 Replay this boss</button>
+    <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>
+  `;
+}
+
+/* ---------- GAP REPORT ---------- */
+function report(){
+  const allStats=loadStats();
+  const cats=["Key Terms","Medieval Church","Civil War","Abolition","Ottomans","British Empire","Industrial Revolution"];
+  let rows='';const ranked=[];
+  cats.forEach(c=>{
+    const st=allStats[c];if(!st||!st.total)return;
+    ranked.push({c,p:Math.round((st.correct/st.total)*100)});
+  });
+  ranked.sort((a,b)=>a.p-b.p);
+  ranked.forEach(r=>{
+    const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--bad)';
+    rows+=`<div class="report-row"><div class="name">${r.c}</div>
+      <div class="track"><i style="width:${r.p}%;background:${col}"></i></div>
+      <div class="pct" style="color:${col}">${r.p}%</div></div>`;
+  });
+  const avg=ranked.length?Math.round(ranked.reduce((s,r)=>s+r.p,0)/ranked.length):0;
+  let verdict,vmeme;
+  if(avg>=85){verdict="🏆 EXAM SLAYER. You're basically the teacher now.";vmeme=["🧠✨","CERTIFIED","HISTORY GENIUS"];}
+  else if(avg>=65){verdict="💪 Strong! Patch the red bars and you're golden.";vmeme=["📈🔥","ALMOST THERE","PATCH THE GAPS"];}
+  else{verdict="📚 Good effort — focus your revision on the red bars below.";vmeme=["🛠️📖","WORK IN PROGRESS","WE CAN FIX THIS"];}
+  const tips={
+    "Key Terms":"Flashcards: provenance (who/when/why), decolonisation, golden age, source, economy, industrial revolution.",
+    "Medieval Church":"Chain it: Crusades (S-U-H) → Magna Carta (1215, King John forced by barons, limits king). Richard=Crusader hero, John=excommunicated.",
+    "Civil War":"Causes = R-M-P (Religion, Money, Power). Timeline: 1629 close Parliament → Jan 1642 storm Commons → 22 Aug 1642 war → 1649 execution → 1653 Lord Protector → 1660 Restoration.",
+    "Abolition":"The team: Wilberforce (MP/speeches), Clarkson (evidence/Society 1787/Zong), Equiano (autobiography/Sons of Africa), women (sugar boycotts), revolts (Haiti 1791, Jamaica 1831). Act = 1807.",
+    "Ottomans":"1453 Mehmed II takes Constantinople (→ Istanbul). Lasted 622 yrs: army (Janissaries), all-powerful Sultan, geography, millets (religious tolerance), economy. Suleiman the Magnificent.",
+    "British Empire":"Why = P-E-S-M-R (Political/Economic/Social/Military/Religious). India: 1757 Plassey → 1857 Mutiny → British Raj → 1947 independence. Scramble for Africa (90% by 1914). Fell: WWII/Cold War, nationalism, bankruptcy.",
+    "Industrial Revolution":"= sudden change in industry. Causes: agriculture, inventions, empire/slavery, iron/coal/cotton. Child labour (~age 10). Disease: typhus/cholera. Reforms: 1833 Factory Act, 1834 workhouses, 1870 education."
+  };
+  const weak=ranked.filter(r=>r.p<70);
+  const gapHtml = weak.length
+    ? `<div class="gaps" style="background:#150f29;border-radius:14px;padding:16px;margin-top:14px;border:2px solid #36285e">
+        <h3 style="color:var(--accent2);margin-bottom:8px">🎯 Patch these gaps:</h3>
+        <ul style="margin-left:18px">${weak.map(w=>`<li style="margin:7px 0;color:#dcd6f5;line-height:1.45"><b style="color:var(--accent)">${w.c}</b> (${w.p}%): ${tips[w.c]}</li>`).join('')}</ul></div>`
+    : `<div class="gaps" style="background:#150f29;border-radius:14px;padding:16px;margin-top:14px;border:2px solid #36285e">
+        <h3 style="color:var(--good)">🎉 No major gaps — every topic ≥70%!</h3>
+        <p style="color:#dcd6f5;margin-top:6px">Replay any boss for a perfect run, then go flex on that exam.</p></div>`;
+  panel.innerHTML=`
+    <h1>🏁 GAP REPORT</h1>
+    <div class="meme"><div class="img">${vmeme[0]}</div><div class="cap">${vmeme[1]}<br>${vmeme[2]}</div></div>
+    <div class="verdict" style="font-size:19px;text-align:center;margin:14px 0;line-height:1.4">${verdict}</div>
+    <h3 style="color:var(--accent);margin:6px 0">Topic breakdown (weakest first):</h3>
+    ${rows||'<p style="color:#b7aee0">Beat some bosses first to see your stats!</p>'}
+    ${gapHtml}
+    <button class="btn" onclick="sfx.click();map()">🗺️ Back to map</button>
+    <button class="btn ghost" onclick="sfx.click();title()">🏠 Home</button>
+  `;
+}
+
+/* ---------- FINAL EXAM (all topics) ---------- */
+let FE;
+function finalExam(){
+  const all=[];STAGES.forEach(s=>s.questions.forEach(q=>all.push(q)));
+  shuffle(all);
+  const N=Math.min(25,all.length);
+  FE={qs:all.slice(0,N),i:0,correct:0,stat:{},answered:false};
+  feRender();
+}
+function feRender(){
+  if(FE.i>=FE.qs.length)return feResult();
+  FE.answered=false;
+  const q=FE.qs[FE.i];const prog=Math.round(FE.i/FE.qs.length*100);
+  panel.innerHTML=`
+    <span class="cat" style="background:var(--accent2)">🎓 FINAL EXAM</span>
+    <div class="hud">
+      <div class="stat"><b>${FE.i+1}/${FE.qs.length}</b><span>Question</span></div>
+      <div class="stat"><b>${FE.correct}</b><span>Correct</span></div>
+      <div class="stat"><b>${FE.i?Math.round(FE.correct/FE.i*100):0}%</b><span>Running</span></div>
+    </div>
+    <div class="bar"><i style="width:${prog}%"></i></div>
+    <span class="cat">${q.cat}</span>
+    <div class="q">${q.q}</div>
+    <div class="opts" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="btn" id="next" style="display:none" onclick="sfx.click();feNext()">NEXT ➡️</button>
+  `;
+  const optsEl=document.getElementById('opts');
+  shuffle(q.opts.map((t,k)=>({t,k}))).forEach(o=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=o.t;
+    b.onclick=()=>feChoose(b,o.k===q.a,q);optsEl.appendChild(b);
+  });
+}
+function feChoose(btn,correct,q){
+  if(FE.answered)return;FE.answered=true;
+  FE.stat[q.cat]=FE.stat[q.cat]||{correct:0,total:0};FE.stat[q.cat].total++;
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;
+    if(b.textContent===q.opts[q.a])b.classList.add('correct');else b.classList.add('dim');});
+  const ex=document.getElementById('explain');
+  ex.innerHTML=(correct?"✅ <b>Correct!</b> ":"❌ <b>Answer:</b> ")+q.why;ex.style.display='block';
+  if(correct){FE.correct++;FE.stat[q.cat].correct++;showToast("✅ Correct");}
+  else{btn.classList.remove('dim');btn.classList.add('wrong');showToast("❌");}
+  const n=document.getElementById('next');n.style.display='block';
+  if(FE.i>=FE.qs.length-1)n.textContent='🏁 FINISH EXAM';
+}
+function feNext(){FE.i++;feRender();}
+function feResult(){
+  const allStats=loadStats();
+  for(const c in FE.stat){const prev=allStats[c]||{correct:0,total:0};
+    const nA=FE.stat[c].correct/FE.stat[c].total, oA=prev.total?prev.correct/prev.total:-1;
+    if(nA>=oA)allStats[c]=FE.stat[c];}
+  saveStats(allStats);
+  const pct=Math.round(FE.correct/FE.qs.length*100);
+  let grade,gmeme;
+  if(pct>=90){grade="Grade 9 🏆";gmeme=["🧠✨","TOP MARKS","HISTORY LEGEND"];}
+  else if(pct>=80){grade="Grade 8";gmeme=["📈🔥","EXCELLENT","SO CLOSE TO PERFECT"];}
+  else if(pct>=70){grade="Grade 7";gmeme=["💪","STRONG PASS","KEEP PUSHING"];}
+  else if(pct>=55){grade="Grade 5–6";gmeme=["👍","SOLID PASS","PATCH THE GAPS"];}
+  else if(pct>=40){grade="Grade 4";gmeme=["🛠️","SCRAPED A PASS","REVISE MORE"];}
+  else {grade="Below pass";gmeme=["📚","NOT YET","BACK TO THE ORGANISERS"];}
+  const ranked=Object.keys(FE.stat).map(c=>({c,p:Math.round(FE.stat[c].correct/FE.stat[c].total*100)})).sort((a,b)=>a.p-b.p);
+  const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--bad)';
+    return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
+  const weak=ranked.filter(r=>r.p<70).map(r=>r.c);
+  panel.innerHTML=`
+    <h1>🎓 FINAL EXAM RESULT</h1>
+    <div class="meme"><div class="img">${gmeme[0]}</div><div class="cap">${gmeme[1]}<br>${gmeme[2]}</div></div>
+    <div class="hud">
+      <div class="stat"><b>${FE.correct}/${FE.qs.length}</b><span>Score</span></div>
+      <div class="stat"><b>${pct}%</b><span>Percent</span></div>
+      <div class="stat"><b>${grade}</b><span>Grade</span></div></div>
+    <h3 style="color:var(--accent);margin:8px 0 4px">By topic (weakest first):</h3>
+    ${rows}
+    ${weak.length?`<div class="gaps" style="background:#150f29;border-radius:14px;padding:14px;margin-top:12px;border:2px solid #36285e"><h3 style="color:var(--accent2)">🎯 Revise these first:</h3><p style="color:#dcd6f5;margin-top:6px">${weak.join(', ')} — then retake the exam!</p></div>`:`<div class="gaps" style="background:#150f29;border-radius:14px;padding:14px;margin-top:12px;border:2px solid #36285e"><h3 style="color:var(--good)">🎉 Every topic ≥70% — you're exam-ready!</h3></div>`}
+    <button class="btn" onclick="sfx.click();finalExam()">🔁 Retake exam</button>
+    <button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>
+  `;
+}
+
+title();
+</script>
+</body>
+</html>

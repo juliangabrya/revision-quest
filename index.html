@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 Revision Quest — History & Science Games</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Trebuchet MS','Segoe UI',sans-serif;min-height:100vh;
+    background:radial-gradient(1200px 800px at 70% -10%, #2a1d4e 0%, #0b0a16 55%);
+    color:#f5f3ff;display:flex;align-items:center;justify-content:center;padding:18px}
+  .wrap{width:100%;max-width:760px;text-align:center}
+  h1{font-size:38px;text-shadow:0 3px 0 #000,0 0 28px rgba(255,210,63,.4);margin-bottom:6px}
+  .sub{color:#b7aee0;margin-bottom:26px;font-size:16px;line-height:1.5}
+  .cards{display:grid;gap:18px}
+  @media(min-width:640px){.cards{grid-template-columns:1fr 1fr}}
+  a.card{display:block;text-decoration:none;color:inherit;border-radius:22px;padding:26px;
+    border:3px solid #3a2d63;background:linear-gradient(180deg,#221a3d,#15182c);
+    box-shadow:0 18px 40px rgba(0,0,0,.5);transition:transform .12s,border-color .15s,box-shadow .15s}
+  a.card:hover{transform:translateY(-6px);border-color:#ffd23f;box-shadow:0 22px 50px rgba(255,210,63,.18)}
+  .em{font-size:64px;filter:drop-shadow(0 0 16px rgba(255,210,63,.35))}
+  .card b{display:block;font-size:24px;margin:10px 0 6px}
+  .card span{color:#b7aee0;font-size:14px;line-height:1.5}
+  .tagrow{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .tag{font-size:11px;padding:4px 10px;border-radius:999px;background:#0f1a2e;border:1px solid #36285e;color:#9be36b}
+  footer{margin-top:30px;color:#6b6390;font-size:13px;line-height:1.6}
+  .sci a.card{border-color:#244064}
+  .sci a.card:hover{border-color:#39e6ff;box-shadow:0 22px 50px rgba(57,230,255,.18)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎮 Revision Quest</h1>
+  <div class="sub">Two fun, offline study games built from real Year 8 exam material.<br>Learn it, battle the bosses, ace the exam. 🏆</div>
+  <div class="cards">
+    <a class="card" href="HistoryQuest.html">
+      <div class="em">🏰⚔️</div>
+      <b>HistoryQuest</b>
+      <span>Learn-then-battle through 7 topics, then sit a final exam with a GCSE-style grade.</span>
+      <div class="tagrow"><span class="tag">Medieval Church</span><span class="tag">Civil War</span><span class="tag">Abolition</span><span class="tag">Ottomans</span><span class="tag">British Empire</span><span class="tag">Industrial Revolution</span></div>
+    </a>
+    <div class="sci"><a class="card" href="MadLab.html">
+      <div class="em">⚗️🔬</div>
+      <b>MadLab</b>
+      <span>An interactive science lab: mix ~120 chemicals, dissect a frog, morph matter, build circuits & battle exam bosses across 11 topics.</span>
+      <div class="tagrow"><span class="tag">Reactions</span><span class="tag">Dissection</span><span class="tag">Circuits</span><span class="tag">Distillation</span><span class="tag">Forces</span></div>
+    </a></div>
+  </div>
+  <footer>Built for revision • works offline • no logins, no ads<br>🤖 Made with Claude Code</footer>
+</div>
+</body>
+</html>
