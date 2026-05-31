@@ -155,9 +155,19 @@ function vmPick(side,enc){const w=decodeURIComponent(enc);const el=document.getE
 
 /* TTS Hear It */
 let TTS;
-function ttsLab(){TTS=ex('tts');const btns=TTS.pairs.map((p,i)=>`<button class="opt" style="text-align:center" onclick="ttsSpeak(${i})">🔊 ${p[0]}</button>`).join('');
- app.innerHTML=`<div class="topbar"><span class="tag">🔊 Hear It!</span></div><h2>Listen & learn</h2><div class="sub">Tap a word to hear it spoken aloud and see its meaning.</div><div class="opts">${btns}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
-function ttsSpeak(i){const p=TTS.pairs[i];toast(p[0]+' = '+p[1]);try{const u=new SpeechSynthesisUtterance(p[0]);u.lang=TTS.lang;u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){toast('(speech not available)');}}
+function ttsVoice(lang){if(!window.speechSynthesis)return null;var vs=speechSynthesis.getVoices()||[];var pre=lang.slice(0,2).toLowerCase();
+ var exact=vs.filter(function(v){return (v.lang||'').toLowerCase().replace('_','-')===lang.toLowerCase();});
+ if(exact.length)return exact[0];
+ return vs.find(function(v){return (v.lang||'').toLowerCase().replace('_','-').indexOf(pre)===0})||null;}
+function ttsLab(){TTS=ex('tts');try{if(window.speechSynthesis)speechSynthesis.getVoices();}catch(e){}
+ var v=ttsVoice(TTS.lang);var langName=TTS.lang.slice(0,2)==='fr'?'French':'Spanish';
+ var note=v?('🗣️ Voice: <b>'+v.name+'</b>'):('⚠️ No '+langName+' voice found on this device yet — it may sound English. Add one via Windows Settings → Time &amp; Language → Speech → Add voices.');
+ const btns=TTS.pairs.map((p,i)=>`<button class="opt" style="text-align:center" onclick="ttsSpeak(${i})">🔊 ${p[0]}</button>`).join('');
+ app.innerHTML=`<div class="topbar"><span class="tag">🔊 Hear It!</span></div><h2>Listen & learn</h2><div class="sub">Tap a word to hear it in ${langName} and see its meaning.</div><div class="info" style="margin-bottom:8px">${note}</div><div class="opts">${btns}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
+ if(window.speechSynthesis&&!v){speechSynthesis.onvoiceschanged=function(){if(TTS)ttsLab();};}}
+function ttsSpeak(i){const p=TTS.pairs[i];toast(p[0]+' = '+p[1]);
+ if(!window.speechSynthesis){toast('🔇 Speech not supported here');return;}
+ try{var u=new SpeechSynthesisUtterance(p[0]);u.lang=TTS.lang;u.rate=0.82;var v=ttsVoice(TTS.lang);if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){toast('(speech unavailable)');}}
 
 /* Piano */
 const NOTES=[['C',261.63,0],['C#',277.18,1],['D',293.66,0],['D#',311.13,1],['E',329.63,0],['F',349.23,0],['F#',369.99,1],['G',392.00,0],['G#',415.30,1],['A',440.00,0],['A#',466.16,1],['B',493.88,0],['C',523.25,0]];
@@ -355,6 +365,7 @@ function ladBank(){sfx.win();const amt=LAD.lvl>0?RUNGS[LAD.lvl-1]:0;app.innerHTM
 function ladLose(){app.innerHTML=`<h1>💸 Wrong!</h1><div class="center" style="font-size:54px">😬</div><p class="center small">You dropped to £0 — should've banked!</p><button class="btn" onclick="sfx.click();ladder()">🔁 Try again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 function ladWin(){sfx.win();app.innerHTML=`<h1>🏆 £32,000!</h1><div class="center" style="font-size:54px">🎉</div><p class="center small">You climbed the whole ladder — genius!</p><button class="btn" onclick="sfx.click();ladder()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
 
+try{if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=function(){};}}catch(e){}
 home();
 if(window.parent&&window.parent!==window){var _bb=document.createElement('button');_bb.textContent='🎮 Subjects';_bb.onclick=function(){parent.postMessage('rq-menu','*')};_bb.style.cssText='position:fixed;top:10px;right:10px;z-index:99999;background:#1b1530;color:#fff;border:2px solid #ffd23f;border-radius:10px;padding:7px 11px;font-weight:bold;cursor:pointer;font-family:inherit;font-size:13px';document.body.appendChild(_bb);}
 </script></body></html>
