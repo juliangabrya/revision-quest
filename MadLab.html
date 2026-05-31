@@ -1138,7 +1138,7 @@ function drawProUI(){
    <div class="lab">
      <div>
        <div class="toolbar" style="margin-bottom:6px">
-         ${['testtube','beaker','flask','distill'].map(v=>`<button class="tool" style="font-size:13px;${PRO.vessel===v?'border-color:var(--acid);color:var(--acid)':''}" onclick="PRO.vessel='${v}';drawProUI()">${v==='testtube'?'🧪 Test tube':v==='beaker'?'🥃 Beaker':v==='flask'?'⚗️ Flask':'🔥 Distillation'}</button>`).join('')}
+         ${['testtube','beaker','flask','distill','filter','evaporate'].map(v=>`<button class="tool" style="font-size:13px;${PRO.vessel===v?'border-color:var(--acid);color:var(--acid)':''}" onclick="PRO.vessel='${v}';drawProUI()">${v==='testtube'?'🧪 Test tube':v==='beaker'?'🥃 Beaker':v==='flask'?'⚗️ Flask':v==='distill'?'🔥 Distillation':v==='filter'?'🫗 Filtration':'🌫️ Evaporation'}</button>`).join('')}
        </div>
        <canvas id="pro" width="440" height="400"></canvas>
        <div id="procontents" class="small" style="margin:6px 0;min-height:18px"></div>
@@ -1147,6 +1147,7 @@ function drawProUI(){
        <div class="btnrow" style="flex-wrap:wrap;gap:6px">
          <button class="btn red sm" style="margin:0;flex:1;min-width:110px" onclick="proEmpty()">🧹 Clear flask</button>
          ${PRO.vessel==='distill'?`<button class="btn ghost sm" style="margin:0;flex:1;min-width:120px" onclick="proClearReceiver()">🧹 Clear receiver</button><button class="btn green sm" style="margin:0;flex:1;min-width:140px" onclick="proPourBack()">♻️ Pour back → flask</button>`:''}
+         ${PRO.vessel==='filter'?`<button class="btn green sm" style="margin:0;flex:1;min-width:130px" onclick="proFilter()">💧 Filter the mixture</button>`:''}
          <button class="btn ghost sm" style="margin:0;flex:1;min-width:90px" onclick="proStir()">🥄 Stir</button>
        </div>
        <div class="toolbar" style="margin-top:8px">
@@ -1182,6 +1183,40 @@ function proPourBack(){if(!PRO)return;if(!PRO.distillate){proLog('Nothing in the
   if(id){proLog('♻️ Poured the '+nm+' back into the reaction flask.');proAdd(id);}
   else{PRO.targetLevel=Math.min(0.6,PRO.targetLevel+0.18);PRO.targetColor=col;for(let i=0;i<10;i++)PRO.bubbles.push(mkPB());SFX.whoosh();proLog('♻️ Poured the '+nm+' back into the reaction flask.');}}
 function proStir(){if(!PRO)return;SFX.whoosh();for(let i=0;i<14;i++)PRO.bubbles.push(mkPB());proLog('🥄 Stirred the mixture.');}
+function proFilter(){if(!PRO)return;SFX.whoosh();PRO.filtering=true;PRO.filterProg=0;
+  const solids=PRO.contents.filter(id=>PCHEM[id].solid&&!PCHEM[id].sol);PRO.hasSolid=solids.length>0||PRO.precip.length>0;
+  proLog(PRO.hasSolid?'💧 Filtering — the <b>insoluble solid stays on the filter paper (the residue)</b>, while the <b>liquid passes through (the filtrate)</b>.':'💧 Filtering — but everything here is dissolved or liquid, so it all passes through with no residue. (Add an insoluble solid like a metal or carbonate to separate one out!)');}
+function drawFilter(ctx,W,H,sx){ctx.save();ctx.translate(sx,0);if(PRO.filterProg==null)PRO.filterProg=0;
+  if(PRO.filtering&&PRO.filterProg<1)PRO.filterProg+=0.012;const fp=PRO.filtering?PRO.filterProg:0;
+  ctx.fillStyle='#2a3850';ctx.fillRect(30,362,70,10);ctx.fillRect(42,110,8,252);ctx.fillRect(42,150,130,8);
+  const cx=214,topY=92,topHalf=72,pointY=182;
+  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(cx-topHalf,topY);ctx.lineTo(cx,pointY);ctx.lineTo(cx+topHalf,topY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-6,pointY);ctx.lineTo(cx-6,pointY+32);ctx.moveTo(cx+6,pointY);ctx.lineTo(cx+6,pointY+32);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-topHalf+8,topY+5);ctx.lineTo(cx,pointY-4);ctx.lineTo(cx+topHalf-8,topY+5);ctx.stroke();
+  const mixH=PRO.level>0.01?(1-fp):0;if(mixH>0.03){const lvlY=topY+(pointY-topY)*(1-mixH);const wl=topHalf*(pointY-lvlY)/(pointY-topY);ctx.fillStyle=PRO.color;ctx.beginPath();ctx.moveTo(cx,pointY);ctx.lineTo(cx-wl,lvlY);ctx.lineTo(cx+wl,lvlY);ctx.closePath();ctx.fill();}
+  if(PRO.hasSolid&&fp>0.15){ctx.fillStyle='#6a4a2b';ctx.beginPath();ctx.ellipse(cx,pointY-12,16,7,0,0,6.28);ctx.fill();}
+  if(PRO.filtering&&fp<1){ctx.fillStyle=blend(PRO.color,'#dfe9f0',0.4);for(let k=0;k<3;k++){const t=((PRO.t*0.05+k*0.33)%1);ctx.beginPath();ctx.arc(cx,pointY+32+t*64,3,0,6.28);ctx.fill();}}
+  const rTop=252,rBot=358,hTop=12,hBot=46;const filt=PRO.filtering?fp:0;
+  if(filt>0.01){const liqY=rBot-(rBot-rTop-8)*filt;const wTop=hTop+(hBot-hTop)*((liqY-rTop)/(rBot-rTop));ctx.fillStyle=blend(PRO.color,'#dfe9f0',0.35);ctx.beginPath();ctx.moveTo(cx-wTop,liqY);ctx.lineTo(cx+wTop,liqY);ctx.lineTo(cx+hBot,rBot-3);ctx.lineTo(cx-hBot,rBot-3);ctx.closePath();ctx.fill();}
+  ctx.strokeStyle='rgba(160,210,255,.6)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(cx-hTop,rTop);ctx.lineTo(cx-hBot,rBot);ctx.lineTo(cx+hBot,rBot);ctx.lineTo(cx+hTop,rTop);ctx.moveTo(cx-hTop,rTop);ctx.lineTo(cx-hTop,rTop-12);ctx.moveTo(cx+hTop,rTop);ctx.lineTo(cx+hTop,rTop-12);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText('funnel + filter paper',cx-52,topY-8);ctx.fillText('filtrate',cx-18,rBot+16);
+  ctx.fillStyle='#cfe0f5';ctx.font='12px Trebuchet MS';ctx.fillText(PRO.contents.length+' in the mixture',16,26);ctx.restore();}
+function drawEvap(ctx,W,H,sx){ctx.save();ctx.translate(sx,0);if(PRO.crystals==null)PRO.crystals=0;
+  const salt={cuso4:'#2a7fff',cuno32:'#2a7fff',cucl2:'#3aa0a0',kmno4:'#7a2bbf',feso4:'#7fcaa0',fecl3:'#caa15a'};PRO.crystalCol='#eaf0f5';for(const id of PRO.contents){if(salt[id]){PRO.crystalCol=salt[id];break;}}
+  const cx=214,by=246;
+  ctx.strokeStyle='#5b6b85';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(cx-70,by+8);ctx.lineTo(cx-96,by+82);ctx.moveTo(cx+70,by+8);ctx.lineTo(cx+96,by+82);ctx.moveTo(cx-80,by+8);ctx.lineTo(cx+80,by+8);ctx.stroke();
+  ctx.fillStyle='#3a4760';ctx.fillRect(cx-10,by+52,20,38);ctx.fillRect(cx-26,by+86,52,8);
+  if(PRO.heating){for(let i=0;i<3;i++){ctx.fillStyle=['#3a7bff','#ffae3c','#ffe14d'][i];ctx.globalAlpha=.78;ctx.beginPath();ctx.ellipse(cx,by+30,13-i*4,30-i*8,0,0,6.28);ctx.fill();}ctx.globalAlpha=1;}
+  if(PRO.heating&&PRO.level>0.02){PRO.level=Math.max(0,PRO.level-0.0016);if(PRO.level<0.28)PRO.crystals=Math.min(1,PRO.crystals+0.004);}
+  const bw=94,bh=24;
+  if(PRO.level>0.01){const sc=Math.min(1,PRO.level*2+0.35);ctx.fillStyle=PRO.color;ctx.beginPath();ctx.ellipse(cx,by-2,bw*0.86*sc,bh*0.7*sc,0,0,6.28);ctx.fill();}
+  if(PRO.crystals>0.02){ctx.fillStyle=PRO.crystalCol;for(let c=0;c<Math.floor(46*PRO.crystals);c++){const a=(c*2.39),rr=(c%9)/9*bw*0.78;ctx.fillRect(cx+Math.cos(a)*rr,by-3+Math.sin(a)*bh*0.5,3,3);}}
+  if(PRO.heating&&PRO.level>0.02){ctx.fillStyle='rgba(255,255,255,.18)';for(let s=0;s<5;s++){const sy=by-22-((PRO.t*1.5+s*20)%70);ctx.beginPath();ctx.arc(cx-30+s*15,sy,7,0,6.28);ctx.fill();}}
+  ctx.strokeStyle='rgba(160,210,255,.7)';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(cx,by,bw,bh,0,0,6.28);ctx.stroke();
+  ctx.fillStyle='#8fb3d9';ctx.font='11px Trebuchet MS';ctx.fillText('evaporating basin — heat it up! 🌡️',cx-86,by+44);
+  ctx.fillStyle='#cfe0f5';ctx.font='12px Trebuchet MS';ctx.fillText(PRO.contents.length+' in the basin',16,26);
+  if(PRO.crystals>0.6){ctx.fillStyle='#9fffc0';ctx.font='bold 13px Trebuchet MS';ctx.fillText('✅ Crystals formed!',cx-52,70);}
+  ctx.restore();}
 const EQUIP=[
  ['🥽','Safety goggles','Protect your eyes — always wear them in the lab!'],
  ['🔥','Bunsen burner','Heats substances (blue flame = hottest).'],
@@ -1335,7 +1370,7 @@ function proTest(kind){if(!PRO)return;
   if(kind==='lit'){if(PRO.gas==='h2'){SFX.pop();PRO.shakeT=8;proLog(`🔥 Lit splint: a <b>squeaky POP</b>! → the gas is <b>hydrogen</b>! ✅`);}else if(PRO.gas==='o2'){proLog(`🔥 The splint burns more brightly — that's oxygen, not hydrogen.`);}else proLog(`🔥 Nothing happens — no flammable gas present.`);}
   if(kind==='glow'){if(PRO.gas==='o2'){SFX.ding();proLog(`✨ Glowing splint <b>relights</b>! → the gas is <b>oxygen</b>! ✅`);}else proLog(`✨ The glowing splint goes out — no oxygen to relight it.`);}
 }
-function proEmpty(){if(!PRO)return;SFX.whoosh();Object.assign(PRO,{contents:[],targetLevel:0,targetColor:'#0a2036',targetFoam:0,foam:0,targetHeat:0,heat:0,gasFizz:false,gas:null,bubbles:[],parts:[],precip:[],cloudy:0,distillate:null,distilling:false,_dmsg:false,_heated:false,_burned:false,heating:false,flameT:0,_hot:false,tempC:0});
+function proEmpty(){if(!PRO)return;SFX.whoosh();Object.assign(PRO,{contents:[],targetLevel:0,targetColor:'#0a2036',targetFoam:0,foam:0,targetHeat:0,heat:0,gasFizz:false,gas:null,bubbles:[],parts:[],precip:[],cloudy:0,distillate:null,distilling:false,_dmsg:false,_heated:false,_burned:false,heating:false,flameT:0,_hot:false,tempC:0,filtering:false,filterProg:0,hasSolid:false,crystals:0});
   PRO.log=[];proLog('Vessel rinsed and empty. 🧼 Ready for the next experiment!');}
 function mkPB(sp){return {x:160+Math.random()*120,y:330,r:2+Math.random()*5,vy:-(0.6+Math.random()*1.4)*(sp?2:1),wob:Math.random()*6.28}}
 function mkPrecip(c){return {x:150+Math.random()*140,y:120+Math.random()*180,vy:0.3+Math.random()*0.6,c,r:2+Math.random()*3}}
@@ -1348,6 +1383,8 @@ function proLoop(){
   let sx=0;if(PRO.shakeT>0){sx=(Math.random()-.5)*PRO.shakeT;PRO.shakeT*=0.9;if(PRO.shakeT<0.5)PRO.shakeT=0}
   ctx.clearRect(0,0,W,H);
   if(PRO.vessel==='distill'){drawDistill(ctx,W,H,sx);raf=requestAnimationFrame(proLoop);return}
+  if(PRO.vessel==='filter'){drawFilter(ctx,W,H,sx);raf=requestAnimationFrame(proLoop);return}
+  if(PRO.vessel==='evaporate'){drawEvap(ctx,W,H,sx);raf=requestAnimationFrame(proLoop);return}
   ctx.save();ctx.translate(sx,0);
   // clamp stand
   ctx.fillStyle='#2a3850';ctx.fillRect(40,360,120,12);ctx.fillRect(58,40,10,330);
