@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧮 MathsMaster</title>
+<style>
+ :root{--bg:#0c0f1f;--line:#2c3354;--accent:#ffd23f;--accent2:#ff4d6d;--good:#3ddc84;--pur:#9b5de5;--ink:#eef1ff}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:'Trebuchet MS','Segoe UI',sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;background:radial-gradient(1200px 800px at 70% -10%, #232a52 0%, var(--bg) 55%)}
+ .wrap{width:100%;max-width:760px}
+ .panel{background:linear-gradient(180deg,#191e36,#12152a);border:2px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+ h1{font-size:32px;text-align:center;text-shadow:0 3px 0 #000,0 0 24px rgba(255,210,63,.35);margin-bottom:4px}
+ h2{font-size:22px;text-align:center;margin-bottom:6px}
+ .sub{text-align:center;color:#a6acd6;margin-bottom:16px;font-size:14px;line-height:1.5}
+ .btn{margin-top:12px;width:100%;padding:14px;border:none;border-radius:13px;cursor:pointer;font-size:17px;font-weight:bold;font-family:inherit;color:#101;background:linear-gradient(180deg,var(--accent),#d6a800);box-shadow:0 5px 0 rgba(0,0,0,.35);transition:transform .06s}
+ .btn:active{transform:translateY(4px)}
+ .btn.ghost{background:#222843;color:var(--ink)} .btn.green{background:linear-gradient(180deg,var(--good),#2fbf6e);color:#031}
+ .btn.sm{width:auto;display:inline-block;padding:9px 15px;font-size:15px;margin:4px}
+ .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}@media(min-width:640px){.grid{grid-template-columns:1fr 1fr 1fr}}
+ .tile{background:linear-gradient(180deg,#1c2342,#141831);border:2px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:center;transition:transform .12s,border-color .15s;position:relative}
+ .tile:hover{transform:translateY(-4px);border-color:var(--accent)}
+ .tile .em{font-size:36px}.tile b{display:block;font-size:14px;margin-top:6px}.tile .pct{position:absolute;top:6px;right:9px;font-size:11px;font-weight:bold;color:var(--good)}
+ .tag{font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;background:#1c2342;border:1px solid var(--line);color:var(--accent)}
+ .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+ .cat{display:inline-block;font-size:12px;font-weight:bold;padding:5px 12px;border-radius:999px;background:var(--pur);color:#fff;margin-bottom:10px}
+ .q{font-size:20px;font-weight:bold;line-height:1.35;margin:8px 0 12px}
+ .opts{display:grid;gap:10px}
+ .opt{text-align:left;padding:13px 15px;border-radius:12px;border:2px solid var(--line);background:#1c2342;color:var(--ink);font-size:16px;cursor:pointer;font-family:inherit;transition:transform .08s,background .12s}
+ .opt:hover{background:#26305a;transform:translateY(-2px)}
+ .opt.correct{background:var(--good);color:#031;border-color:#2fbf6e;font-weight:bold}.opt.wrong{background:var(--accent2);color:#fff;font-weight:bold}.opt.dim{opacity:.4}
+ .explain{margin-top:12px;background:#11152a;border-left:5px solid var(--accent);border-radius:10px;padding:12px;font-size:15px;line-height:1.5;color:#dde2ff;display:none}.explain b{color:var(--accent)}
+ .hud{display:flex;gap:10px;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
+ .stat{flex:1;min-width:74px;background:#11152a;border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:#a6acd6;text-transform:uppercase}
+ .streak.fire b{color:var(--accent);text-shadow:0 0 12px var(--accent)}
+ .bar{height:10px;background:#11152a;border-radius:8px;overflow:hidden;border:2px solid var(--line);margin-bottom:14px}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:width .35s}
+ .fighter{display:flex;align-items:center;gap:12px;margin-bottom:10px}.fighter .face{font-size:40px;width:52px;text-align:center;flex:none}
+ .nm{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}.hpbar{height:15px;background:#11152a;border-radius:9px;overflow:hidden;border:2px solid var(--line)}.hpbar>i{display:block;height:100%;transition:width .4s}
+ .hp-e>i{background:linear-gradient(90deg,#d62f4d,#ff7d99)}.hp-s>i{background:linear-gradient(90deg,#2fbf6e,#5dffa0)}
+ .bubble{background:#11152a;border:2px solid var(--line);border-radius:13px;padding:10px 13px;font-size:13.5px;color:#dde2ff;margin:8px 0;font-style:italic}
+ .info{background:#11152a;border:2px solid var(--line);border-radius:12px;padding:13px;font-size:14.5px;line-height:1.55}.info b{color:var(--accent)}
+ .center{text-align:center}.small{font-size:13px;color:#a6acd6;line-height:1.5}
+ .report-row{display:flex;align-items:center;gap:10px;margin:8px 0}.report-row .name{width:130px;font-weight:bold;font-size:13px}.report-row .track{flex:1;height:14px;background:#11152a;border-radius:8px;overflow:hidden;border:2px solid var(--line)}.report-row .track>i{display:block;height:100%}.report-row .pct{width:44px;text-align:right;font-weight:bold;font-size:13px}
+ .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#000;border:2px solid var(--accent);color:var(--accent);padding:9px 18px;border-radius:999px;font-weight:bold;opacity:0;transition:opacity .25s,top .25s;pointer-events:none;z-index:60}.toast.show{opacity:1;top:26px}
+ .matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.mcol{display:grid;gap:8px}
+ .mbtn{padding:12px;border-radius:11px;border:2px solid var(--line);background:#1c2342;color:var(--ink);cursor:pointer;font-family:inherit;font-size:15px}.mbtn.sel{border-color:var(--accent);color:var(--accent)}.mbtn.done{background:#13311f;border-color:#2fbf6e;color:var(--good);cursor:default}.mbtn.bad{background:var(--accent2);color:#fff}
+ input[type=text]{width:100%;padding:13px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:16px;font-family:inherit}
+ textarea{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#11152a;color:var(--ink);font-size:15px;font-family:inherit}
+</style></head><body>
+<div class="toast" id="toast"></div><div class="wrap"><div class="panel" id="app"></div></div>
+<script>
+const GAME={"file": "MathsMaster", "id": "maths", "name": "MathsMaster", "emoji": "🧮", "accent": "#ffd23f", "accent2": "#ff4d6d", "tagline": "Crush inequalities, volume & percentages — then enter the Number Dojo.", "extra": {"type": "calc"}, "topics": [{"key": "numineq", "name": "Inequalities & Number", "emoji": "➗", "boss": "Lord Decimal", "bem": "🧮", "taunts": ["You'll never solve me!", "Reverse THIS!", "x is undefined... like you!"], "qs": [{"q": "Which symbol means 'greater than or equal to'?", "o": ["≥", "≤", ">", "≠"], "a": 0, "w": "≥ means greater than or equal to."}, {"q": "Which integers satisfy −2 < x ≤ 4?", "o": ["−1, 0, 1, 2, 3, 4", "−2, −1, 0, 1, 2, 3, 4", "0, 1, 2, 3", "−2, −1, 0, 1"], "a": 0, "w": "−2 is excluded (strict <); 4 is included (≤): −1,0,1,2,3,4."}, {"q": "What is the multiplier to INCREASE a number by 12%?", "o": ["1.12", "0.88", "0.12", "12"], "a": 0, "w": "100% + 12% = 112% = 1.12."}, {"q": "What is the multiplier to DECREASE a number by 12%?", "o": ["0.88", "1.12", "0.12", "8.8"], "a": 0, "w": "100% − 12% = 88% = 0.88."}]}, {"key": "volmeas", "name": "Volume & Measures", "emoji": "📐", "boss": "The Cuboid", "bem": "🧊", "taunts": ["Measure THIS!", "Convert or perish!", "You can't find my volume!"], "qs": [{"q": "How many faces, edges and vertices does a cube have?", "o": ["6 faces, 12 edges, 8 vertices", "4 faces, 8 edges, 6 vertices", "6 faces, 8 edges, 12 vertices", "8 faces, 12 edges, 6 vertices"], "a": 0, "w": "A cube has 6 faces, 12 edges and 8 vertices."}, {"q": "Volume of a cuboid 6 cm × 5 cm × 3 cm?", "o": ["90 cm³", "14 cm³", "30 cm³", "900 cm³"], "a": 0, "w": "V = L×W×H = 6×5×3 = 90 cm³."}, {"q": "Convert 5 kg into grams.", "o": ["5000 g", "500 g", "50 g", "50000 g"], "a": 0, "w": "1 kg = 1000 g, so 5 kg = 5000 g."}, {"q": "Density = ?", "o": ["mass ÷ volume", "volume ÷ mass", "mass × volume", "mass + volume"], "a": 0, "w": "Density = mass ÷ volume."}]}, {"key": "percent", "name": "Percentages", "emoji": "💯", "boss": "Percy Cent", "bem": "💸", "taunts": ["Find MY percentage!", "Increase your effort by 100%!", "Reverse this if you dare!"], "qs": [{"q": "What is 20% of 6000?", "o": ["1200", "120", "300", "600"], "a": 0, "w": "6000 ÷ 100 = 60; × 20 = 1200 (or 1/5 of 6000)."}, {"q": "Increase 500 by 20%.", "o": ["600", "520", "700", "400"], "a": 0, "w": "20% of 500 = 100; 500 + 100 = 600."}, {"q": "A jumper is £48.60 after a 10% reduction. Original price?", "o": ["£54", "£48.60", "£53.46", "£58"], "a": 0, "w": "90% = £48.60, so 1% = £0.54, 100% = £54."}, {"q": "What is 10% of 200?", "o": ["20", "2", "100", "10"], "a": 0, "w": "10% of 200 = 200 ÷ 10 = 20."}]}], "written": {"Maths": [{"m": 1, "q": "Write 'x is greater than or equal to 1' as an inequality.", "s": ["x ≥ 1"]}, {"m": 2, "q": "State the number of faces, edges and vertices of a cube.", "s": ["6 faces", "12 edges and 8 vertices"]}, {"m": 3, "q": "A jumper costs £48.60 after a 10% reduction. Find its original price.", "s": ["90% = £48.60", "1% = £0.54", "100% = £54"]}]}};
+document.documentElement.style.setProperty('--accent',GAME.accent);
+document.documentElement.style.setProperty('--accent2',GAME.accent2);
+const app=document.getElementById('app'),toastEl=document.getElementById('toast');
+function toast(t){toastEl.innerHTML=t;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove('show'),1100);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function loadScores(){try{return JSON.parse(localStorage.getItem('rqg_'+GAME.id)||'{}')}catch(e){return{}}}
+function saveScore(k,c,t){const s=loadScores();const p=Math.round(c/t*100);if(s[k]==null||p>=s[k])s[k]=p;localStorage.setItem('rqg_'+GAME.id,JSON.stringify(s));}
+let muted=false,actx;
+function beep(f,d,t){if(muted)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t||'square';o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.12,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+const sfx={good:()=>{beep(660,.08);setTimeout(()=>beep(880,.12),80)},crit:()=>{[660,990,1320].forEach((f,i)=>setTimeout(()=>beep(f,.1),i*70))},bad:()=>beep(180,.18,'sawtooth'),click:()=>beep(440,.04),win:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16),i*110))};
+
+function home(){app.innerHTML=`<h1>${GAME.emoji} ${GAME.name}</h1><div class="sub">${GAME.tagline}</div><button class="btn" onclick="sfx.click();map()">▶️ Start</button><p class="small center" style="margin-top:10px">Boss battles · mark-scheme questions · final exam</p>`;}
+function map(){
+ const s=loadScores();let tiles='';
+ GAME.topics.forEach((t,i)=>{const sc=s[t.key];tiles+=`<div class="tile" onclick="sfx.click();quizTopic(${i})">${sc!=null?`<span class="pct">${sc}%</span>`:''}<div class="em">${t.emoji}</div><b>${t.name}</b></div>`;});
+ if(GAME.extra&&GAME.extra.type==='calc')tiles+=`<div class="tile" onclick="sfx.click();dojo()"><div class="em">🥋</div><b>Number Dojo</b></div>`;
+ if(GAME.extra&&GAME.extra.type==='vocab')tiles+=`<div class="tile" onclick="sfx.click();vocabMatch()"><div class="em">🔤</div><b>Vocab Match</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();writtenMenu()"><div class="em">📝</div><b>Written Exam</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();finalExam()"><div class="em">🎓</div><b>Final Exam</b></div>`;
+ tiles+=`<div class="tile" onclick="sfx.click();gapReport()"><div class="em">📊</div><b>Gap Report</b></div>`;
+ app.innerHTML=`<div class="topbar"><span class="tag">${GAME.emoji} ${GAME.name}</span></div><h2>Choose your challenge</h2><div class="sub">Beat the bosses, then sit the Final Exam.</div><div class="grid">${tiles}</div><button class="btn ghost" onclick="sfx.click();home()">🏠 Home</button>`;
+}
+let B;
+function quizTopic(i){const t=GAME.topics[i];B={t,qs:shuffle(t.qs.slice()),i:0,score:0,streak:0,best:0,correct:0,hp:5,bossMax:t.qs.length,bossHP:t.qs.length,answered:false};drawBattle();}
+function drawBattle(){if(B.i>=B.qs.length)return battleWin();if(B.hp<=0)return battleFaint();B.answered=false;const t=B.t,q=B.qs[B.i],taunt=t.taunts[B.i%t.taunts.length];
+ app.innerHTML=`<div class="topbar"><span class="tag">${t.emoji} ${t.name}</span></div>
+  <div class="fighter"><div class="face">${t.bem}</div><div style="flex:1"><div class="nm"><b>${t.boss}</b><span>${B.bossHP}/${B.bossMax} HP</span></div><div class="hpbar hp-e"><i style="width:${B.bossHP/B.bossMax*100}%"></i></div></div></div>
+  <div class="bubble">"${taunt}"</div>
+  <div class="fighter"><div class="face">🧑‍🎓</div><div style="flex:1"><div class="nm"><b>You</b><span>${'❤️'.repeat(B.hp)}${'🖤'.repeat(5-B.hp)}</span></div><div class="hpbar hp-s"><i style="width:${B.hp/5*100}%"></i></div></div></div>
+  <div class="hud"><div class="stat"><b>${B.score}</b><span>Score</span></div><div class="stat streak ${B.streak>=2?'fire':''}"><b>${B.streak}${B.streak>=2?'🔥':''}</b><span>Combo</span></div><div class="stat"><b>${B.i+1}/${B.qs.length}</b><span>Q</span></div></div>
+  <div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div><button class="btn" id="next" style="display:none" onclick="sfx.click();bNext()">NEXT ➡️</button>`;
+ const opts=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.tx;b.onclick=()=>bAns(b,o.k===q.a,q);opts.appendChild(b);});}
+function bAns(btn,correct,q){if(B.answered)return;B.answered=true;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
+ const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>HIT!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';
+ if(correct){B.correct++;B.streak++;B.best=Math.max(B.best,B.streak);B.bossHP=Math.max(0,B.bossHP-1);B.score+=100+(B.streak-1)*25;if(B.streak>=3){sfx.crit();toast("💥 CRITICAL! x"+B.streak);}else{sfx.good();toast("✅ +"+(100+(B.streak-1)*25));}}
+ else{B.streak=0;B.hp--;btn.classList.remove('dim');btn.classList.add('wrong');sfx.bad();toast("💢 Boss hits back!");}
+ document.querySelector('.hp-e>i').style.width=Math.max(0,B.bossHP/B.bossMax*100)+'%';document.querySelector('.hp-s>i').style.width=B.hp/5*100+'%';
+ const n=document.getElementById('next');n.style.display='block';n.textContent=B.i>=B.qs.length-1?'🏁 FINISH':'NEXT ➡️';}
+function bNext(){if(B.hp<=0)return battleFaint();B.i++;drawBattle();}
+function battleRetry(){B.i=0;B.score=0;B.streak=0;B.correct=0;B.hp=5;B.bossHP=B.bossMax;shuffle(B.qs);drawBattle();}
+function battleFaint(){sfx.bad();app.innerHTML=`<h1>😵 Fainted!</h1><div class="center" style="font-size:54px">🤕</div><p class="center small" style="margin:14px 0">${B.t.boss} got 5 hits in — just a few gaps. Revise & retry!</p><button class="btn" onclick="sfx.click();battleRetry()">🔁 Retry</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function battleWin(){sfx.win();saveScore(B.t.key,B.correct,B.qs.length);const pct=Math.round(B.correct/B.qs.length*100);
+ app.innerHTML=`<h1>🏆 ${B.t.boss} DEFEATED!</h1><div class="center" style="font-size:54px">${B.t.bem}💥</div>
+  <div class="hud" style="margin-top:14px"><div class="stat"><b>${B.score}</b><span>Score</span></div><div class="stat"><b>${pct}%</b><span>Accuracy</span></div><div class="stat"><b>${B.best}🔥</b><span>Best combo</span></div></div>
+  <p class="center small">${pct>=90?"🌟 Flawless!":pct>=70?"💪 Strong — one more for the perfect run!":"📚 Beaten — revise & retry."}</p>
+  <button class="btn green" onclick="sfx.click();map()">🗺️ Map</button><button class="btn ghost" onclick="sfx.click();battleRetry()">🔁 Replay</button>`;}
+
+/* ---- Number Dojo (calc) ---- */
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+const DOJO=[
+ {n:'Percentage of an amount',gen(){const p=[10,20,25,50][rnd(0,3)],y=rnd(2,9)*100;return{q:`Find ${p}% of ${y}.`,ans:y*p/100,work:`${y} ÷ 100 = ${y/100}; × ${p} = ${y*p/100}.`}}},
+ {n:'Volume of a cuboid',gen(){const l=rnd(2,9),w=rnd(2,9),h=rnd(2,6);return{q:`Volume of a cuboid ${l}×${w}×${h} cm? (cm³)`,ans:l*w*h,work:`V = L×W×H = ${l}×${w}×${h} = ${l*w*h} cm³.`}}},
+ {n:'Metric: kg → g',gen(){const k=rnd(2,9);return{q:`Convert ${k} kg into grams.`,ans:k*1000,work:`1 kg = 1000 g, so ${k} kg = ${k*1000} g.`}}},
+ {n:'Increase by a %',gen(){const p=[10,20,50][rnd(0,2)],y=rnd(2,9)*100;return{q:`Increase ${y} by ${p}%.`,ans:y+y*p/100,work:`${p}% of ${y} = ${y*p/100}; ${y}+${y*p/100}=${y+y*p/100}.`}}},
+ {n:'Density',gen(){const d=rnd(2,9),v=rnd(2,6);return{q:`Density ${d} g/cm³, volume ${v} cm³. Find mass.`,ans:d*v,work:`Mass = D×V = ${d}×${v} = ${d*v} g.`}}},
+];
+let DJ;
+function dojo(){DJ={i:0,marks:0,total:8};dojoQ();}
+function dojoQ(){if(DJ.i>=DJ.total)return dojoResult();const F=DOJO[rnd(0,DOJO.length-1)];DJ.cur={F,item:F.gen()};DJ.answered=false;
+ app.innerHTML=`<div class="topbar"><span class="tag">🥋 Dojo ${DJ.i+1}/${DJ.total}</span></div><div class="hud"><div class="stat"><b>${DJ.marks}</b><span>Marks</span></div><div class="stat"><b>${DJ.i+1}/${DJ.total}</b><span>Q</span></div></div>
+  <div class="info"><b>${F.n}</b></div><div class="q" style="margin-top:8px">${DJ.cur.item.q}</div><input type="text" id="din" inputmode="decimal" placeholder="Answer (number only)"><button class="btn" id="dsub" onclick="dojoCheck()">✅ Check</button><div class="explain" id="dex"></div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;
+ const inp=document.getElementById('din');inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')dojoCheck();});}
+function dojoCheck(){if(DJ.answered)return;const v=parseFloat(document.getElementById('din').value),it=DJ.cur.item,ok=!isNaN(v)&&Math.abs(v-it.ans)<0.01;DJ.answered=true;const ex=document.getElementById('dex');
+ if(ok){DJ.marks++;sfx.good();ex.innerHTML="✅ <b>Correct!</b> "+it.work;}else{sfx.bad();ex.innerHTML="❌ <b>Answer: "+it.ans+"</b><br>"+it.work;}ex.style.display='block';
+ const s=document.getElementById('dsub');s.textContent=DJ.i>=DJ.total-1?'🏁 Finish':'Next ➡️';s.onclick=()=>{DJ.i++;dojoQ();};}
+function dojoResult(){const pct=Math.round(DJ.marks/DJ.total*100);sfx.win();app.innerHTML=`<h1>🥋 ${DJ.marks}/${DJ.total}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><button class="btn" onclick="sfx.click();dojo()">🔁 Again</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+/* ---- Vocab Match ---- */
+let VM;
+function vocabMatch(){const pool=shuffle(GAME.extra.pairs.slice()).slice(0,6);VM={pairs:pool,left:shuffle(pool.map(p=>p[0])),right:shuffle(pool.map(p=>p[1])),selL:null,selR:null,done:0,tries:0};drawVM();}
+function vmId(side,w){return side+'_'+btoa(unescape(encodeURIComponent(w))).replace(/[^a-zA-Z0-9]/g,'');}
+function drawVM(){
+ const lcol=VM.left.map(w=>`<button class="mbtn" id="${vmId('L',w)}" onclick="vmPick('L','${encodeURIComponent(w)}')">${w}</button>`).join('');
+ const rcol=VM.right.map(w=>`<button class="mbtn" id="${vmId('R',w)}" onclick="vmPick('R','${encodeURIComponent(w)}')">${w}</button>`).join('');
+ app.innerHTML=`<div class="topbar"><span class="tag">🔤 ${GAME.name} Match</span></div><div class="sub" id="vmsub">Tap a word, then its English meaning. Matched: <b>${VM.done}/${VM.pairs.length}</b></div><div class="matchgrid"><div class="mcol">${lcol}</div><div class="mcol">${rcol}</div></div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function vmPick(side,enc){const w=decodeURIComponent(enc);const el=document.getElementById(vmId(side,w));if(!el||el.classList.contains('done'))return;sfx.click();
+ if(side==='L'){if(VM.selL){const p=document.getElementById(vmId('L',VM.selL));if(p)p.classList.remove('sel');}VM.selL=w;el.classList.add('sel');}
+ else{if(VM.selR){const p=document.getElementById(vmId('R',VM.selR));if(p)p.classList.remove('sel');}VM.selR=w;el.classList.add('sel');}
+ if(VM.selL&&VM.selR){VM.tries++;const ok=VM.pairs.some(p=>p[0]===VM.selL&&p[1]===VM.selR);const lEl=document.getElementById(vmId('L',VM.selL)),rEl=document.getElementById(vmId('R',VM.selR));
+  if(ok){lEl.classList.add('done');rEl.classList.add('done');lEl.classList.remove('sel');rEl.classList.remove('sel');VM.done++;sfx.good();VM.selL=null;VM.selR=null;
+   if(VM.done>=VM.pairs.length){sfx.win();const sb=document.getElementById('vmsub');if(sb)sb.innerHTML='🎉 All matched! '+VM.pairs.length+' pairs in '+VM.tries+' tries.';}}
+  else{lEl.classList.add('bad');rEl.classList.add('bad');sfx.bad();const a=VM.selL,b=VM.selR;VM.selL=null;VM.selR=null;
+   setTimeout(()=>{const x=document.getElementById(vmId('L',a)),y=document.getElementById(vmId('R',b));if(x&&!x.classList.contains('done'))x.classList.remove('bad','sel');if(y&&!y.classList.contains('done'))y.classList.remove('bad','sel');},600);}}}
+
+/* ---- Written ---- */
+let WR;
+function writtenMenu(){let t='';Object.keys(GAME.written).forEach(k=>{t+=`<div class="tile" onclick="sfx.click();wrStart('${k}')"><div class="em">📝</div><b>${k}</b></div>`;});
+ app.innerHTML=`<div class="topbar"><span class="tag">📝 Written Exam</span></div><h2>Mark-scheme questions</h2><div class="sub">Answer, reveal the mark scheme, then mark yourself honestly.</div><div class="grid">${t}</div><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+function wrStart(k){WR={k,list:GAME.written[k],i:0,marks:0,max:GAME.written[k].reduce((a,q)=>a+q.m,0)};wrQ();}
+function wrQ(){if(WR.i>=WR.list.length)return wrResult();const q=WR.list[WR.i];
+ app.innerHTML=`<div class="topbar"><span class="tag">📝 ${WR.k} ${WR.i+1}/${WR.list.length}</span></div><div class="hud"><div class="stat"><b>${WR.marks}</b><span>Marks</span></div><div class="stat"><b>${q.m}</b><span>This Q</span></div></div>
+  <div class="q">[${q.m} mark${q.m>1?'s':''}] ${q.q}</div><textarea rows="4" placeholder="Write your answer (optional)..."></textarea><button class="btn" id="rev" onclick="wrReveal()">👀 Reveal mark scheme</button><div class="explain" id="ms"></div><div id="mk"></div><button class="btn ghost" onclick="sfx.click();writtenMenu()">⬅️ Topics</button>`;}
+function wrReveal(){const q=WR.list[WR.i];const ms=document.getElementById('ms');ms.innerHTML="<b>Mark scheme (1 mark per point):</b><ul style='margin:6px 0 0 18px'>"+q.s.map(p=>`<li style='margin:4px 0'>${p}</li>`).join('')+"</ul>";ms.style.display='block';document.getElementById('rev').style.display='none';sfx.click();
+ let b='';for(let m=0;m<=q.m;m++)b+=`<button class="btn sm ${m===q.m?'green':'ghost'}" onclick="wrScore(${m})">${m}</button>`;document.getElementById('mk').innerHTML=`<div class="small" style="margin-top:10px">How many marks did you get?</div><div>${b}</div>`;}
+function wrScore(m){WR.marks+=m;sfx.good();WR.i++;wrQ();}
+function wrResult(){const pct=Math.round(WR.marks/WR.max*100);sfx.win();app.innerHTML=`<h1>📝 ${WR.marks}/${WR.max}</h1><div class="center" style="font-size:54px">${pct>=80?'🏆':pct>=50?'💪':'📚'}</div><div class="sub">${WR.k} • ${pct}%</div><button class="btn" onclick="sfx.click();wrStart('${WR.k}')">🔁 Retry</button><button class="btn ghost" onclick="sfx.click();writtenMenu()">⬅️ Topics</button>`;}
+
+/* ---- Final Exam ---- */
+let FE;
+function finalExam(){let all=[];GAME.topics.forEach(t=>t.qs.forEach(q=>all.push(Object.assign({cat:t.name},q))));shuffle(all);FE={qs:all.slice(0,Math.min(20,all.length)),i:0,correct:0,stat:{},answered:false};feRender();}
+function feRender(){if(FE.i>=FE.qs.length)return feResult();FE.answered=false;const q=FE.qs[FE.i],prog=Math.round(FE.i/FE.qs.length*100);
+ app.innerHTML=`<span class="cat" style="background:var(--accent2)">🎓 FINAL EXAM</span><div class="hud"><div class="stat"><b>${FE.i+1}/${FE.qs.length}</b><span>Q</span></div><div class="stat"><b>${FE.correct}</b><span>Correct</span></div><div class="stat"><b>${FE.i?Math.round(FE.correct/FE.i*100):0}%</b><span>Running</span></div></div><div class="bar"><i style="width:${prog}%"></i></div><span class="cat">${q.cat}</span><div class="q">${q.q}</div><div class="opts" id="opts"></div><div class="explain" id="explain"></div><button class="btn" id="next" style="display:none" onclick="sfx.click();feNext()">NEXT ➡️</button>`;
+ const opts=document.getElementById('opts');q.o.map((tx,k)=>({tx,k})).sort(()=>Math.random()-0.5).forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.tx;b.onclick=()=>feChoose(b,o.k===q.a,q);opts.appendChild(b);});}
+function feChoose(btn,correct,q){if(FE.answered)return;FE.answered=true;FE.stat[q.cat]=FE.stat[q.cat]||{c:0,t:0};FE.stat[q.cat].t++;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent===q.o[q.a])b.classList.add('correct');else b.classList.add('dim');});
+ const ex=document.getElementById('explain');ex.innerHTML=(correct?"✅ <b>Correct!</b> ":"❌ <b>Answer:</b> ")+q.w;ex.style.display='block';if(correct){FE.correct++;FE.stat[q.cat].c++;toast("✅");}else{btn.classList.remove('dim');btn.classList.add('wrong');toast("❌");}
+ const n=document.getElementById('next');n.style.display='block';if(FE.i>=FE.qs.length-1)n.textContent='🏁 FINISH';}
+function feNext(){FE.i++;feRender();}
+function feResult(){const sc=loadScores();for(const c in FE.stat){const p=Math.round(FE.stat[c].c/FE.stat[c].t*100);if(sc[c]==null||p>=sc[c])sc[c]=p;}localStorage.setItem('rqg_'+GAME.id,JSON.stringify(sc));
+ const pct=Math.round(FE.correct/FE.qs.length*100);let g,gm;if(pct>=90){g="Grade 9 🏆";gm="🧠✨";}else if(pct>=80){g="Grade 8";gm="📈🔥";}else if(pct>=70){g="Grade 7";gm="💪";}else if(pct>=55){g="Grade 5–6";gm="👍";}else if(pct>=40){g="Grade 4";gm="🛠️";}else{g="Below pass";gm="📚";}
+ const ranked=Object.keys(FE.stat).map(c=>({c,p:Math.round(FE.stat[c].c/FE.stat[c].t*100)})).sort((a,b)=>a.p-b.p);
+ const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
+ app.innerHTML=`<h1>🎓 FINAL EXAM</h1><div class="center" style="font-size:50px">${gm}</div><div class="hud"><div class="stat"><b>${FE.correct}/${FE.qs.length}</b><span>Score</span></div><div class="stat"><b>${pct}%</b><span>%</span></div><div class="stat"><b>${g}</b><span>Grade</span></div></div><h3 style="color:var(--accent);margin:8px 0 4px">By topic (weakest first):</h3>${rows}<button class="btn" onclick="sfx.click();finalExam()">🔁 Retake</button><button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+/* ---- Gap Report ---- */
+function gapReport(){const s=loadScores();const cats=GAME.topics.map(t=>t.key),names={};GAME.topics.forEach(t=>names[t.key]=t.name);
+ const ranked=cats.map(c=>({c:names[c],p:s[c]})).filter(x=>x.p!=null).sort((a,b)=>a.p-b.p);
+ const rows=ranked.map(r=>{const col=r.p>=80?'var(--good)':r.p>=50?'var(--accent)':'var(--accent2)';return `<div class="report-row"><div class="name">${r.c}</div><div class="track"><i style="width:${r.p}%;background:${col}"></i></div><div class="pct" style="color:${col}">${r.p}%</div></div>`;}).join('');
+ const weak=ranked.filter(r=>r.p<70).map(r=>r.c);
+ app.innerHTML=`<h1>📊 Gap Report</h1><div class="sub">${GAME.name}</div>${rows||'<p class="small center">Beat some bosses first!</p>'}${weak.length?`<div class="info" style="margin-top:12px"><b>🎯 Revise these first:</b> ${weak.join(', ')}.</div>`:(ranked.length?'<div class="info" style="margin-top:12px">🎉 Every attempted topic ≥70%!</div>':'')}<button class="btn ghost" onclick="sfx.click();map()">🗺️ Map</button>`;}
+
+home();
+</script></body></html>
