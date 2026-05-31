@@ -612,7 +612,7 @@ function saveTopicScore(key,correct,total){const s=loadScores();const pct=Math.r
 
 function arena(){stopLoop();const s=loadScores();
   let grid='';TOPICS.forEach((t,i)=>{const sc=s[t.key];
-    grid+=`<div class="topic" onclick="SFX.click();startBattle(${i})">${sc!=null?`<span class="score">${sc}%</span>`:''}<div class="em">${t.em}</div><b>${t.key}</b></div>`});
+    grid+=`<div class="topic" onclick="SFX.click();arenaMenu(${i})">${sc!=null?`<span class="score">${sc}%</span>`:''}<div class="em">${t.em}</div><b>${t.key}</b></div>`});
   const done=Object.keys(s).length;
   root.innerHTML=`
     <div class="topbar"><span class="tag">🧠 Exam Arena</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
@@ -622,6 +622,31 @@ function arena(){stopLoop();const s=loadScores();
     ${done>0?`<button class="btn gold" onclick="SFX.click();gapReport()">📊 See Gap Report</button>`:''}
     <button class="btn ghost" onclick="SFX.click();hub()">⬅️ Back to lab</button>`;
 }
+const NOTES_SCI={
+ "Forces":["<b>Friction</b> slows a moving object (two surfaces rub); <b>drag</b> = friction in a fluid.","<b>Moment</b> (turning effect) = force × distance from the pivot; balanced = equal clockwise & anticlockwise moments.","<b>Hooke's Law:</b> extension is proportional to force (until the elastic limit).","<b>Pressure</b> = force ÷ area. Gas pressure rises if you heat, compress, or add particles."],
+ "Electromagnets":["<b>Like poles repel; opposite poles attract.</b> Field lines run N → S.","The three magnetic metals: <b>iron, nickel, cobalt</b>.","An <b>electromagnet</b> = a coil of wire around an iron core; only magnetic when current flows (so it can be switched on/off).","Make it stronger: more coil turns, more current, or an iron core."],
+ "Energy":["<b>Work done</b> = force × distance (joules).","<b>Conduction</b> = energy passed on by vibrating particles (best in solids/metals).","<b>Convection</b> = hot fluid rises, cool sinks (liquids & gases only).","<b>Radiation</b> = infrared; needs no particles. Dark matte surfaces absorb/emit the most."],
+ "Waves":["<b>Transverse</b> waves vibrate at 90° to travel; <b>longitudinal</b> (sound) vibrate along it (compressions & rarefactions).","Human hearing ≈ 20–20 000 Hz; above that = ultrasound.","EM spectrum (low→high energy): radio, micro, infrared, visible, UV, X-ray, gamma.","Ionising waves (UV, X-rays, gamma) can damage cells and DNA."],
+ "Matter":["<b>Element</b> = one type of atom; <b>compound</b> = elements chemically bonded.","Periodic table: <b>groups</b> = columns, <b>periods</b> = rows.","<b>Group 1</b> (alkali metals) + water → metal hydroxide + hydrogen (more vigorous down the group).","<b>Group 7</b> = halogens; <b>Group 0</b> = noble gases (unreactive). A more reactive halogen displaces a less reactive one."],
+ "Reactions":["<b>Combustion</b> = burning a fuel in oxygen → carbon dioxide + water.","<b>Exothermic</b> = gives out heat (temp rises); <b>endothermic</b> = takes in heat (temp falls).","<b>Thermal decomposition:</b> a metal carbonate → metal oxide + carbon dioxide.","Test for CO₂: limewater turns cloudy. <b>Conservation of mass:</b> mass of reactants = mass of products."],
+ "Earth":["Greenhouse gases (<b>CO₂, methane</b>) trap heat → global warming.","<b>Carbon cycle:</b> released by combustion & respiration, absorbed by photosynthesis.","Air is about 78% nitrogen, 21% oxygen.","Metals below carbon in reactivity → extracted with carbon; above carbon → electrolysis."],
+ "Organisms":["<b>Gas exchange:</b> oxygen in, carbon dioxide out (in the lungs/alveoli).","Breathing in: diaphragm contracts & flattens, ribs up/out, pressure drops, air rushes in.","<b>Enzymes</b> are biological catalysts (lock & key): carbohydrase→sugars, protease→amino acids, lipase→fatty acids+glycerol.","Nutrients: carbs (energy), protein (growth/repair), fibre (keeps food moving)."],
+ "Ecosystems":["<b>Aerobic respiration:</b> glucose + oxygen → carbon dioxide + water.","<b>Anaerobic</b> (humans): glucose → lactic acid; (yeast/fermentation): glucose → ethanol + CO₂.","<b>Photosynthesis:</b> water + carbon dioxide + light → glucose + oxygen (in chloroplasts).","Rate of photosynthesis depends on light, CO₂ and temperature."],
+ "Genes":["<b>DNA</b> is a double helix; a <b>gene</b> is a section of DNA; a <b>chromosome</b> is a coiled strand (humans have 46).","Sex cells (sperm/egg) have 23 chromosomes each → 46 at fertilisation.","<b>Dominant</b> allele shows with one copy (capital letter); <b>recessive</b> needs two (lower-case).","<b>Natural selection:</b> the best-adapted survive and pass on their genes. Extinction = a whole species dies out."],
+ "Electricity":["<b>Ammeter</b> measures current (A), connected in <b>series</b>.","<b>Voltmeter</b> measures voltage (V), connected in <b>parallel</b>.","<b>Series:</b> one loop — bulbs are dimmer (shared voltage); break one and all go out; current is the same everywhere.","<b>Parallel:</b> each bulb is on its own branch with full voltage; one breaking doesn't stop the others."],
+};
+function arenaMenu(ti){const t=TOPICS[ti];root.innerHTML=`
+ <div class="topbar"><span class="tag">${t.em} ${t.key}</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+ <h2 class="center">${t.em} ${t.key}</h2><div class="sub">Learn it first, then beat the boss.</div>
+ <button class="btn gold" onclick="SFX.click();arenaLearn(${ti})">📚 Learn this topic</button>
+ <button class="btn green" onclick="SFX.click();startBattle(${ti})">⚔️ Boss battle</button>
+ <button class="btn ghost" onclick="SFX.click();arena()">⬅️ Exam Arena</button>`;}
+function arenaLearn(ti){const t=TOPICS[ti];const notes=(NOTES_SCI[t.key]||[]).map(n=>`<li style="margin:9px 0">${n}</li>`).join('');
+ root.innerHTML=`<div class="topbar"><span class="tag">📚 Learn</span><button class="muteBtn" id="muteBtn" onclick="toggleMute()">${muted?'🔇':'🔊'}</button></div>
+ <h2 class="center">${t.em} ${t.key}</h2>
+ <div class="info" style="line-height:1.65"><b style="color:var(--acid)">Key facts to learn:</b><ul style="margin:10px 0 0 18px">${notes}</ul></div>
+ <button class="btn green" onclick="SFX.click();startBattle(${ti})">⚔️ Got it — battle the boss!</button>
+ <button class="btn ghost" onclick="SFX.click();arenaMenu(${ti})">⬅️ Back</button>`;}
 let BT;
 function startBattle(ti){const t=TOPICS[ti];const qs=[...t.qs].sort(()=>Math.random()-0.5);
   BT={t,qs,i:0,score:0,streak:0,best:0,correct:0,bossMax:qs.length,bossHP:qs.length,hp:5,answered:false};drawBattle()}
